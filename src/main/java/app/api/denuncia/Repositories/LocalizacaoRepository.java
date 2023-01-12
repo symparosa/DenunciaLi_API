@@ -21,7 +21,7 @@ public interface LocalizacaoRepository extends JpaRepository<LocalizacaoModel, I
                         + "latitudeIlha,longitudeIlha,ilha"
                         + " FROM view_localizacao_info"
                         + " WHERE estadoLugar = 1 and estadoZona = 1 and estadoConcelho = 1 and estadoIlha = 1"
-                        + " and (lugar LIKE %:localizacao% or zona LIKE %:localizacao% or concelho LIKE %:localizacao% or ilha LIKE %:localizacao%)", nativeQuery = true)
+                        + " and (lugar LIKE :localizacao% )", nativeQuery = true)
         List<LocalizacaoOutputDto> listarLocalizacoes(@Param("localizacao") String localizacao);
 
         @Query(value = "SELECT idLugar,longitudeLugar,latitudeLugar,lugar,"
