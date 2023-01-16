@@ -42,41 +42,17 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                for (int i = 0; i < estatistica.size(); i++) {
+                final int total = estatistica.get(0).getTotal();
 
+                for (int i = 0; i < estatistica.size(); i++) {
                     anosFinais.add(estatistica.get(i).getAno());
                 }
-
-                final int total = estatistica.get(0).getTotal();
 
                 for (int y = 0; y < totalAnos.size(); y++) {
 
                     if (!anosFinais.contains(totalAnos.get(y))) {
-
                         String anoNulo = totalAnos.get(y);
-
-                        EstatisticaDenunciaPorAnoDto e = new EstatisticaDenunciaPorAnoDto() {
-
-                        @Override
-                        public String getAno() {
-                        return anoNulo;
-                        }
-
-                        @Override
-                        public int getQuantidade() {
-                        return 0;
-                        }
-
-                        @Override
-                        public int getTotal() {
-                        return total;
-                        }
-
-                        @Override
-                        public Float getPercentagem() {
-                        return 0.0000f;
-                        }};
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno(anoNulo, total));
                     }
                 }
 
@@ -118,52 +94,23 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         try {
 
-            List<EstatisticaDenunciaPorAno_MesDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_Mes(ano, mes);
+            List<EstatisticaDenunciaPorAno_MesDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Mes(ano, mes);
 
             if (estatistica != null && !estatistica.isEmpty()) {
-
-                for (int i = 0; i < estatistica.size(); i++) {
-
-                    mesesFinais.add(estatistica.get(i).getMes());
-                }
 
                 final int total = estatistica.get(0).getTotal();
                 final String anoFixo = estatistica.get(0).getAno();
 
+                for (int i = 0; i < estatistica.size(); i++) {
+                    mesesFinais.add(estatistica.get(i).getMes());
+                }
+
                 for (int y = 0; y < totalMeses.size(); y++) {
 
                     if (!mesesFinais.contains(totalMeses.get(y))) {
-
                         Integer mesesNulo = totalMeses.get(y);
-                        
-                        EstatisticaDenunciaPorAno_MesDto e = new EstatisticaDenunciaPorAno_MesDto() {
-
-                            @Override
-                            public String getAno() {
-                                return anoFixo;
-                            }
-
-                            @Override
-                            public int getMes() {
-                                return mesesNulo;
-                            }
-
-                            @Override
-                            public int getQuantidade() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getTotal() {
-                                return total;
-                            }
-
-                            @Override
-                            public Float getPercentagem() {
-                                return 0.0000f;
-                            }
-                        };
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno_Mes(anoFixo, mesesNulo, total));
                     }
                 }
                 response.setResponseCode(1);
@@ -204,52 +151,23 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         try {
 
-            List<EstatisticaDenunciaPorAno_TipoCrimeDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_TipoCrime(ano, tipoCrime);
+            List<EstatisticaDenunciaPorAno_TipoCrimeDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_TipoCrime(ano, tipoCrime);
 
             if (estatistica != null && !estatistica.isEmpty()) {
-
-                for (int i = 0; i < estatistica.size(); i++) {
-
-                    tipoCrimeFinais.add(estatistica.get(i).getTipoCrime());
-                }
 
                 final int total = estatistica.get(0).getTotal();
                 final String anoFixo = estatistica.get(0).getAno();
 
+                for (int i = 0; i < estatistica.size(); i++) {
+                    tipoCrimeFinais.add(estatistica.get(i).getTipoCrime());
+                }
+
                 for (int y = 0; y < totalTipoCrime.size(); y++) {
 
                     if (!tipoCrimeFinais.contains(totalTipoCrime.get(y))) {
-
                         Integer tipoCrimeNulo = totalTipoCrime.get(y);
-                        
-                        EstatisticaDenunciaPorAno_TipoCrimeDto e = new EstatisticaDenunciaPorAno_TipoCrimeDto() {
-
-                            @Override
-                            public String getAno() {
-                                return anoFixo;
-                            }
-
-                            @Override
-                            public int getTipoCrime() {
-                                return tipoCrimeNulo;
-                            }
-
-                            @Override
-                            public int getQuantidade() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getTotal() {
-                                return total;
-                            }
-
-                            @Override
-                            public Float getPercentagem() {
-                                return 0.0000f;
-                            }
-                        };
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno_TipoCrime(anoFixo, tipoCrimeNulo, total));
                     }
                 }
 
@@ -281,7 +199,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_Mes_TipoCrime(String ano, Collection<Integer> mes,Collection<Integer> tipoCrime) {
+    public ResponseDto getEstatisticaDenunciaPorAno_Mes_TipoCrime(String ano, Collection<Integer> mes,
+            Collection<Integer> tipoCrime) {
 
         ResponseDto response = new ResponseDto();
 
@@ -291,64 +210,34 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         List<Integer> mesesFinais = new ArrayList<Integer>();
 
-        List<Integer> tipoCrimeFinais = new ArrayList<Integer>();
-
         try {
 
-            List<EstatisticaDenunciaPorAno_Mes_TipoCrimeDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_Mes_TipoCrime(ano, mes, tipoCrime);
+            List<EstatisticaDenunciaPorAno_Mes_TipoCrimeDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Mes_TipoCrime(ano, mes, tipoCrime);
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                
-                for (int i = 0; i < estatistica.size(); i++) {
+                final String anoFixo = estatistica.get(0).getAno();
 
+                for (int i = 0; i < estatistica.size(); i++) {
                     mesesFinais.add(estatistica.get(i).getMes());
-                    tipoCrimeFinais.add(estatistica.get(i).getTipoCrime());
                 }
 
-                final int total = estatistica.get(0).getTotal();
-                final String anoFixo = estatistica.get(0).getAno();
+                for (int tiposCrime : totalTipoCrime) {
+
+                    for (int meses : mesesFinais) {
+                        if (estatistica.stream().filter(item -> item.getMes() == meses && item.getTipoCrime() == tiposCrime).count() < 1) {
+                            int total = estatistica.stream().filter(item -> item.getMes() == meses).findAny().orElse(null).getTotal();
+                            estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(anoFixo, meses, tiposCrime, total));
+                        }
+                    }
+                }
 
                 for (int y = 0; y < totalMeses.size(); y++) {
 
                     if (!mesesFinais.contains(totalMeses.get(y))) {
-
                         Integer mesesNulo = totalMeses.get(y);
-                        
-                        EstatisticaDenunciaPorAno_Mes_TipoCrimeDto e = new EstatisticaDenunciaPorAno_Mes_TipoCrimeDto() {
-
-                            @Override
-                            public String getAno() {
-                                return anoFixo;
-                            }
-
-                            @Override
-                            public int getMes() {
-                                return mesesNulo;
-                            }
-
-                            @Override
-                            public int getTipoCrime() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getQuantidade() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getTotal() {
-                                return 0;
-                            }
-
-                            @Override
-                            public Float getPercentagem() {
-                                return 0.0000f;
-                            }
-                            
-                        };
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(anoFixo, mesesNulo, 0, 0));
                     }
                 }
                 response.setResponseCode(1);
@@ -389,52 +278,23 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         try {
 
-            List<EstatisticaDenunciaPorAno_FaixaEtariaDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_FaixaEtaria(ano);
+            List<EstatisticaDenunciaPorAno_FaixaEtariaDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_FaixaEtaria(ano);
 
             if (estatistica != null && !estatistica.isEmpty()) {
-
-                for (int i = 0; i < estatistica.size(); i++) {
-
-                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
-                }
 
                 final int total = estatistica.get(0).getTotal();
                 final String anoFixo = estatistica.get(0).getAno();
 
+                for (int i = 0; i < estatistica.size(); i++) {
+                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
+                }
+
                 for (int y = 0; y < totalFaixaEtaria.size(); y++) {
 
                     if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
-
                         String faixaEtariaNulo = totalFaixaEtaria.get(y);
-                        
-                        EstatisticaDenunciaPorAno_FaixaEtariaDto e = new EstatisticaDenunciaPorAno_FaixaEtariaDto() {
-
-                            @Override
-                            public String getAno() {
-                                return anoFixo;
-                            }
-
-                            @Override
-                            public String getFaixa_etaria() {
-                                return faixaEtariaNulo;
-                            }
-
-                            @Override
-                            public int getQuantidade() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getTotal() {
-                                return total;
-                            }
-
-                            @Override
-                            public Float getPercentagem() {
-                                return 0.0000f;
-                            }
-                        };
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno_FaixaEtaria(anoFixo, faixaEtariaNulo, total));
                     }
                 }
 
@@ -476,61 +336,22 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         try {
 
-            List<EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_FaixaEtaria_Genero(ano);
+            List<EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_FaixaEtaria_Genero(ano);
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                for (int i = 0; i < estatistica.size(); i++) {
+                final String anoFixo = estatistica.get(0).getAno();
 
+                for (int i = 0; i < estatistica.size(); i++) {
                     faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
                 }
-
-                final String anoFixo = estatistica.get(0).getAno();
 
                 for (int y = 0; y < totalFaixaEtaria.size(); y++) {
 
                     if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
-
                         String faixaEtariaNulo = totalFaixaEtaria.get(y);
-                        
-                        EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto e = new EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto() {
-
-                            @Override
-                            public String getAno() {
-                                return anoFixo;
-                            }
-
-                            @Override
-                            public String getFaixa_etaria() {
-                                return faixaEtariaNulo;
-                            }
-
-                            @Override
-                            public int getTotal() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getQuantidadeFeminino() {
-                                return 0;
-                            }
-
-                            @Override
-                            public int getQuantidadeMasculino() {
-                                return 0;
-                            }
-
-                            @Override
-                            public Float getPercentagemFeminino() {
-                                return 0.0000f;
-                            }
-
-                            @Override
-                            public Float getPercentagemMasculino() {
-                                return 0.0000f;
-                            }
-                        };
-                        estatistica.add(e);
+                        estatistica.add(addEstatisticaPorAno_FaixaEtaria_Genero(anoFixo, faixaEtariaNulo));
                     }
                 }
 
@@ -562,19 +383,47 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(String ano,Collection<Integer> tipoCrime) {
+    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(String ano, Collection<Integer> tipoCrime) {
 
         ResponseDto response = new ResponseDto();
 
-        List<String> faixaEtaria = faixaEtariaList();
+        List<String> totalFaixaEtaria = faixaEtariaList();
 
-        List<String> faixa = new ArrayList<String>();
+        List<String> faixaEtariaFinais = new ArrayList<String>();
+
+        ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
 
         try {
 
-            List<EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto> estatistica = denunciaRepository.getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(ano,tipoCrime);
+            List<EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(ano, tipoCrime);
 
             if (estatistica != null && !estatistica.isEmpty()) {
+
+                final String anoFixo = estatistica.get(0).getAno();
+
+                for (int i = 0; i < estatistica.size(); i++) {
+                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
+                }
+    
+                for (int y = 0; y < totalFaixaEtaria.size(); y++) {
+    
+                    if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
+                        String faixaEtariaNulo = totalFaixaEtaria.get(y);
+                        estatistica.add(addEstatisticaPorAno_FaixaEtaria_TipoCrime(anoFixo,faixaEtariaNulo,0, 0));
+                    }
+                }
+    
+                for (int tiposCrime : totalTipoCrime) {
+    
+                    for (String faixaEtaria : faixaEtariaFinais) {
+                        if (estatistica.stream().filter(item -> item.getFaixa_etaria() == faixaEtaria && item.getTipoCrime() == tiposCrime).count() < 1) {
+                            int total = estatistica.stream().filter(item -> item.getFaixa_etaria() == faixaEtaria).findAny().orElse(null).getTotal();
+                            estatistica.add(addEstatisticaPorAno_FaixaEtaria_TipoCrime(anoFixo,faixaEtaria,tiposCrime, total));
+                        }
+                    }
+                }
+
                 response.setResponseCode(1);
                 response.setResponseType(ResponseType.Sucesso);
                 response.setObject(estatistica);
@@ -614,6 +463,242 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         faixaEtaria.add("80 anos ou mais");
 
         return faixaEtaria;
+    }
+
+    public EstatisticaDenunciaPorAnoDto addEstatisticaPorAno(String ano, int total) {
+        EstatisticaDenunciaPorAnoDto e = new EstatisticaDenunciaPorAnoDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_MesDto addEstatisticaPorAno_Mes(String ano, int mes, int total) {
+        EstatisticaDenunciaPorAno_MesDto e = new EstatisticaDenunciaPorAno_MesDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getMes() {
+                return mes;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_TipoCrimeDto addEstatisticaPorAno_TipoCrime(String ano, int tipoCrime, int total) {
+        EstatisticaDenunciaPorAno_TipoCrimeDto e = new EstatisticaDenunciaPorAno_TipoCrimeDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Mes_TipoCrimeDto addEstatisticaPorAno_Mes_TipoCrime(String ano, int mes,
+            int tipoCrime, int total) {
+        EstatisticaDenunciaPorAno_Mes_TipoCrimeDto e = new EstatisticaDenunciaPorAno_Mes_TipoCrimeDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getMes() {
+                return mes;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_FaixaEtariaDto addEstatisticaPorAno_FaixaEtaria(String ano, String faixaEtaria,
+            int total) {
+        EstatisticaDenunciaPorAno_FaixaEtariaDto e = new EstatisticaDenunciaPorAno_FaixaEtariaDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public String getFaixa_etaria() {
+                return faixaEtaria;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto addEstatisticaPorAno_FaixaEtaria_Genero(String ano,
+            String faixaEtaria) {
+        EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto e = new EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public String getFaixa_etaria() {
+                return faixaEtaria;
+            }
+
+            @Override
+            public int getTotal() {
+                return 0;
+            }
+
+            @Override
+            public int getQuantidadeFeminino() {
+                return 0;
+            }
+
+            @Override
+            public int getQuantidadeMasculino() {
+                return 0;
+            }
+
+            @Override
+            public Float getPercentagemFeminino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto addEstatisticaPorAno_FaixaEtaria_TipoCrime(String ano,String faixaEtaria, int tipoCrime, int total){
+        EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto e = new EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto() {
+
+            @Override
+            public String getAno() {
+                return ano;
+            }
+
+            @Override
+            public String getFaixa_etaria() {
+                return faixaEtaria;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
     }
 
     public DenunciaRepository getDenunciaRepository() {
