@@ -29,8 +29,6 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             int tipoUtilizador_fk) {
 
         ResponseDto response = new ResponseDto();
-        String fotoDefault = "Foto padrão";
-        String fotoPerfil = null;
 
         try {
 
@@ -50,14 +48,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                                 if (UtilizadorRepository.findByTelemovel(telemovel) == null) {
 
-                                    if (foto == null) {
-                                        fotoPerfil = fotoDefault;
-                                    } else {
-                                        fotoPerfil = foto;
-                                    }
-
                                     int UtilizadorSave = UtilizadorRepository.save(apelido, bi, cni, data_nascimento,
-                                            email, fotoPerfil, genero, nome, telemovel, localizacao_fk, username,
+                                            email, foto, genero, nome, telemovel, localizacao_fk, username,
                                             tipoUtilizador_fk);
 
                                     if (UtilizadorSave != 0) {
