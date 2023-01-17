@@ -2,7 +2,7 @@ package app.api.denuncia.Dto;
 
 public interface EstatisticaDenunciaPorAnoDto {
     
-    String getAno();
+    int getAno();
 
     int getQuantidade();
 

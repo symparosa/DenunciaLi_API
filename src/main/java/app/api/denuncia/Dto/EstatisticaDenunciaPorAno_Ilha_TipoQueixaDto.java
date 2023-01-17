@@ -1,12 +1,12 @@
 package app.api.denuncia.Dto;
 
-public interface EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto {
+public interface EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto {
     
     int getAno();
 
-    String getFaixa_etaria();
+    int getIdIlha();
 
-    int getTipoCrime();
+    int getTipoQueixa();
 
     int getQuantidade();
 

@@ -11,9 +11,19 @@ import app.api.denuncia.Dto.EstatisticaDenunciaPorAnoDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_FaixaEtariaDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_GeneroDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_IlhaDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Ilha_GeneroDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_MesDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_Mes_TipoCrimeDto;
 import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_TipoCrimeDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_TipoCrime_GeneroDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Dto.EstatisticaDenunciaPorAno_TipoQueixaDto;
 import app.api.denuncia.Dto.ResponseDto;
 import app.api.denuncia.Repositories.DenunciaRepository;
 import app.api.denuncia.Services.EstatisticaService;
@@ -28,13 +38,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno(Collection<String> ano) {
+    public ResponseDto getEstatisticaDenunciaPorAno(Collection<Integer> ano) {
 
         ResponseDto response = new ResponseDto();
 
-        ArrayList<String> totalAnos = new ArrayList<>(ano);
-
-        List<String> anosFinais = new ArrayList<String>();
+        ArrayList<Integer> totalAnos = new ArrayList<>(ano);
 
         try {
 
@@ -42,17 +50,9 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final int total = estatistica.get(0).getTotal();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    anosFinais.add(estatistica.get(i).getAno());
-                }
-
-                for (int y = 0; y < totalAnos.size(); y++) {
-
-                    if (!anosFinais.contains(totalAnos.get(y))) {
-                        String anoNulo = totalAnos.get(y);
-                        estatistica.add(addEstatisticaPorAno(anoNulo, total));
+                for (int anos : totalAnos) {
+                    if (estatistica.stream().filter(item -> item.getAno() == anos).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno(anos, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -84,13 +84,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_Mes(String ano, Collection<Integer> mes) {
+    public ResponseDto getEstatisticaDenunciaPorAno_Mes(Integer ano, Collection<Integer> mes) {
 
         ResponseDto response = new ResponseDto();
 
         ArrayList<Integer> totalMeses = new ArrayList<>(mes);
-
-        List<Integer> mesesFinais = new ArrayList<Integer>();
 
         try {
 
@@ -99,18 +97,9 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final int total = estatistica.get(0).getTotal();
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    mesesFinais.add(estatistica.get(i).getMes());
-                }
-
-                for (int y = 0; y < totalMeses.size(); y++) {
-
-                    if (!mesesFinais.contains(totalMeses.get(y))) {
-                        Integer mesesNulo = totalMeses.get(y);
-                        estatistica.add(addEstatisticaPorAno_Mes(anoFixo, mesesNulo, total));
+                for (int meses : totalMeses) {
+                    if (estatistica.stream().filter(item -> item.getMes() == meses).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_Mes(ano, meses, estatistica.get(0).getTotal()));
                     }
                 }
                 response.setResponseCode(1);
@@ -141,13 +130,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_TipoCrime(String ano, Collection<Integer> tipoCrime) {
+    public ResponseDto getEstatisticaDenunciaPorAno_TipoCrime(Integer ano, Collection<Integer> tipoCrime) {
 
         ResponseDto response = new ResponseDto();
 
         ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
-
-        List<Integer> tipoCrimeFinais = new ArrayList<Integer>();
 
         try {
 
@@ -156,18 +143,9 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final int total = estatistica.get(0).getTotal();
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    tipoCrimeFinais.add(estatistica.get(i).getTipoCrime());
-                }
-
-                for (int y = 0; y < totalTipoCrime.size(); y++) {
-
-                    if (!tipoCrimeFinais.contains(totalTipoCrime.get(y))) {
-                        Integer tipoCrimeNulo = totalTipoCrime.get(y);
-                        estatistica.add(addEstatisticaPorAno_TipoCrime(anoFixo, tipoCrimeNulo, total));
+                for (int tiposCrime : totalTipoCrime) {
+                    if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_TipoCrime(ano, tiposCrime, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -199,7 +177,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_Mes_TipoCrime(String ano, Collection<Integer> mes,
+    public ResponseDto getEstatisticaDenunciaPorAno_Mes_TipoCrime(Integer ano, Collection<Integer> mes,
             Collection<Integer> tipoCrime) {
 
         ResponseDto response = new ResponseDto();
@@ -208,8 +186,6 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
         ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
 
-        List<Integer> mesesFinais = new ArrayList<Integer>();
-
         try {
 
             List<EstatisticaDenunciaPorAno_Mes_TipoCrimeDto> estatistica = denunciaRepository
@@ -217,27 +193,20 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    mesesFinais.add(estatistica.get(i).getMes());
-                }
-
                 for (int tiposCrime : totalTipoCrime) {
 
-                    for (int meses : mesesFinais) {
-                        if (estatistica.stream().filter(item -> item.getMes() == meses && item.getTipoCrime() == tiposCrime).count() < 1) {
-                            int total = estatistica.stream().filter(item -> item.getMes() == meses).findAny().orElse(null).getTotal();
-                            estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(anoFixo, meses, tiposCrime, total));
+                    for (int meses : totalMeses) {
+                        if (estatistica.stream()
+                                .filter(item -> item.getMes() == meses && item.getTipoCrime() == tiposCrime)
+                                .count() < 1) {
+                            EstatisticaDenunciaPorAno_Mes_TipoCrimeDto e = estatistica.stream()
+                                    .filter(item -> item.getMes() == meses).findAny().orElse(null);
+                            int total = 0;
+                            if (e != null) {
+                                total = e.getTotal();
+                            }
+                            estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(ano, meses, tiposCrime, total));
                         }
-                    }
-                }
-
-                for (int y = 0; y < totalMeses.size(); y++) {
-
-                    if (!mesesFinais.contains(totalMeses.get(y))) {
-                        Integer mesesNulo = totalMeses.get(y);
-                        estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(anoFixo, mesesNulo, 0, 0));
                     }
                 }
                 response.setResponseCode(1);
@@ -268,13 +237,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria(String ano) {
+    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria(Integer ano) {
 
         ResponseDto response = new ResponseDto();
 
         List<String> totalFaixaEtaria = faixaEtariaList();
-
-        List<String> faixaEtariaFinais = new ArrayList<String>();
 
         try {
 
@@ -283,18 +250,10 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final int total = estatistica.get(0).getTotal();
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
-                }
-
-                for (int y = 0; y < totalFaixaEtaria.size(); y++) {
-
-                    if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
-                        String faixaEtariaNulo = totalFaixaEtaria.get(y);
-                        estatistica.add(addEstatisticaPorAno_FaixaEtaria(anoFixo, faixaEtariaNulo, total));
+                for (String faixaEtaria : totalFaixaEtaria) {
+                    if (estatistica.stream().filter(item -> item.getFaixa_etaria().equals(faixaEtaria)).count() < 1) {
+                        estatistica
+                                .add(addEstatisticaPorAno_FaixaEtaria(ano, faixaEtaria, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -326,13 +285,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_Genero(String ano) {
+    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_Genero(Integer ano) {
 
         ResponseDto response = new ResponseDto();
 
         List<String> totalFaixaEtaria = faixaEtariaList();
-
-        List<String> faixaEtariaFinais = new ArrayList<String>();
 
         try {
 
@@ -341,17 +298,9 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
-                }
-
-                for (int y = 0; y < totalFaixaEtaria.size(); y++) {
-
-                    if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
-                        String faixaEtariaNulo = totalFaixaEtaria.get(y);
-                        estatistica.add(addEstatisticaPorAno_FaixaEtaria_Genero(anoFixo, faixaEtariaNulo));
+                for (String faixaEtaria : totalFaixaEtaria) {
+                    if (estatistica.stream().filter(item -> item.getFaixa_etaria().equals(faixaEtaria)).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_FaixaEtaria_Genero(ano, faixaEtaria));
                     }
                 }
 
@@ -383,13 +332,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     @Override
-    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(String ano, Collection<Integer> tipoCrime) {
+    public ResponseDto getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(Integer ano, Collection<Integer> tipoCrime) {
 
         ResponseDto response = new ResponseDto();
 
         List<String> totalFaixaEtaria = faixaEtariaList();
-
-        List<String> faixaEtariaFinais = new ArrayList<String>();
 
         ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
 
@@ -400,26 +347,20 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             if (estatistica != null && !estatistica.isEmpty()) {
 
-                final String anoFixo = estatistica.get(0).getAno();
-
-                for (int i = 0; i < estatistica.size(); i++) {
-                    faixaEtariaFinais.add(estatistica.get(i).getFaixa_etaria());
-                }
-    
-                for (int y = 0; y < totalFaixaEtaria.size(); y++) {
-    
-                    if (!faixaEtariaFinais.contains(totalFaixaEtaria.get(y))) {
-                        String faixaEtariaNulo = totalFaixaEtaria.get(y);
-                        estatistica.add(addEstatisticaPorAno_FaixaEtaria_TipoCrime(anoFixo,faixaEtariaNulo,0, 0));
-                    }
-                }
-    
                 for (int tiposCrime : totalTipoCrime) {
-    
-                    for (String faixaEtaria : faixaEtariaFinais) {
-                        if (estatistica.stream().filter(item -> item.getFaixa_etaria() == faixaEtaria && item.getTipoCrime() == tiposCrime).count() < 1) {
-                            int total = estatistica.stream().filter(item -> item.getFaixa_etaria() == faixaEtaria).findAny().orElse(null).getTotal();
-                            estatistica.add(addEstatisticaPorAno_FaixaEtaria_TipoCrime(anoFixo,faixaEtaria,tiposCrime, total));
+
+                    for (String faixaEtaria : totalFaixaEtaria) {
+                        if (estatistica.stream().filter(
+                                item -> item.getFaixa_etaria().equals(faixaEtaria) && item.getTipoCrime() == tiposCrime)
+                                .count() < 1) {
+                            EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto e = estatistica.stream()
+                                    .filter(item -> item.getFaixa_etaria().equals(faixaEtaria)).findAny().orElse(null);
+                            int total = 0;
+                            if (e != null) {
+                                total = e.getTotal();
+                            }
+                            estatistica.add(
+                                    addEstatisticaPorAno_FaixaEtaria_TipoCrime(ano, faixaEtaria, tiposCrime, total));
                         }
                     }
                 }
@@ -449,6 +390,517 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             response.setMessage(" Falha no sistema.");
             return response;
         }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_TipoCrime_Genero(Integer ano, Collection<Integer> tipoCrime) {
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_TipoCrime_GeneroDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_TipoCrime_Genero(ano, tipoCrime);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int tiposCrime : totalTipoCrime) {
+                    if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_TipoCrime_Genero(ano, tiposCrime));
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_TipoQueixa(Integer ano, Collection<Integer> tipoQueixa) {
+
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalTipoQueixa = new ArrayList<>(tipoQueixa);
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_TipoQueixaDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_TipoQueixa(ano);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int tiposQueixa : totalTipoQueixa) {
+                    if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_TipoQueixa(ano, tiposQueixa));
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_TipoCrime_TipoQueixa(Integer ano, Collection<Integer> tipoCrime,
+            Collection<Integer> tipoQueixa) {
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
+
+        ArrayList<Integer> totalTipoQueixa = new ArrayList<>(tipoQueixa);
+        try {
+
+            List<EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_TipoCrime_TipoQueixa(ano, tipoCrime, tipoQueixa);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int tiposCrime : totalTipoCrime) {
+
+                    for (int tipoQueixas : totalTipoQueixa) {
+                        if (estatistica.stream().filter(
+                                item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
+                                .count() < 1) {
+                            EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto e = estatistica.stream()
+                                    .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+                            int total = 0;
+                            if (e != null) {
+                                total = e.getTotal();
+                            }
+                            estatistica.add(
+                                    addEstatisticaPorAno_TipoCrime_TipoQueixa(ano, tiposCrime, tipoQueixas, total));
+                        }
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Genero(Integer ano) {
+
+        ResponseDto response = new ResponseDto();
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_GeneroDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Genero(ano);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha(Integer ano, Collection<Integer> Ilhas) {
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalIlhas = new ArrayList<>(Ilhas);
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_IlhaDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Ilha(ano, Ilhas);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int ilha : totalIlhas) {
+                    if (estatistica.stream().filter(item -> item.getIdIlha() == ilha).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_Ilha(ano, ilha, estatistica.get(0).getTotal()));
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha_Genero(Integer ano, Collection<Integer> Ilhas) {
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalIlhas = new ArrayList<>(Ilhas);
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_Ilha_GeneroDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Ilha_Genero(ano, Ilhas);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int ilha : totalIlhas) {
+                    if (estatistica.stream().filter(item -> item.getIdIlha() == ilha).count() < 1) {
+                        estatistica.add(addEstatisticaPorAno_Ilha_Genero(ano, ilha));
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha_TipoCrime(Integer ano, Collection<Integer> Ilhas,
+            Collection<Integer> tipoCrime) {
+
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
+
+        ArrayList<Integer> totalIlha = new ArrayList<>(Ilhas);
+        try {
+
+            List<EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Ilha_TipoCrime(ano, Ilhas, tipoCrime);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int tiposCrime : totalTipoCrime) {
+
+                    for (int ilha : totalIlha) {
+                        if (estatistica.stream()
+                                .filter(item -> item.getIdIlha() == ilha && item.getTipoCrime() == tiposCrime)
+                                .count() < 1) {
+                            EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto e = estatistica.stream()
+                                    .filter(item -> item.getIdIlha() == ilha).findAny().orElse(null);
+                            int total = 0;
+                            if (e != null) {
+                                total = e.getTotal();
+                            }
+                            estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime(ano, ilha, tiposCrime, total));
+                        }
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha_TipoQueixa(Integer ano, Collection<Integer> Ilhas,
+            Collection<Integer> tipoQueixa) {
+        ResponseDto response = new ResponseDto();
+
+        ArrayList<Integer> totalTipoQueixa = new ArrayList<>(tipoQueixa);
+
+        ArrayList<Integer> totalIlha = new ArrayList<>(Ilhas);
+
+        try {
+
+            List<EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto> estatistica = denunciaRepository
+                    .getEstatisticaDenunciaPorAno_Ilha_TipoQueixa(ano, Ilhas, tipoQueixa);
+
+            if (estatistica != null && !estatistica.isEmpty()) {
+
+                for (int tiposQueixa : totalTipoQueixa) {
+
+                    for (int ilha : totalIlha) {
+                        if (estatistica.stream()
+                                .filter(item -> item.getIdIlha() == ilha && item.getTipoQueixa() == tiposQueixa)
+                                .count() < 1) {
+                                    EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto e = estatistica.stream()
+                                    .filter(item -> item.getIdIlha() == ilha).findAny().orElse(null);
+                            int total = 0;
+                            if (e != null) {
+                                total = e.getTotal();
+                            }
+                            estatistica.add(addEstatisticaPorAno_Ilha_TipoQueixa(ano,ilha,tiposQueixa,total));
+                        }
+                    }
+                }
+
+                response.setResponseCode(1);
+                response.setResponseType(ResponseType.Sucesso);
+                response.setObject(estatistica);
+                response.setMessage(" Listar estatística sucesso.");
+                return response;
+            } else if (estatistica == null) {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" Falha estatística.");
+                return response;
+            } else {
+                response.setResponseCode(0);
+                response.setResponseType(ResponseType.Erro);
+                response.setObject(null);
+                response.setMessage(" A lista de estatística está vazia.");
+                return response;
+            }
+        } catch (Exception e) {
+            response.setResponseCode(0);
+            response.setResponseType(ResponseType.Erro);
+            response.setObject(null);
+            response.setMessage(" Falha no sistema.");
+            return response;
+        }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha_TipoCrime_Genero(Integer ano, Integer Ilha,
+            Collection<Integer> tipoCrime) {
+
+                ResponseDto response = new ResponseDto();
+
+                ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
+        
+                try {
+        
+                    List<EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto> estatistica = denunciaRepository
+                            .getEstatisticaDenunciaPorAno_Ilha_TipoCrime_Genero(ano, Ilha, tipoCrime);
+        
+                    if (estatistica != null && !estatistica.isEmpty()) {
+        
+                        for (int tiposCrime : totalTipoCrime) {
+                            if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
+                                estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime_Genero(ano, Ilha, tiposCrime));
+                            }
+                        }
+        
+                        response.setResponseCode(1);
+                        response.setResponseType(ResponseType.Sucesso);
+                        response.setObject(estatistica);
+                        response.setMessage(" Listar estatística sucesso.");
+                        return response;
+                    } else if (estatistica == null) {
+                        response.setResponseCode(0);
+                        response.setResponseType(ResponseType.Erro);
+                        response.setObject(null);
+                        response.setMessage(" Falha estatística.");
+                        return response;
+                    } else {
+                        response.setResponseCode(0);
+                        response.setResponseType(ResponseType.Erro);
+                        response.setObject(null);
+                        response.setMessage(" A lista de estatística está vazia.");
+                        return response;
+                    }
+                } catch (Exception e) {
+                    response.setResponseCode(0);
+                    response.setResponseType(ResponseType.Erro);
+                    response.setObject(null);
+                    response.setMessage(" Falha no sistema.");
+                    return response;
+                }
+    }
+
+    @Override
+    public ResponseDto getEstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixa(Integer ano, Integer Ilha,
+            Collection<Integer> tipoCrime, Collection<Integer> tipoQueixa) {
+                ResponseDto response = new ResponseDto();
+
+                ArrayList<Integer> totalTipoCrime = new ArrayList<>(tipoCrime);
+        
+                ArrayList<Integer> totalTipoQueixa = new ArrayList<>(tipoQueixa);
+                try {
+        
+                    List<EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto> estatistica = denunciaRepository
+                            .getEstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixa(ano, Ilha, tipoCrime, tipoQueixa);
+        
+                    if (estatistica != null && !estatistica.isEmpty()) {
+        
+                        for (int tiposCrime : totalTipoCrime) {
+        
+                            for (int tipoQueixas : totalTipoQueixa) {
+
+                                if (estatistica.stream().filter(
+                                        item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
+                                        .count() < 1) {
+                                            EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto e = estatistica.stream()
+                                            .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+                                    int total = 0;
+                                    if (e != null) {
+                                        total = e.getTotal();
+                                    }
+                                    estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime_TipoQueixa(ano, Ilha, tiposCrime, tipoQueixas, total));
+                                }
+                            }
+                        }
+        
+                        response.setResponseCode(1);
+                        response.setResponseType(ResponseType.Sucesso);
+                        response.setObject(estatistica);
+                        response.setMessage(" Listar estatística sucesso.");
+                        return response;
+                    } else if (estatistica == null) {
+                        response.setResponseCode(0);
+                        response.setResponseType(ResponseType.Erro);
+                        response.setObject(null);
+                        response.setMessage(" Falha estatística.");
+                        return response;
+                    } else {
+                        response.setResponseCode(0);
+                        response.setResponseType(ResponseType.Erro);
+                        response.setObject(null);
+                        response.setMessage(" A lista de estatística está vazia.");
+                        return response;
+                    }
+                } catch (Exception e) {
+                    response.setResponseCode(0);
+                    response.setResponseType(ResponseType.Erro);
+                    response.setObject(null);
+                    response.setMessage(" Falha no sistema.");
+                    return response;
+                }
     }
 
     public List<String> faixaEtariaList() {
@@ -465,11 +917,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return faixaEtaria;
     }
 
-    public EstatisticaDenunciaPorAnoDto addEstatisticaPorAno(String ano, int total) {
+    public EstatisticaDenunciaPorAnoDto addEstatisticaPorAno(int ano, int total) {
         EstatisticaDenunciaPorAnoDto e = new EstatisticaDenunciaPorAnoDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -492,11 +944,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_MesDto addEstatisticaPorAno_Mes(String ano, int mes, int total) {
+    public EstatisticaDenunciaPorAno_MesDto addEstatisticaPorAno_Mes(int ano, int mes, int total) {
         EstatisticaDenunciaPorAno_MesDto e = new EstatisticaDenunciaPorAno_MesDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -523,11 +975,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_TipoCrimeDto addEstatisticaPorAno_TipoCrime(String ano, int tipoCrime, int total) {
+    public EstatisticaDenunciaPorAno_TipoCrimeDto addEstatisticaPorAno_TipoCrime(int ano, int tipoCrime, int total) {
         EstatisticaDenunciaPorAno_TipoCrimeDto e = new EstatisticaDenunciaPorAno_TipoCrimeDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -554,12 +1006,12 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_Mes_TipoCrimeDto addEstatisticaPorAno_Mes_TipoCrime(String ano, int mes,
+    public EstatisticaDenunciaPorAno_Mes_TipoCrimeDto addEstatisticaPorAno_Mes_TipoCrime(int ano, int mes,
             int tipoCrime, int total) {
         EstatisticaDenunciaPorAno_Mes_TipoCrimeDto e = new EstatisticaDenunciaPorAno_Mes_TipoCrimeDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -591,12 +1043,12 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_FaixaEtariaDto addEstatisticaPorAno_FaixaEtaria(String ano, String faixaEtaria,
+    public EstatisticaDenunciaPorAno_FaixaEtariaDto addEstatisticaPorAno_FaixaEtaria(int ano, String faixaEtaria,
             int total) {
         EstatisticaDenunciaPorAno_FaixaEtariaDto e = new EstatisticaDenunciaPorAno_FaixaEtariaDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -623,12 +1075,12 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto addEstatisticaPorAno_FaixaEtaria_Genero(String ano,
+    public EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto addEstatisticaPorAno_FaixaEtaria_Genero(int ano,
             String faixaEtaria) {
         EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto e = new EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -665,11 +1117,12 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto addEstatisticaPorAno_FaixaEtaria_TipoCrime(String ano,String faixaEtaria, int tipoCrime, int total){
+    public EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto addEstatisticaPorAno_FaixaEtaria_TipoCrime(int ano,
+            String faixaEtaria, int tipoCrime, int total) {
         EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto e = new EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto() {
 
             @Override
-            public String getAno() {
+            public int getAno() {
                 return ano;
             }
 
@@ -681,6 +1134,349 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_TipoCrime_GeneroDto addEstatisticaPorAno_TipoCrime_Genero(int ano, int tipoCrime) {
+        EstatisticaDenunciaPorAno_TipoCrime_GeneroDto e = new EstatisticaDenunciaPorAno_TipoCrime_GeneroDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidadeFeminino() {
+                return 0;
+            }
+
+            @Override
+            public int getQuantidadeMasculino() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return 0;
+            }
+
+            @Override
+            public Float getPercentagemFeminino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto addEstatisticaPorAno_TipoCrime_TipoQueixa(int ano,
+            int tipoCrime, int tipoQueixa, int total) {
+        EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto e = new EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getTipoQueixa() {
+                return tipoQueixa;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_TipoQueixaDto addEstatisticaPorAno_TipoQueixa(int ano, int tipoQueixa) {
+        EstatisticaDenunciaPorAno_TipoQueixaDto e = new EstatisticaDenunciaPorAno_TipoQueixaDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getTipoQueixa() {
+                return tipoQueixa;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return 0;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_IlhaDto addEstatisticaPorAno_Ilha(int ano, int ilha, int total) {
+        EstatisticaDenunciaPorAno_IlhaDto e = new EstatisticaDenunciaPorAno_IlhaDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Ilha_GeneroDto addEstatisticaPorAno_Ilha_Genero(int ano, int ilha) {
+        EstatisticaDenunciaPorAno_Ilha_GeneroDto e = new EstatisticaDenunciaPorAno_Ilha_GeneroDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getQuantidadeFeminino() {
+                return 0;
+            }
+
+            @Override
+            public int getQuantidadeMasculino() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return 0;
+            }
+
+            @Override
+            public Float getPercentagemFeminino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto addEstatisticaPorAno_Ilha_TipoCrime(int ano, int ilha,
+            int tipoCrime, int total) {
+
+        EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto e = new EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto addEstatisticaPorAno_Ilha_TipoQueixa(int ano, int ilha,int tipoQueixa, int total){
+        EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto e = new EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getTipoQueixa() {
+                return tipoQueixa;
+            }
+
+            @Override
+            public int getQuantidade() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return total;
+            }
+
+            @Override
+            public Float getPercentagem() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto addEstatisticaPorAno_Ilha_TipoCrime_Genero(int ano, int ilha, int tipoCrime){
+        EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto e = new EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getQuantidadeFeminino() {
+                return 0;
+            }
+
+            @Override
+            public int getQuantidadeMasculino() {
+                return 0;
+            }
+
+            @Override
+            public int getTotal() {
+                return 0;
+            }
+
+            @Override
+            public Float getPercentagemFeminino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+        };
+        return e;
+    }
+
+    public EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto addEstatisticaPorAno_Ilha_TipoCrime_TipoQueixa(int ano, int ilha, int tipoCrime, int tipoQueixa, int total){
+
+        EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto e = new EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto() {
+
+            @Override
+            public int getAno() {
+                return ano;
+            }
+
+            @Override
+            public int getIdIlha() {
+                return ilha;
+            }
+
+            @Override
+            public int getTipoCrime() {
+                return tipoCrime;
+            }
+
+            @Override
+            public int getTipoQueixa() {
+                return tipoQueixa;
             }
 
             @Override

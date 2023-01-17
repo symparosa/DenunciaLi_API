@@ -2,7 +2,7 @@ package app.api.denuncia.Dto;
 
 public interface EstatisticaDenunciaPorAno_FaixaEtariaDto {
     
-    String getAno();
+    int getAno();
 
     String getFaixa_etaria();
 
