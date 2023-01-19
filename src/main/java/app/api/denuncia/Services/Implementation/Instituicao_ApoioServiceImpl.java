@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Dto.Instituicao_ApoioOutputDto;
-import app.api.denuncia.Dto.ResponseDto;
+import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Repositories.Instituicao_ApoioRepository;
 import app.api.denuncia.Repositories.Tipo_CrimeRepository;
 import app.api.denuncia.Services.Instituicao_ApoioService;

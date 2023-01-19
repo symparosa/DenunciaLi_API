@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.api.denuncia.Dto.UtilizadorInputInsertDto;
 import app.api.denuncia.Dto.UtilizadorInputUpdateDto;
-import app.api.denuncia.Dto.ResponseDto;
+import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Services.UtilizadorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -1,8 +1,6 @@
-package app.api.denuncia.Dto;
+package app.api.denuncia.Dto.Estatistica;
 
-public interface EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto {
-    
-    int getAno();
+public interface EstatisticaDenunciaPorFaixaEtaria_TipoCrimeDto {
 
     String getFaixa_etaria();
 

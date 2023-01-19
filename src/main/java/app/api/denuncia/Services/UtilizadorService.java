@@ -2,7 +2,7 @@ package app.api.denuncia.Services;
 
 import java.util.Date;
 
-import app.api.denuncia.Dto.ResponseDto;
+import app.api.denuncia.Dto.Response.ResponseDto;
 
 public interface UtilizadorService {
 

@@ -1,8 +1,8 @@
-package app.api.denuncia.Dto;
+package app.api.denuncia.Dto.Estatistica;
 
-public interface EstatisticaDenunciaPorAno_GeneroDto {
+public interface EstatisticaDenunciaPorConcelho_GeneroDto {
     
-    int getAno();
+    int getConcelho();
 
     int getQuantidadeFeminino();
 

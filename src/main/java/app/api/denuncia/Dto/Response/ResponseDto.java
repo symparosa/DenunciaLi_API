@@ -1,4 +1,4 @@
-package app.api.denuncia.Dto;
+package app.api.denuncia.Dto.Response;
 
 import app.api.denuncia.Constants.ResponseType;
 import io.swagger.v3.oas.annotations.media.Schema;

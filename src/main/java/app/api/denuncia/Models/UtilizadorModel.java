@@ -57,7 +57,7 @@ public class UtilizadorModel implements Serializable {
     @Column
     private String foto;
 
-    @Column
+    @Column(columnDefinition = "default '1869-04-04'")
     private Date dataNascimento;
 
     @ManyToOne

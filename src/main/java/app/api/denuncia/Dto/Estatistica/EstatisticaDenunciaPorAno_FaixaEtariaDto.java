@@ -1,4 +1,4 @@
-package app.api.denuncia.Dto;
+package app.api.denuncia.Dto.Estatistica;
 
 public interface EstatisticaDenunciaPorAno_FaixaEtariaDto {
     

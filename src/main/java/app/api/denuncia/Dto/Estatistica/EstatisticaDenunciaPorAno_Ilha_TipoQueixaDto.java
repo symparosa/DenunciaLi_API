@@ -1,8 +1,10 @@
-package app.api.denuncia.Dto;
+package app.api.denuncia.Dto.Estatistica;
 
-public interface EstatisticaDenunciaPorAno_TipoQueixaDto {
+public interface EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto {
     
     int getAno();
+
+    int getIdIlha();
 
     int getTipoQueixa();
 

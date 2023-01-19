@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Dto.UtilizadorOutputDto;
-import app.api.denuncia.Dto.ResponseDto;
+import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Services.UtilizadorService;
 

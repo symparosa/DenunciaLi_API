@@ -1,6 +1,6 @@
 package app.api.denuncia.Services;
 
-import app.api.denuncia.Dto.ResponseDto;
+import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.DenunciaModel;
 
 public interface DenunciaService {
