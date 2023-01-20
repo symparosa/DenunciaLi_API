@@ -12,9 +12,13 @@ public interface EstatisticaDenunciaPorAno_Concelho_TipoCrime_GeneroDto {
 
     int getQuantidadeMasculino();
 
+    int getQuantidadeAnonimo();
+
     int getTotal();
 
     Float getPercentagemFeminino();
 
     Float getPercentagemMasculino();
+
+    Float getPercentagemAnonimo();
 }

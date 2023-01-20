@@ -18,14 +18,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 		}, tags = {
 				@Tag(name = "Denúncia", description = "Onde serão gerenciados os endpoits de denúncia."),
 				@Tag(name = "Utilizador", description = "Onde serão gerenciados os endpoits do utilizador."),
-				@Tag(name = "Localização", description = "Onde serão gerenciados os endpoits da localização, exemplo: praia..."),
-				@Tag(name = "Instituição de apoio", description = "Onde serão gerenciados os endpoits da instituição de apoio a vitimas de crimes, exemplo: ICIEG..."),
-				@Tag(name = "Contato", description = "Onde serão gerenciados os endpoits de contatos importantes que os utilizadores poderão precisar, exemplo: Contato da polícia Nacional..."),
-				@Tag(name = "Tipo de arquivo", description = "Onde serão gerenciados os endpoits de tipos de arquivos anexados pelos utlizadores, exemplo: Arquivo do tipo imagem..."),
-				@Tag(name = "Tipo de queixa", description = "Onde serão gerenciados os endpoits de tipos de queixas feitas pelos utilizadores, exemplo: Queixa do tipo anónimo..."),
-				@Tag(name = "Tipo de nível", description = "Onde serão gerenciados os endpoits de tipos de níveis da localização, exemplo: Nível do tipo 1 (ilha)..."),
-				@Tag(name = "Tipo de utilizador", description = "Onde serão gerenciados os endpoits de tipos de utilizadores da aplicação, exemplo: Utilizador do tipo ADMIN..."),
-				@Tag(name = "Tipo de crime", description = "Onde serão gerenciados os endpoits de tipos de crimes existentes, exemplo: VBG..."),
+				@Tag(name = "Localização", description = "Onde serão gerenciados os endpoits da localização."),
+				@Tag(name = "Instituição de apoio", description = "Onde serão gerenciados os endpoits da instituição de apoio a vitimas de crimes."),
+				@Tag(name = "Contato", description = "Onde serão gerenciados os endpoits de contatos importantes que os utilizadores poderão precisar."),
+				@Tag(name = "Tipo de arquivo", description = "Onde serão gerenciados os endpoits de tipos de arquivos anexados pelos utlizadores."),
+				@Tag(name = "Tipo de queixa", description = "Onde serão gerenciados os endpoits de tipos de queixas feitas pelos utilizadores."),
+				@Tag(name = "Tipo de nível", description = "Onde serão gerenciados os endpoits de tipos de níveis da localização."),
+				@Tag(name = "Tipo de utilizador", description = "Onde serão gerenciados os endpoits de tipos de utilizadores da aplicação."),
+				@Tag(name = "Tipo de crime", description = "Onde serão gerenciados os endpoits de tipos de crimes existentes."),
 				@Tag(name = "Estatística", description = "Onde serão gerenciados os endpoits de estatística.")
 		})
 public class DenunciaApplication {

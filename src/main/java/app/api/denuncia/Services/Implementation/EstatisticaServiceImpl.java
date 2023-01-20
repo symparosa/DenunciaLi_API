@@ -129,7 +129,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_TipoQueixa(ano, tiposQueixa));
+                        estatistica.add(addEstatisticaPorAno_TipoQueixa(ano, tiposQueixa, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -1292,6 +1292,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
     @Override
     public ResponseDto getEstatisticaDenunciaPorIlha(Collection<Integer> Ilha) {
+
         ResponseDto response = new ResponseDto();
 
         ArrayList<Integer> totalIlha = new ArrayList<>(Ilha);
@@ -1437,7 +1438,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorIlha_TipoQueixa(Ilha, tiposQueixa));
+                        estatistica.add(addEstatisticaPorIlha_TipoQueixa(Ilha, tiposQueixa,estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -1576,8 +1577,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // ESTATÍSTICA POR CONCELHO
+    // -------------------------------------------------------------------------
+
     @Override
     public ResponseDto getEstatisticaDenunciaPorConcelho(Collection<Integer> Concelho) {
+
         ResponseDto response = new ResponseDto();
 
         ArrayList<Integer> totalConcelho = new ArrayList<>(Concelho);
@@ -1724,7 +1730,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorConcelho_TipoQueixa(Concelho, tiposQueixa));
+                        estatistica.add(addEstatisticaPorConcelho_TipoQueixa(Concelho, tiposQueixa, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -1866,8 +1872,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // ESTATÍSTICA POR GENERO
+    // -------------------------------------------------------------------------
+
     @Override
     public ResponseDto getEstatisticaDenunciaPorGenero() {
+        
         ResponseDto response = new ResponseDto();
 
         try {
@@ -1902,6 +1913,10 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             return response;
         }
     }
+
+    // -------------------------------------------------------------------------
+    // ESTATÍSTICA POR TIPO DE CRIME
+    // -------------------------------------------------------------------------
 
     @Override
     public ResponseDto getEstatisticaDenunciaPorTipoCrime(Collection<Integer> tipoCrime) {
@@ -2058,6 +2073,10 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         }
     }
 
+     // -------------------------------------------------------------------------
+    // ESTATÍSTICA POR TIPO DE QUEIXA
+    // -------------------------------------------------------------------------
+
     @Override
     public ResponseDto getEstatisticaDenunciaPorTipoQueixa(Collection<Integer> tipoQueixa) {
 
@@ -2074,7 +2093,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorTipoQueixa(tiposQueixa));
+                        estatistica.add(addEstatisticaPorTipoQueixa(tiposQueixa, estatistica.get(0).getTotal()));
                     }
                 }
 
@@ -2105,6 +2124,10 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // ESTATÍSTICA POR FAIXA ETÁRIA
+    // -------------------------------------------------------------------------
+    
     @Override
     public ResponseDto getEstatisticaDenunciaPorFaixaEtaria() {
 
@@ -2271,6 +2294,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         faixaEtaria.add("60 - 64 anos");
         faixaEtaria.add("65 - 79 anos");
         faixaEtaria.add("80 anos ou mais");
+        faixaEtaria.add("Anónimo");
 
         return faixaEtaria;
     }
@@ -2610,7 +2634,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorAno_TipoQueixaDto addEstatisticaPorAno_TipoQueixa(int ano, int tipoQueixa) {
+    public EstatisticaDenunciaPorAno_TipoQueixaDto addEstatisticaPorAno_TipoQueixa(int ano, int tipoQueixa, int total) {
         EstatisticaDenunciaPorAno_TipoQueixaDto e = new EstatisticaDenunciaPorAno_TipoQueixaDto() {
 
             @Override
@@ -2630,7 +2654,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public int getTotal() {
-                return 0;
+                return total;
             }
 
             @Override
@@ -3086,6 +3110,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public int getQuantidadeAnonimo() {
+                return 0;
+            }
+
+            @Override
             public int getTotal() {
                 return 0;
             }
@@ -3097,6 +3126,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemAnonimo() {
                 return 0.0000f;
             }
         };
@@ -3204,7 +3238,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorIlha_TipoQueixaDto addEstatisticaPorIlha_TipoQueixa(int Ilha, int tipoQueixa) {
+    public EstatisticaDenunciaPorIlha_TipoQueixaDto addEstatisticaPorIlha_TipoQueixa(int Ilha, int tipoQueixa, int total) {
         EstatisticaDenunciaPorIlha_TipoQueixaDto e = new EstatisticaDenunciaPorIlha_TipoQueixaDto() {
 
             @Override
@@ -3224,7 +3258,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public int getTotal() {
-                return 0;
+                return total;
             }
 
             @Override
@@ -3260,6 +3294,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public int getQuantidadeAnonimo() {
+                return 0;
+            }
+
+            @Override
             public int getTotal() {
                 return 0;
             }
@@ -3271,6 +3310,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemAnonimo() {
                 return 0.0000f;
             }
         };
@@ -3374,7 +3418,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public EstatisticaDenunciaPorConcelho_TipoQueixaDto addEstatisticaPorConcelho_TipoQueixa(int Concelho,
-            int tipoQueixa) {
+            int tipoQueixa, int total) {
         EstatisticaDenunciaPorConcelho_TipoQueixaDto e = new EstatisticaDenunciaPorConcelho_TipoQueixaDto() {
 
             @Override
@@ -3394,7 +3438,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public int getTotal() {
-                return 0;
+                return total;
             }
 
             @Override
@@ -3430,6 +3474,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public int getQuantidadeAnonimo() {
+                return 0;
+            }
+
+            @Override
             public int getTotal() {
                 return 0;
             }
@@ -3441,6 +3490,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemAnonimo() {
                 return 0.0000f;
             }
         };
@@ -3535,12 +3589,22 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public int getQuantidadeAnonimo() {
+                return 0;
+            }
+
+            @Override
             public Float getPercentagemFeminino() {
                 return 0.0000f;
             }
 
             @Override
             public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemAnonimo() {
                 return 0.0000f;
             }
         };
@@ -3579,7 +3643,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public EstatisticaDenunciaPorTipoQueixaDto addEstatisticaPorTipoQueixa(int tipoQueixa) {
+    public EstatisticaDenunciaPorTipoQueixaDto addEstatisticaPorTipoQueixa(int tipoQueixa, int total) {
         EstatisticaDenunciaPorTipoQueixaDto e = new EstatisticaDenunciaPorTipoQueixaDto() {
 
             @Override
@@ -3594,7 +3658,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
             @Override
             public int getTotal() {
-                return 0;
+                return total;
             }
 
             @Override
@@ -3655,12 +3719,22 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public int getQuantidadeAnonimo() {
+                return 0;
+            }
+
+            @Override
             public Float getPercentagemFeminino() {
                 return 0.0000f;
             }
 
             @Override
             public Float getPercentagemMasculino() {
+                return 0.0000f;
+            }
+
+            @Override
+            public Float getPercentagemAnonimo() {
                 return 0.0000f;
             }
         };
