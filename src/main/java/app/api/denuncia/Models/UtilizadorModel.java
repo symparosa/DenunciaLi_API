@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "utilizador")
 public class UtilizadorModel implements Serializable {
@@ -57,16 +59,19 @@ public class UtilizadorModel implements Serializable {
     @Column
     private String foto;
 
-    @Column(columnDefinition = "default '1869-04-04'")
+    @Column
     private Date dataNascimento;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel morada;
 
     @ManyToOne
     @JoinColumn(name = "tipoUtilizador_fk")
     private Tipo_UtilizadorModel tipoUtilizador;
+
+    @Column
+    private String moradaGps_Map;
 
     @Column
     private int estado;
@@ -206,5 +211,13 @@ public class UtilizadorModel implements Serializable {
 
     public void setTipoUtilizador(Tipo_UtilizadorModel tipoUtilizador) {
         this.tipoUtilizador = tipoUtilizador;
+    }
+
+    public String getMoradaGps_Map() {
+        return moradaGps_Map;
+    }
+
+    public void setMoradaGps_Map(String moradaGps_Map) {
+        this.moradaGps_Map = moradaGps_Map;
     }
 }

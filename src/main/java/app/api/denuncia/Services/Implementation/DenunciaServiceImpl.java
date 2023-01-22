@@ -30,7 +30,7 @@ public class DenunciaServiceImpl implements DenunciaService {
         ResponseDto response = new ResponseDto();
 
         try {
-
+            
             DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
 
             if (denunciaSave != null) {

@@ -33,8 +33,11 @@ public class UtilizadorInputInsertDto {
     @Schema(description = "O telemovel do utilizador", required = true)
     private String telemovel;
 
-    @Schema(description = "A localização do utilizador", required = true)
-    private int localizacao;
+    @Schema(description = "A localização do utilizador", required = false)
+    private Integer localizacao;
+
+    @Schema(description = "A localização do utilizador no mapa", required = false)
+    private String moradaGps_Map;
 
     @Schema(description = "O tipo de utilizador", required = true)
     private int tipoUtilizador;
@@ -90,11 +93,11 @@ public class UtilizadorInputInsertDto {
         this.telemovel = telemovel;
     }
 
-    public int getLocalizacao() {
+    public Integer getLocalizacao() {
         return localizacao;
     }
 
-    public void setLocalizacao(int localizacao) {
+    public void setLocalizacao(Integer localizacao) {
         this.localizacao = localizacao;
     }
 
@@ -128,5 +131,13 @@ public class UtilizadorInputInsertDto {
 
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public String getMoradaGps_Map() {
+        return moradaGps_Map;
+    }
+
+    public void setMoradaGps_Map(String moradaGps_Map) {
+        this.moradaGps_Map = moradaGps_Map;
     }
 }

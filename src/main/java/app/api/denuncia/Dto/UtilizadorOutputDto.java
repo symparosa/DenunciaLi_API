@@ -29,7 +29,7 @@ public interface UtilizadorOutputDto {
 
     String getTelemovel();
 
-    int getLocalizacao_fk();
+    Integer getLocalizacao_fk();
 
     String getLongitude();
 
@@ -44,4 +44,6 @@ public interface UtilizadorOutputDto {
     String getLugar();
 
     String getUsername();
+
+    String getMorada_gps_map();
 }

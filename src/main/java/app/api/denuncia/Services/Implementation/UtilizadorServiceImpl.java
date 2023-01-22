@@ -25,15 +25,15 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     @Override
     public ResponseDto adicionarUtilizador(String apelido, String bi, String cni, Date data_nascimento, String email,
-            String foto, String genero, String nome, String telemovel, int localizacao_fk, String username,
-            int tipoUtilizador_fk) {
+            String foto, String genero, String nome, String telemovel, Integer localizacao_fk, String username,
+            int tipoUtilizador_fk, String moradaGps_Map) {
 
         ResponseDto response = new ResponseDto();
 
         try {
 
             String msg = validarInput(apelido, bi, cni, data_nascimento, email, foto, genero, nome, telemovel,
-                    localizacao_fk, username, tipoUtilizador_fk);
+                    localizacao_fk, username, tipoUtilizador_fk,moradaGps_Map);
 
             if (msg == null) {
 
@@ -50,7 +50,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                                     int UtilizadorSave = UtilizadorRepository.save(apelido, bi, cni, data_nascimento,
                                             email, foto, genero, nome, telemovel, localizacao_fk, username,
-                                            tipoUtilizador_fk);
+                                            tipoUtilizador_fk, moradaGps_Map);
 
                                     if (UtilizadorSave != 0) {
                                         response.setResponseCode(1);
@@ -221,13 +221,13 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     @Override
     public ResponseDto atualizarUtilizadorInfo(String apelido, String email, String nome, String telemovel,
-            int localizacao_fk, String foto, int id) {
+    Integer localizacao_fk, String foto, String moradaGps_Map, int id) {
 
         ResponseDto response = new ResponseDto();
 
         try {
 
-            String msg = validarInputUpdate(apelido, email, nome, telemovel, localizacao_fk, foto, id);
+            String msg = validarInputUpdate(apelido, email, nome, telemovel, localizacao_fk, foto, moradaGps_Map,id);
 
             if (msg == null) {
 
@@ -241,7 +241,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                                 int result = UtilizadorRepository.atualizarUtilizadorInfo(apelido, email, nome,
                                         telemovel,
-                                        localizacao_fk, foto, id);
+                                        localizacao_fk, foto, moradaGps_Map, id);
 
                                 if (result == 1) {
                                     response.setResponseCode(1);
@@ -400,8 +400,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     public String validarInput(String apelido, String bi, String cni, Date data_nascimento, String email,
-            String foto, String genero, String nome, String telemovel, int localizacao_fk, String username,
-            int tipoUtilizador_fk) {
+            String foto, String genero, String nome, String telemovel, Integer localizacao_fk, String username,
+            int tipoUtilizador_fk,String moradaGps_Map) {
 
         String msg = null;
 
@@ -421,8 +421,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             return msg = "O nome não pode ser null";
         } else if (telemovel == null) {
             return msg = "O telemovel não pode ser null";
-        } else if (localizacao_fk == 0) {
-            return msg = "A localização não pode ser 0";
+        } else if (localizacao_fk == null && moradaGps_Map == null) {
+            return msg = "A localização e a moradaGps_Map não podem ser null";
         } else if (username == null) {
             return msg = "O username não pode ser null";
         } else if (tipoUtilizador_fk == 0) {
@@ -433,7 +433,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     public String validarInputUpdate(String apelido, String email, String nome, String telemovel,
-            int localizacao_fk, String foto, int id) {
+            Integer localizacao_fk, String foto,String moradaGps_Map, int id) {
 
         String msg = null;
 
@@ -447,8 +447,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             return msg = "O nome não pode ser null";
         } else if (telemovel == null) {
             return msg = "O telemovel não pode ser null";
-        } else if (localizacao_fk == 0) {
-            return msg = "A localização não pode ser 0";
+        } else if (localizacao_fk == null && moradaGps_Map == null) {
+            return msg = "A localização e a moradaGps_Map não podem ser null";
         } else if (id == 0) {
             return msg = "A id não pode ser 0";
         } else {

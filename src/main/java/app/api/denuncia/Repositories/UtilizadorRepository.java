@@ -42,16 +42,16 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
 
         @Query(value = "SELECT id, apelido, bi, cni, data_atualizacao, data_criacao, data_nascimento, email, estado, foto, genero,"
                         + "nome, telemovel, localizacao_fk,longitude,latitude,"
-                        + "ilha,concelho,zona, lugar, username"
+                        + "ilha,concelho,zona, lugar, username, morada_gps_map"
                         + " FROM view_utilizador_info "
-                        + " WHERE estado=1 and estadoLugar = 1 and estadoZona = 1 and estadoConcelho = 1 and estadoIlha = 1 and id=:id", nativeQuery = true)
+                        + " WHERE id=:id", nativeQuery = true)
         UtilizadorOutputDto findByIdUser(@Param("id") int id);
 
         @Query(value = "SELECT id, apelido, bi, cni, data_atualizacao, data_criacao, data_nascimento, email, estado, foto, genero,"
                         + "nome, telemovel, localizacao_fk,longitude,latitude,"
-                        + "ilha,concelho,zona, lugar, username"
+                        + "ilha,concelho,zona, lugar, username, morada_gps_map"
                         + " FROM view_utilizador_info "
-                        + " WHERE estado=:estado and estadoLugar = 1 and estadoZona = 1 and estadoConcelho = 1 and estadoIlha = 1", nativeQuery = true)
+                        + " WHERE estado=:estado", nativeQuery = true)
         List<UtilizadorOutputDto> listarUtilizadorsAtivos_Inativo(@Param("estado") int estado);
 
         @Modifying
@@ -59,18 +59,18 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
         int ativar_desativarUtilizador(@Param("estado") int fav, @Param("id") int id);
 
         @Modifying
-        @Query(value = "INSERT INTO utilizador(apelido, bi, cni, data_criacao, data_nascimento, email, estado, foto, genero, nome, telemovel, localizacao_fk, username,tipo_utilizador_fk) VALUES (?,?,?,now(),?,?,1,?,?,?,?,?,?,?)", nativeQuery = true)
+        @Query(value = "INSERT INTO utilizador(apelido, bi, cni, data_criacao, data_nascimento, email, estado, foto, genero, nome, telemovel, localizacao_fk, username,tipo_utilizador_fk,morada_gps_map) VALUES (?,?,?,now(),?,?,1,?,?,?,?,?,?,?,?)", nativeQuery = true)
         int save(@Param("apelido") String apelido, @Param("bi") String bi, @Param("cni") String cni,
                         @Param("data_nascimento") Date data_nascimento, @Param("email") String email,
                         @Param("foto") String foto,
                         @Param("genero") String genero, @Param("nome") String nome,
                         @Param("telemovel") String telemovel,
-                        @Param("localizacao_fk") int localizacao_fk, @Param("username") String username,
-                        @Param("tipoUtilizador_fk") int tipoUtilizador_fk);
+                        @Param("localizacao_fk") Integer localizacao_fk, @Param("username") String username,
+                        @Param("tipoUtilizador_fk") int tipoUtilizador_fk, @Param("moradaGps_Map") String moradaGps_Map);
 
         @Modifying
-        @Query(value = "UPDATE utilizador SET apelido=:apelido, data_atualizacao=now(),email=:email,nome=:nome,telemovel=:telemovel,localizacao_fk=:localizacao_fk,foto=:foto where id=:id and estado = 1", nativeQuery = true)
+        @Query(value = "UPDATE utilizador SET apelido=:apelido, data_atualizacao=now(),email=:email,nome=:nome,telemovel=:telemovel,localizacao_fk=:localizacao_fk,foto=:foto, morada_gps_map=:morada_gps_map where id=:id and estado = 1", nativeQuery = true)
         int atualizarUtilizadorInfo(@Param("apelido") String apelido, @Param("email") String email,
                         @Param("nome") String nome, @Param("telemovel") String telemovel,
-                        @Param("localizacao_fk") int localizacao_fk, @Param("foto") String foto, @Param("id") int id);
+                        @Param("localizacao_fk") Integer localizacao_fk, @Param("foto") String foto,@Param("morada_gps_map") String morada_gps_map, @Param("id") int id);
 }

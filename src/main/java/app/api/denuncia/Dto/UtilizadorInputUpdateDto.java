@@ -23,7 +23,10 @@ public class UtilizadorInputUpdateDto {
     private String telemovel;
 
     @Schema(description = "A localização do utilizador")
-    private int localizacao;
+    private Integer localizacao;
+
+    @Schema(description = "A localização do utilizador no mapa", required = false)
+    private String moradaGps_Map;
 
     public UtilizadorInputUpdateDto() {
     }
@@ -76,11 +79,19 @@ public class UtilizadorInputUpdateDto {
         this.telemovel = telemovel;
     }
 
-    public int getLocalizacao() {
+    public Integer getLocalizacao() {
         return localizacao;
     }
 
-    public void setLocalizacao(int localizacao) {
+    public void setLocalizacao(Integer localizacao) {
         this.localizacao = localizacao;
+    }
+
+    public String getMoradaGps_Map() {
+        return moradaGps_Map;
+    }
+
+    public void setMoradaGps_Map(String moradaGps_Map) {
+        this.moradaGps_Map = moradaGps_Map;
     }
 }

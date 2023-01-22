@@ -35,7 +35,7 @@ public class QueixaModel implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "localizacao_fk")
-    private LocalizacaoModel Localizacao;
+    private LocalizacaoModel localizacao;
 
     @Column
     private String descricaoEndereco;
@@ -56,6 +56,9 @@ public class QueixaModel implements Serializable {
     @ManyToOne
     @JoinColumn(name = "tipoCrime_fk")
     private Tipo_CrimeModel tipoCrime;
+
+    @Column
+    private String localizacaoGps_Map;
 
     @Column
     private int estado;
@@ -99,14 +102,6 @@ public class QueixaModel implements Serializable {
 
     public void setDataOcorrencia(Date dataOcorrencia) {
         this.dataOcorrencia = dataOcorrencia;
-    }
-
-    public LocalizacaoModel getLocalizacao() {
-        return Localizacao;
-    }
-
-    public void setLocalizacao(LocalizacaoModel localizacao) {
-        Localizacao = localizacao;
     }
 
     public String getPorta() {
@@ -179,5 +174,21 @@ public class QueixaModel implements Serializable {
 
     public void setDescricaoEndereco(String descricaoEndereco) {
         this.descricaoEndereco = descricaoEndereco;
+    }
+
+    public LocalizacaoModel getLocalizacao() {
+        return localizacao;
+    }
+
+    public void setLocalizacao(LocalizacaoModel localizacao) {
+        this.localizacao = localizacao;
+    }
+
+    public String getLocalizacaoGps_Map() {
+        return localizacaoGps_Map;
+    }
+
+    public void setLocalizacaoGps_Map(String localizacaoGps_Map) {
+        this.localizacaoGps_Map = localizacaoGps_Map;
     }
 }

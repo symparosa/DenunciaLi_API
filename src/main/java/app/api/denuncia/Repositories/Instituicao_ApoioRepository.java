@@ -36,24 +36,21 @@ public interface Instituicao_ApoioRepository extends JpaRepository<Instituicao_A
                         + "rua,telefone,tipo_crime_fk,crime,localizacao_fk,"
                         + "longitude,latitude, ilha,concelho,zona,lugar"
                         + " FROM view_instituicaoApoio_info"
-                        + " WHERE estadoTipo_crime = 1 AND estadoLugar = 1 AND estadoInstituicao_apoio = 1 AND estadoZona = 1"
-                        + " AND estadoConcelho = 1 AND estadoIlha = 1 AND id=:id", nativeQuery = true)
+                        + " WHERE id=:id", nativeQuery = true)
         Instituicao_ApoioOutputDto findByIdInst(@Param("id") int id);
 
         @Query(value = "SELECT id,data_atualizacao,data_criacao,email,estado,logotipo,nome,porta,"
                         + "rua,telefone,tipo_crime_fk,crime,localizacao_fk,"
                         + "longitude,latitude, ilha,concelho,zona,lugar"
                         + " FROM view_instituicaoApoio_info"
-                        + " WHERE estadoTipo_crime = 1 AND estadoLugar = 1 AND estadoInstituicao_apoio =:estado AND estadoZona = 1"
-                        + " AND estadoConcelho = 1 AND estadoIlha = 1", nativeQuery = true)
+                        + " WHERE estadoInstituicao_apoio =:estado", nativeQuery = true)
         List<Instituicao_ApoioOutputDto> listarInstituicaoDeApoioAtivos_Inativo(@Param("estado") int estado);
 
         @Query(value = "SELECT id,data_atualizacao,data_criacao,email,estado,logotipo,nome,porta,"
                         + "rua,telefone,tipo_crime_fk,crime,localizacao_fk,"
                         + "longitude,latitude, ilha,concelho,zona,lugar"
                         + " FROM view_instituicaoApoio_info"
-                        + " WHERE estadoTipo_crime = 1 AND estadoLugar = 1 AND estadoInstituicao_apoio = 1 AND estadoZona = 1"
-                        + " AND estadoConcelho = 1 AND estadoIlha = 1 AND tipoCrimeId=:id", nativeQuery = true)
+                        + " WHERE tipoCrimeId=:id", nativeQuery = true)
         List<Instituicao_ApoioOutputDto> getInstituicaoApoioByCrime(@Param("id") int id);
 
         @Modifying

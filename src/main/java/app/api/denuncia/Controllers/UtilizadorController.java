@@ -42,7 +42,7 @@ public class UtilizadorController {
 
         return UtilizadorService.adicionarUtilizador(user.getApelido(), bi, cni, user.getDataNascimento(),
                 user.getEmail(), user.getFoto(), user.getGenero(), user.getNome(), user.getTelemovel(),
-                user.getLocalizacao(), user.getUsername(), user.getTipoUtilizador());
+                user.getLocalizacao(), user.getUsername(), user.getTipoUtilizador(), user.getMoradaGps_Map());
     }
 
     @Operation(tags = {
@@ -87,6 +87,6 @@ public class UtilizadorController {
             "Utilizador" }, summary = "Atualizar informação do utilizador", description = "Atualiza os dados de um utilizador ativo a partir do ID.")
     @PutMapping(path = "/atualizarUtilizadorInfo")
     public ResponseDto atualizarUtilizadorInfo(@RequestBody UtilizadorInputUpdateDto user){
-        return UtilizadorService.atualizarUtilizadorInfo(user.getApelido(), user.getEmail(), user.getNome(), user.getTelemovel(), user.getLocalizacao(),user.getFoto(), user.getId());
+        return UtilizadorService.atualizarUtilizadorInfo(user.getApelido(), user.getEmail(), user.getNome(), user.getTelemovel(), user.getLocalizacao(),user.getFoto(),user.getMoradaGps_Map(), user.getId());
     }
 }

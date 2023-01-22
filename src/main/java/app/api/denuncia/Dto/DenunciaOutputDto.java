@@ -21,11 +21,13 @@ public interface DenunciaOutputDto {
 
     String getTipoCrime();
 
+    String getDescricao_endereco();
+
     String getPorta();
 
     String getRua();
 
-    int getLocalizacao_fk();
+    Integer getLocalizacao_fk();
 
     String getIlha();
 
@@ -39,5 +41,5 @@ public interface DenunciaOutputDto {
 
     String getUsername();
 
-    String getDescricao_endereco();
+    String getLocalizacao_gps_map();
 }
