@@ -6,61 +6,47 @@
 
 // import app.api.denuncia.Constants.ResponseType;
 // import app.api.denuncia.Dto.Response.ResponseDto;
-// import app.api.denuncia.Models.Tipo_CrimeModel;
-// import app.api.denuncia.Repositories.Tipo_CrimeRepository;
-// import app.api.denuncia.Services.Tipo_CrimeService;
+// import app.api.denuncia.Repositories.DominioRepository;
+// import app.api.denuncia.Services.DominioService;
 
 // @Service
-// public class Tipo_CrimeServiceImpl implements Tipo_CrimeService {
+// public class DominioServiceImpl implements DominioService {
 
-//     private Tipo_CrimeRepository tipoCrimeRepository;
-//     private ContatoServiceImpl contatoServiceImpl;
+//     private DominioRepository tipoArquivoRepository;
 
-//     public Tipo_CrimeServiceImpl(Tipo_CrimeRepository tipoCrimeRepository, ContatoServiceImpl contatoServiceImpl) {
-//         this.tipoCrimeRepository = tipoCrimeRepository;
-//         this.contatoServiceImpl = contatoServiceImpl;
+//     public DominioServiceImpl(DominioRepository tipoArquivoRepository) {
+//         this.tipoArquivoRepository = tipoArquivoRepository;
 //     }
 
 //     @Override
-//     public ResponseDto adicionarTipoCrime(String nome, String logotipo) {
+//     public ResponseDto adicionarTipoArquivo(String nome) {
 
 //         ResponseDto response = new ResponseDto();
 
 //         try {
 
-//             String msg = contatoServiceImpl.validarInput(logotipo, nome, 1);
+//             if (tipoArquivoRepository.findByNome(nome) == null) {
 
-//             if (msg == null) {
+//                 int tipoArquivoSave = tipoArquivoRepository.save(nome);
 
-//                 if (tipoCrimeRepository.findByNome(nome) == null) {
-
-//                     int tipoCrimeSave = tipoCrimeRepository.save(nome, logotipo);
-
-//                     if (tipoCrimeSave != 0) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Tipo de crime salvo com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao salvar o tipo de crime.");
-//                         return response;
-//                     }
+//                 if (tipoArquivoSave != 0) {
+//                     response.setResponseCode(1);
+//                     response.setResponseType(ResponseType.Sucesso);
+//                     response.setObject(null);
+//                     response.setMessage(" Tipo de arquivo salvo com sucesso.");
+//                     return response;
 //                 } else {
 //                     response.setResponseCode(0);
 //                     response.setResponseType(ResponseType.Erro);
 //                     response.setObject(null);
-//                     response.setMessage(" Tipo de crime já existe.");
+//                     response.setMessage(" Falha ao salvar o tipo de arquivo.");
 //                     return response;
 //                 }
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(msg);
+//                 response.setMessage(" Tipo de arquivo já existe.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
@@ -73,66 +59,66 @@
 //     }
 
 //     @Override
-//     public ResponseDto listarTipoCrimesAtivos() {
+//     public ResponseDto listarTipoArquivosAtivos() {
 
 //         ResponseDto response = new ResponseDto();
 
 //         try {
-//             List<Tipo_CrimeModel> listaTipoCrimes = tipoCrimeRepository.findAllByEstado(1);
+//             List<Tipo_ArquivoModel> listaTipoArquivos = tipoArquivoRepository.findAllByEstado(1);
 
-//             if (listaTipoCrimes != null && !listaTipoCrimes.isEmpty()) {
+//             if (listaTipoArquivos != null && !listaTipoArquivos.isEmpty()) {
 //                 response.setResponseCode(1);
 //                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaTipoCrimes);
-//                 response.setMessage(" Listar tipos de crimes ativos com sucesso.");
+//                 response.setObject(listaTipoArquivos);
+//                 response.setMessage(" Listar tipo de arquivos ativos com sucesso.");
 //                 return response;
-//             } else if (listaTipoCrimes == null) {
+//             } else if (listaTipoArquivos == null) {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar tipos de crimes ativos.");
+//                 response.setMessage(" Falha ao listar tipo de arquivos ativos.");
 //                 return response;
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" A lista de tipos de crimes ativos está vazia.");
+//                 response.setMessage(" A lista de tipo de arquivos ativos está vazia.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
 //             response.setResponseCode(0);
 //             response.setResponseType(ResponseType.Erro);
 //             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
+//             response.setMessage(" ExceptionMessage = " + e.getMessage());
 //             return response;
 //         }
 //     }
 
 //     @Override
-//     public ResponseDto listarTipoCrimesInativos() {
+//     public ResponseDto listarTipoArquivosInativos() {
 
 //         ResponseDto response = new ResponseDto();
 
 //         try {
-//             List<Tipo_CrimeModel> listaTipoCrimes = tipoCrimeRepository.findAllByEstado(0);
+//             List<Tipo_ArquivoModel> listaTipoArquivos = tipoArquivoRepository.findAllByEstado(0);
 
-//             if (listaTipoCrimes != null && !listaTipoCrimes.isEmpty()) {
+//             if (listaTipoArquivos != null && !listaTipoArquivos.isEmpty()) {
 //                 response.setResponseCode(1);
 //                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaTipoCrimes);
-//                 response.setMessage(" Listar tipos de crimes inativos com sucesso.");
+//                 response.setObject(listaTipoArquivos);
+//                 response.setMessage(" Listar tipo de arquivos inativos com sucesso.");
 //                 return response;
-//             } else if (listaTipoCrimes == null) {
+//             } else if (listaTipoArquivos == null) {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar tipos de crimes inativos.");
+//                 response.setMessage(" Falha ao listar tipo de arquivos inativos.");
 //                 return response;
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" A lista de tipos de crimes inativos está vazia.");
+//                 response.setMessage(" A lista de tipo de arquivos inativos está vazia.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
@@ -145,24 +131,24 @@
 //     }
 
 //     @Override
-//     public ResponseDto getTipoCrimeById(int id) {
+//     public ResponseDto getTipoArquivoById(int id) {
 //         ResponseDto response = new ResponseDto();
 
 //         try {
 
-//             Tipo_CrimeModel Tipo_Crime = tipoCrimeRepository.findByIdAndEstado(id, 1);
+//             Tipo_ArquivoModel Tipo_Arquivo = tipoArquivoRepository.findByIdAndEstado(id, 1);
 
-//             if (Tipo_Crime != null) {
+//             if (Tipo_Arquivo != null) {
 //                 response.setResponseCode(1);
 //                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(Tipo_Crime);
-//                 response.setMessage(" Tipo de crime encontrado com sucesso.");
+//                 response.setObject(Tipo_Arquivo);
+//                 response.setMessage(" Tipo de arquivo encontrado com sucesso.");
 //                 return response;
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" Tipo de crime não existe.");
+//                 response.setMessage(" Tipo de arquivo não existe.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
@@ -175,173 +161,154 @@
 //     }
 
 //     @Override
-//     public ResponseDto atualizarTipoCrime(String nome, String logotipo, int id) {
+//     public ResponseDto atualizarTipoArquivo(String nome, int id) {
 //         ResponseDto response = new ResponseDto();
 
 //         try {
 
-//             String msg = contatoServiceImpl.validarInput(logotipo, nome, id);
+//             if (tipoArquivoRepository.findByIdAndEstado(id, 1) != null) {
 
-//             if (msg == null) {
+//                 if (tipoArquivoRepository.validarTipoArquivo(id, nome) == null) {
 
-//                 if (tipoCrimeRepository.findByIdAndEstado(id, 1) != null) {
-
-//                     if (tipoCrimeRepository.validarTipoCrime(id, nome) == null) {
-
-//                         int result = tipoCrimeRepository.atualizarTipoCrime(nome, logotipo, id);
-
-//                         if (result == 1) {
-//                             response.setResponseCode(1);
-//                             response.setResponseType(ResponseType.Sucesso);
-//                             response.setObject(result);
-//                             response.setMessage(" Tipo de crime atualizado com sucesso.");
-//                             return response;
-//                         } else {
-//                             response.setResponseCode(0);
-//                             response.setResponseType(ResponseType.Erro);
-//                             response.setObject(null);
-//                             response.setMessage(" Falha ao atualizar o tipo de crime.");
-//                             return response;
-//                         }
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Tipo de crime já existe.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Tipo de crime não existe.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(msg);
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(e.getMessage());
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     @Override
-//     public ResponseDto desativarTipoCrime(int id) {
-//         ResponseDto response = new ResponseDto();
-
-//         try {
-
-//             if (tipoCrimeRepository.findById(id) != null) {
-
-//                 if (tipoCrimeRepository.findById(id).getEstado() == 1) {
-
-//                     int result = tipoCrimeRepository.ativar_desativarTipoCrime(0, id);
+//                     int result = tipoArquivoRepository.atualizarTipoArquivo(nome, id);
 
 //                     if (result == 1) {
 //                         response.setResponseCode(1);
 //                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(id);
-//                         response.setMessage(" Tipo de crime desativado com sucesso.");
+//                         response.setObject(null);
+//                         response.setMessage(" Tipo de arquivo atualizado com sucesso.");
 //                         return response;
 //                     } else {
 //                         response.setResponseCode(0);
 //                         response.setResponseType(ResponseType.Erro);
 //                         response.setObject(null);
-//                         response.setMessage(" Falha ao desativar o Tipo de crime.");
+//                         response.setMessage(" Falha ao atualizar o tipo de arquivo.");
 //                         return response;
 //                     }
 //                 } else {
 //                     response.setResponseCode(0);
 //                     response.setResponseType(ResponseType.Erro);
 //                     response.setObject(null);
-//                     response.setMessage(" Tipo de crime já foi desativado.");
+//                     response.setMessage(" Tipo de arquivo já existe.");
 //                     return response;
 //                 }
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" Tipo de crime não existe.");
+//                 response.setMessage(" Tipo de arquivo não existe.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
 //             response.setResponseCode(0);
 //             response.setResponseType(ResponseType.Erro);
-//             response.setObject(e.getMessage());
+//             response.setObject(null);
 //             response.setMessage(" Falha no sistema.");
 //             return response;
 //         }
 //     }
 
 //     @Override
-//     public ResponseDto ativarTipoCrime(int id) {
+//     public ResponseDto desativarTipoArquivo(int id) {
 //         ResponseDto response = new ResponseDto();
 
 //         try {
 
-//             if (tipoCrimeRepository.findById(id) != null) {
+//             if (tipoArquivoRepository.findById(id) != null) {
 
-//                 if (tipoCrimeRepository.findById(id).getEstado() == 0) {
+//                 if (tipoArquivoRepository.findById(id).getEstado() == 1) {
 
-//                     int result = tipoCrimeRepository.ativar_desativarTipoCrime(1, id);
+//                     int result = tipoArquivoRepository.ativar_desativarTipoArquivo(0, id);
 
 //                     if (result == 1) {
 //                         response.setResponseCode(1);
 //                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(id);
-//                         response.setMessage(" Tipo de crime ativado com sucesso.");
+//                         response.setObject(null);
+//                         response.setMessage(" Tipo de arquivo desativado com sucesso.");
 //                         return response;
 //                     } else {
 //                         response.setResponseCode(0);
 //                         response.setResponseType(ResponseType.Erro);
 //                         response.setObject(null);
-//                         response.setMessage(" Falha ao ativar o Tipo de crime.");
+//                         response.setMessage(" Falha ao desativar o Tipo de arquivo.");
 //                         return response;
 //                     }
 //                 } else {
 //                     response.setResponseCode(0);
 //                     response.setResponseType(ResponseType.Erro);
 //                     response.setObject(null);
-//                     response.setMessage(" Tipo de crime já foi ativado.");
+//                     response.setMessage(" Tipo de arquivo já foi desativado.");
 //                     return response;
 //                 }
 //             } else {
 //                 response.setResponseCode(0);
 //                 response.setResponseType(ResponseType.Erro);
 //                 response.setObject(null);
-//                 response.setMessage(" Tipo de crime não existe.");
+//                 response.setMessage(" Tipo de arquivo não existe.");
 //                 return response;
 //             }
 //         } catch (Exception e) {
 //             response.setResponseCode(0);
 //             response.setResponseType(ResponseType.Erro);
-//             response.setObject(e.getMessage());
+//             response.setObject(null);
 //             response.setMessage(" Falha no sistema.");
 //             return response;
 //         }
 //     }
 
-//     public Tipo_CrimeRepository getTipoCrimeRepository() {
-//         return tipoCrimeRepository;
+//     @Override
+//     public ResponseDto ativarTipoArquivo(int id) {
+//         ResponseDto response = new ResponseDto();
+
+//         try {
+
+//             if (tipoArquivoRepository.findById(id) != null) {
+
+//                 if (tipoArquivoRepository.findById(id).getEstado() == 0) {
+
+//                     int result = tipoArquivoRepository.ativar_desativarTipoArquivo(1, id);
+
+//                     if (result == 1) {
+//                         response.setResponseCode(1);
+//                         response.setResponseType(ResponseType.Sucesso);
+//                         response.setObject(null);
+//                         response.setMessage(" Tipo de arquivo ativado com sucesso.");
+//                         return response;
+//                     } else {
+//                         response.setResponseCode(0);
+//                         response.setResponseType(ResponseType.Erro);
+//                         response.setObject(null);
+//                         response.setMessage(" Falha ao ativar o Tipo de arquivo.");
+//                         return response;
+//                     }
+//                 } else {
+//                     response.setResponseCode(0);
+//                     response.setResponseType(ResponseType.Erro);
+//                     response.setObject(null);
+//                     response.setMessage(" Tipo de arquivo já foi ativado.");
+//                     return response;
+//                 }
+//             } else {
+//                 response.setResponseCode(0);
+//                 response.setResponseType(ResponseType.Erro);
+//                 response.setObject(null);
+//                 response.setMessage(" Tipo de arquivo não existe.");
+//                 return response;
+//             }
+//         } catch (Exception e) {
+//             response.setResponseCode(0);
+//             response.setResponseType(ResponseType.Erro);
+//             response.setObject(null);
+//             response.setMessage(" Falha no sistema.");
+//             return response;
+//         }
 //     }
 
-//     public void setTipoCrimeRepository(Tipo_CrimeRepository tipoCrimeRepository) {
-//         this.tipoCrimeRepository = tipoCrimeRepository;
+//     public DominioRepository getTipoArquivoRepository() {
+//         return tipoArquivoRepository;
 //     }
 
-//     public ContatoServiceImpl getContatoServiceImpl() {
-//         return contatoServiceImpl;
-//     }
-
-//     public void setContatoServiceImpl(ContatoServiceImpl contatoServiceImpl) {
-//         this.contatoServiceImpl = contatoServiceImpl;
+//     public void setTipoArquivoRepository(DominioRepository tipoArquivoRepository) {
+//         this.tipoArquivoRepository = tipoArquivoRepository;
 //     }
 // }

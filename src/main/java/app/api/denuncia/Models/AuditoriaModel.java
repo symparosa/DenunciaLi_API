@@ -8,14 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_contato")
-public class ContatoModel implements Serializable {
-
+@Table(name = "dn_t_auditoria")
+public class AuditoriaModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -26,20 +24,20 @@ public class ContatoModel implements Serializable {
     @Column(nullable = false)
     private String tipo_objeto;
 
-    @Column(unique = true, nullable = false)
-    private String valor;
+    @Column(nullable = false)
+    private String valor_atual;
 
-    @ManyToOne
-    @JoinColumn(name = "tipo_contato_fk")
-    private DominioModel tipo_contato;
+    @Column(nullable = false)
+    private String valor_novo;
+
+    @Column(nullable = false)
+    private int id_utilizador;
 
     private int estado;
 
     private Date data_criacao;
 
-    private Date data_atualizacao;
-
-    public ContatoModel() {
+    public AuditoriaModel() {
     }
 
     public int getId() {
@@ -58,28 +56,28 @@ public class ContatoModel implements Serializable {
         this.id_objeto = id_objeto;
     }
 
-    public String getTipo_objeto() {
-        return tipo_objeto;
+    public String getValor_atual() {
+        return valor_atual;
     }
 
-    public void setTipo_objeto(String tipo_objeto) {
-        this.tipo_objeto = tipo_objeto;
+    public void setValor_atual(String valor_atual) {
+        this.valor_atual = valor_atual;
     }
 
-    public String getValor() {
-        return valor;
+    public String getValor_novo() {
+        return valor_novo;
     }
 
-    public void setValor(String valor) {
-        this.valor = valor;
+    public void setValor_novo(String valor_novo) {
+        this.valor_novo = valor_novo;
     }
 
-    public DominioModel getTipo_contato() {
-        return tipo_contato;
+    public int getId_utilizador() {
+        return id_utilizador;
     }
 
-    public void setTipo_contato(DominioModel tipo_contato) {
-        this.tipo_contato = tipo_contato;
+    public void setId_utilizador(int id_utilizador) {
+        this.id_utilizador = id_utilizador;
     }
 
     public int getEstado() {
@@ -98,11 +96,11 @@ public class ContatoModel implements Serializable {
         this.data_criacao = data_criacao;
     }
 
-    public Date getData_atualizacao() {
-        return data_atualizacao;
+    public String getTipo_objeto() {
+        return tipo_objeto;
     }
 
-    public void setData_atualizacao(Date data_atualizacao) {
-        this.data_atualizacao = data_atualizacao;
+    public void setTipo_objeto(String tipo_objeto) {
+        this.tipo_objeto = tipo_objeto;
     }
 }

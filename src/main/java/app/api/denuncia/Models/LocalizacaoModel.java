@@ -1,62 +1,53 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 @Entity
-@Table(name = "Localizacao")
+@Table(name = "dn_t_localizacao")
 public class LocalizacaoModel implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(nullable = false)
+    private String id;
 
-    @Column()
-    @NotNull()
+    @Column(nullable = false)
     private String nome;
 
-    @ManyToOne
-    @JoinColumn(name = "tipoNivel_fk")
-    private Tipo_NivelModel Tipo_Nivel;
+    private String pais;
 
-    @Column
-    private String latitude;
+    private String ilha;
 
-    @Column
-    private String longitude;
+    private String concelho;
 
-    @OneToOne
-    @JoinColumn(name = "selfId")
-    private LocalizacaoModel selfId;
+    private String freguesia;
 
-    @Column
-    private int estado;
+    private String zona;
 
-    @Column
-    private Date dataCriacao;
+    private String nome_norm;
 
-    @Column
-    private Date dataAtualizacao;
+    @Column(nullable = false)
+    private String nivel_detalhe;
+
+    @Column(nullable = false)
+    private String colmatch;
+
+    @Lob
+    @Column(nullable = false)
+    private String polygonarea;
 
     public LocalizacaoModel() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -68,59 +59,75 @@ public class LocalizacaoModel implements Serializable {
         this.nome = nome;
     }
 
-    public Tipo_NivelModel getTipo_Nivel() {
-        return Tipo_Nivel;
+    public String getPais() {
+        return pais;
     }
 
-    public void setTipo_Nivel(Tipo_NivelModel tipo_Nivel) {
-        Tipo_Nivel = tipo_Nivel;
+    public void setPais(String pais) {
+        this.pais = pais;
     }
 
-    public String getLatitude() {
-        return latitude;
+    public String getIlha() {
+        return ilha;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setIlha(String ilha) {
+        this.ilha = ilha;
     }
 
-    public String getLongitude() {
-        return longitude;
+    public String getConcelho() {
+        return concelho;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
+    public void setConcelho(String concelho) {
+        this.concelho = concelho;
     }
 
-    public LocalizacaoModel getSelfId() {
-        return selfId;
+    public String getFreguesia() {
+        return freguesia;
     }
 
-    public void setSelfId(LocalizacaoModel selfId) {
-        this.selfId = selfId;
+    public void setFreguesia(String freguesia) {
+        this.freguesia = freguesia;
     }
 
-    public int getEstado() {
-        return estado;
+    public String getZona() {
+        return zona;
     }
 
-    public void setEstado(int estado) {
-        this.estado = estado;
+    public void setZona(String zona) {
+        this.zona = zona;
     }
 
-    public Date getDataCriacao() {
-        return dataCriacao;
+    public String getNome_norm() {
+        return nome_norm;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public void setNome_norm(String nome_norm) {
+        this.nome_norm = nome_norm;
     }
 
-    public Date getDataAtualizacao() {
-        return dataAtualizacao;
+    public String getNivel_detalhe() {
+        return nivel_detalhe;
     }
 
-    public void setDataAtualizacao(Date dataAtualizacao) {
-        this.dataAtualizacao = dataAtualizacao;
+    public void setNivel_detalhe(String nivel_detalhe) {
+        this.nivel_detalhe = nivel_detalhe;
+    }
+
+    public String getColmatch() {
+        return colmatch;
+    }
+
+    public void setColmatch(String colmatch) {
+        this.colmatch = colmatch;
+    }
+
+    public String getPolygonarea() {
+        return polygonarea;
+    }
+
+    public void setPolygonarea(String polygonarea) {
+        this.polygonarea = polygonarea;
     }
 }

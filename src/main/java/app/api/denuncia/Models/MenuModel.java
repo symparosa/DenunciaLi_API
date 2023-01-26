@@ -8,30 +8,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_contato")
-public class ContatoModel implements Serializable {
-
+@Table(name = "dn_t_menu")
+public class MenuModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
-    private int id_objeto;
+    private String codigo;
 
     @Column(nullable = false)
-    private String tipo_objeto;
+    private String titulo;
 
-    @Column(unique = true, nullable = false)
-    private String valor;
+    @Column(nullable = false)
+    private int visibilidade;
 
-    @ManyToOne
-    @JoinColumn(name = "tipo_contato_fk")
-    private DominioModel tipo_contato;
+    private Integer id_menu_pai;
+
+    private String menu_icon;
 
     private int estado;
 
@@ -39,7 +37,7 @@ public class ContatoModel implements Serializable {
 
     private Date data_atualizacao;
 
-    public ContatoModel() {
+    public MenuModel() {
     }
 
     public int getId() {
@@ -50,36 +48,36 @@ public class ContatoModel implements Serializable {
         this.id = id;
     }
 
-    public int getId_objeto() {
-        return id_objeto;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setId_objeto(int id_objeto) {
-        this.id_objeto = id_objeto;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public String getTipo_objeto() {
-        return tipo_objeto;
+    public int getVisibilidade() {
+        return visibilidade;
     }
 
-    public void setTipo_objeto(String tipo_objeto) {
-        this.tipo_objeto = tipo_objeto;
+    public void setVisibilidade(int visibilidade) {
+        this.visibilidade = visibilidade;
     }
 
-    public String getValor() {
-        return valor;
+    public Integer getId_menu_pai() {
+        return id_menu_pai;
     }
 
-    public void setValor(String valor) {
-        this.valor = valor;
+    public void setId_menu_pai(Integer id_menu_pai) {
+        this.id_menu_pai = id_menu_pai;
     }
 
-    public DominioModel getTipo_contato() {
-        return tipo_contato;
+    public String getMenu_icon() {
+        return menu_icon;
     }
 
-    public void setTipo_contato(DominioModel tipo_contato) {
-        this.tipo_contato = tipo_contato;
+    public void setMenu_icon(String menu_icon) {
+        this.menu_icon = menu_icon;
     }
 
     public int getEstado() {
@@ -104,5 +102,13 @@ public class ContatoModel implements Serializable {
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 }

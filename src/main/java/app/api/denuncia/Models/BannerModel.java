@@ -8,41 +8,35 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
-@Table(name = "dn_t_arquivo")
-public class ArquivoModel implements Serializable {
-
+@Table(name = "dn_t_banner")
+public class BannerModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
+    private String imagem;
+
+    private String titulo;
+
     @Lob
-    private String arquivo;
+    private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "tipo_arquivo_fk")
-    private DominioModel tipo_arquivo;
+    @Column(nullable = false)
+    private String url;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "queixa_fk")
-    private QueixaModel queixa;
-
-    @Column
     private int estado;
 
     private Date data_criacao;
 
     private Date data_atualizacao;
 
-    public ArquivoModel() {
+    public BannerModel() {
     }
 
     public int getId() {
@@ -53,36 +47,44 @@ public class ArquivoModel implements Serializable {
         this.id = id;
     }
 
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
-    }
-
-    public String getArquivo() {
-        return arquivo;
-    }
-
-    public void setArquivo(String arquivo) {
-        this.arquivo = arquivo;
-    }
-
-    public DominioModel getTipo_arquivo() {
-        return tipo_arquivo;
-    }
-
-    public void setTipo_arquivo(DominioModel tipo_arquivo) {
-        this.tipo_arquivo = tipo_arquivo;
     }
 
     public Date getData_criacao() {

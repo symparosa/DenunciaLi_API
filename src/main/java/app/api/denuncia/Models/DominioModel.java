@@ -3,30 +3,30 @@ package app.api.denuncia.Models;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_denuncia")
-public class DenunciaModel implements Serializable {
-
+@Table(name = "dn_t_dominio")
+public class DominioModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "queixa_fk")
-    private QueixaModel queixa;
+    @Column(nullable = false)
+    private String dominio;
 
-    @ManyToOne
-    @JoinColumn(name = "denunciante_fk")
-    private DenuncianteModel denunciante;
+    @Column(nullable = false)
+    private String valor;
+
+    @Lob
+    private String descricao;
 
     private int estado;
 
@@ -34,7 +34,7 @@ public class DenunciaModel implements Serializable {
 
     private Date data_atualizacao;
 
-    public DenunciaModel() {
+    public DominioModel() {
     }
 
     public int getId() {
@@ -45,28 +45,36 @@ public class DenunciaModel implements Serializable {
         this.id = id;
     }
 
+    public String getDominio() {
+        return dominio;
+    }
+
+    public void setDominio(String dominio) {
+        this.dominio = dominio;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
-    }
-
-    public DenuncianteModel getDenunciante() {
-        return denunciante;
-    }
-
-    public void setDenunciante(DenuncianteModel denunciante) {
-        this.denunciante = denunciante;
     }
 
     public Date getData_criacao() {

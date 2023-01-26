@@ -1,13 +1,13 @@
-package app.api.denuncia.Services;
+// package app.api.denuncia.Services;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
-import app.api.denuncia.Models.DenunciaModel;
+// import app.api.denuncia.Dto.Response.ResponseDto;
+// import app.api.denuncia.Models.DenunciaModel;
 
-public interface DenunciaService {
+// public interface DenunciaService {
 
-    ResponseDto adicionarDenuncia(DenunciaModel denuncia);
+//     ResponseDto adicionarDenuncia(DenunciaModel denuncia);
 
-    ResponseDto listarDenunciasByUserId(int id);
+//     ResponseDto listarDenunciasByUserId(int id);
 
-    ResponseDto getDenunciaById(int id);
-}
+//     ResponseDto getDenunciaById(int id);
+// }

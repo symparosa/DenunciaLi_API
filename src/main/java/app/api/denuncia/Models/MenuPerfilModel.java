@@ -3,7 +3,6 @@ package app.api.denuncia.Models;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,20 +12,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_denuncia")
-public class DenunciaModel implements Serializable {
-
+@Table(name = "dn_t_menu_perfil")
+public class MenuPerfilModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "queixa_fk")
-    private QueixaModel queixa;
+    @ManyToOne
+    @JoinColumn(name = "menu_fk")
+    private MenuModel menu;
 
     @ManyToOne
-    @JoinColumn(name = "denunciante_fk")
-    private DenuncianteModel denunciante;
+    @JoinColumn(name = "tipo_utilizador_fk")
+    private DominioModel tipo_utilizador;
 
     private int estado;
 
@@ -34,7 +33,7 @@ public class DenunciaModel implements Serializable {
 
     private Date data_atualizacao;
 
-    public DenunciaModel() {
+    public MenuPerfilModel() {
     }
 
     public int getId() {
@@ -45,28 +44,28 @@ public class DenunciaModel implements Serializable {
         this.id = id;
     }
 
+    public MenuModel getMenu() {
+        return menu;
+    }
+
+    public void setMenu(MenuModel menu) {
+        this.menu = menu;
+    }
+
+    public DominioModel getTipo_utilizador() {
+        return tipo_utilizador;
+    }
+
+    public void setTipo_utilizador(DominioModel tipo_utilizador) {
+        this.tipo_utilizador = tipo_utilizador;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
-    }
-
-    public DenuncianteModel getDenunciante() {
-        return denunciante;
-    }
-
-    public void setDenunciante(DenuncianteModel denunciante) {
-        this.denunciante = denunciante;
     }
 
     public Date getData_criacao() {

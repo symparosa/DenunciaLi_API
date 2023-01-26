@@ -2,7 +2,7 @@ package app.api.denuncia.Services;
 
 import app.api.denuncia.Dto.Response.ResponseDto;
 
-public interface Tipo_ArquivoService {
+public interface DominioService {
 
     ResponseDto adicionarTipoArquivo(String nome);
 

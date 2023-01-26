@@ -3,30 +3,25 @@ package app.api.denuncia.Models;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_denuncia")
-public class DenunciaModel implements Serializable {
-
+@Table(name = "dn_t_pergunta_frequente")
+public class PerguntaFrequenteModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "queixa_fk")
-    private QueixaModel queixa;
+    private String titulo;
 
-    @ManyToOne
-    @JoinColumn(name = "denunciante_fk")
-    private DenuncianteModel denunciante;
+    @Lob
+    private String descricao;
 
     private int estado;
 
@@ -34,7 +29,7 @@ public class DenunciaModel implements Serializable {
 
     private Date data_atualizacao;
 
-    public DenunciaModel() {
+    public PerguntaFrequenteModel() {
     }
 
     public int getId() {
@@ -45,28 +40,28 @@ public class DenunciaModel implements Serializable {
         this.id = id;
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
-    }
-
-    public DenuncianteModel getDenunciante() {
-        return denunciante;
-    }
-
-    public void setDenunciante(DenuncianteModel denunciante) {
-        this.denunciante = denunciante;
     }
 
     public Date getData_criacao() {

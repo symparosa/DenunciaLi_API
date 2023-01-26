@@ -3,7 +3,6 @@ package app.api.denuncia.Models;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,20 +12,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dn_t_denuncia")
-public class DenunciaModel implements Serializable {
-
+@Table(name = "dn_t_reprocessamento")
+public class ReprocessamentoModel implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "queixa_fk")
-    private QueixaModel queixa;
-
     @ManyToOne
-    @JoinColumn(name = "denunciante_fk")
-    private DenuncianteModel denunciante;
+    @JoinColumn(name = "denuncia_fk")
+    private DenunciaModel denuncia;
 
     private int estado;
 
@@ -34,7 +29,7 @@ public class DenunciaModel implements Serializable {
 
     private Date data_atualizacao;
 
-    public DenunciaModel() {
+    public ReprocessamentoModel() {
     }
 
     public int getId() {
@@ -45,28 +40,20 @@ public class DenunciaModel implements Serializable {
         this.id = id;
     }
 
+    public DenunciaModel getDenuncia() {
+        return denuncia;
+    }
+
+    public void setDenuncia(DenunciaModel denuncia) {
+        this.denuncia = denuncia;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
-    }
-
-    public DenuncianteModel getDenunciante() {
-        return denunciante;
-    }
-
-    public void setDenunciante(DenuncianteModel denunciante) {
-        this.denunciante = denunciante;
     }
 
     public Date getData_criacao() {

@@ -1,149 +1,149 @@
-package app.api.denuncia.Services.Implementation;
+// package app.api.denuncia.Services.Implementation;
 
-import java.util.List;
+// import java.util.List;
 
-import org.springframework.stereotype.Service;
+// import org.springframework.stereotype.Service;
 
-import app.api.denuncia.Constants.ResponseType;
-import app.api.denuncia.Dto.DenunciaOutputDto;
-import app.api.denuncia.Dto.Response.ResponseDto;
-import app.api.denuncia.Models.ArquivoModel;
-import app.api.denuncia.Models.DenunciaModel;
-import app.api.denuncia.Repositories.DenunciaRepository;
-import app.api.denuncia.Repositories.UtilizadorRepository;
-import app.api.denuncia.Services.DenunciaService;
+// import app.api.denuncia.Constants.ResponseType;
+// import app.api.denuncia.Dto.DenunciaOutputDto;
+// import app.api.denuncia.Dto.Response.ResponseDto;
+// import app.api.denuncia.Models.ArquivoModel;
+// import app.api.denuncia.Models.DenunciaModel;
+// import app.api.denuncia.Repositories.DenunciaRepository;
+// import app.api.denuncia.Repositories.UtilizadorRepository;
+// import app.api.denuncia.Services.DenunciaService;
 
-@Service
-public class DenunciaServiceImpl implements DenunciaService {
+// @Service
+// public class DenunciaServiceImpl implements DenunciaService {
 
-    private DenunciaRepository denunciaRepository;
-    private UtilizadorRepository denuncianteRepository;
+//     private DenunciaRepository denunciaRepository;
+//     private UtilizadorRepository denuncianteRepository;
 
-    public DenunciaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository denuncianteRepository) {
-        this.denunciaRepository = denunciaRepository;
-        this.denuncianteRepository = denuncianteRepository;
-    }
+//     public DenunciaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository denuncianteRepository) {
+//         this.denunciaRepository = denunciaRepository;
+//         this.denuncianteRepository = denuncianteRepository;
+//     }
 
-    @Override
-    public ResponseDto adicionarDenuncia(DenunciaModel denuncia) {
+//     @Override
+//     public ResponseDto adicionarDenuncia(DenunciaModel denuncia) {
 
-        ResponseDto response = new ResponseDto();
+//         ResponseDto response = new ResponseDto();
 
-        try {
+//         try {
             
-            DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
+//             DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
 
-            if (denunciaSave != null) {
+//             if (denunciaSave != null) {
 
-                List<ArquivoModel> arquivo = denunciaSave.getQueixa().getArquivos();
+//                 List<ArquivoModel> arquivo = denunciaSave.getQueixa().getArquivos();
 
-                if (arquivo != null && !arquivo.isEmpty()) {
+//                 if (arquivo != null && !arquivo.isEmpty()) {
 
-                    for (int i = 0; i < arquivo.size(); i++) {
-                        denunciaRepository.atualizarArquivo(denunciaSave.getQueixa().getId(), arquivo.get(i).getId());
-                    }
-                }
-                response.setResponseCode(1);
-                response.setResponseType(ResponseType.Sucesso);
-                response.setObject(denuncia);
-                response.setMessage(" Denúncia salvo com sucesso.");
-                return response;
-            } else {
-                response.setResponseCode(0);
-                response.setResponseType(ResponseType.Erro);
-                response.setObject(null);
-                response.setMessage(" Falha ao salvar a denúncia.");
-                return response;
-            }
-        } catch (Exception e) {
-            response.setResponseCode(0);
-            response.setResponseType(ResponseType.Erro);
-            response.setObject(null);
-            response.setMessage(" Falha no sistema.");
-            return response;
-        }
-    }
+//                     for (int i = 0; i < arquivo.size(); i++) {
+//                         denunciaRepository.atualizarArquivo(denunciaSave.getQueixa().getId(), arquivo.get(i).getId());
+//                     }
+//                 }
+//                 response.setResponseCode(1);
+//                 response.setResponseType(ResponseType.Sucesso);
+//                 response.setObject(denuncia);
+//                 response.setMessage(" Denúncia salvo com sucesso.");
+//                 return response;
+//             } else {
+//                 response.setResponseCode(0);
+//                 response.setResponseType(ResponseType.Erro);
+//                 response.setObject(null);
+//                 response.setMessage(" Falha ao salvar a denúncia.");
+//                 return response;
+//             }
+//         } catch (Exception e) {
+//             response.setResponseCode(0);
+//             response.setResponseType(ResponseType.Erro);
+//             response.setObject(null);
+//             response.setMessage(" Falha no sistema.");
+//             return response;
+//         }
+//     }
 
-    @Override
-    public ResponseDto listarDenunciasByUserId(int id) {
+//     @Override
+//     public ResponseDto listarDenunciasByUserId(int id) {
 
-        ResponseDto response = new ResponseDto();
+//         ResponseDto response = new ResponseDto();
 
-        try {
+//         try {
 
-            if (denuncianteRepository.findById(id) != null) {
+//             if (denuncianteRepository.findById(id) != null) {
 
-                List<DenunciaOutputDto> listadenuncia = denunciaRepository.listarDenunciasByUserId(id);
+//                 List<DenunciaOutputDto> listadenuncia = denunciaRepository.listarDenunciasByUserId(id);
 
-                if (listadenuncia != null && !listadenuncia.isEmpty()) {
-                    response.setResponseCode(1);
-                    response.setResponseType(ResponseType.Sucesso);
-                    response.setObject(listadenuncia);
-                    response.setMessage(" Listar denúncias de utilizador com sucesso.");
-                    return response;
-                } else if (listadenuncia == null) {
-                    response.setResponseCode(0);
-                    response.setResponseType(ResponseType.Erro);
-                    response.setObject(null);
-                    response.setMessage(" Falha ao listar denúncias de utilizador.");
-                    return response;
-                } else {
-                    response.setResponseCode(0);
-                    response.setResponseType(ResponseType.Erro);
-                    response.setObject(null);
-                    response.setMessage(" A lista de denúncias de utilizador está vazia.");
-                    return response;
-                }
-            } else {
-                response.setResponseCode(0);
-                response.setResponseType(ResponseType.Erro);
-                response.setObject(null);
-                response.setMessage(" utilizador não existe.");
-                return response;
-            }
-        } catch (Exception e) {
-            response.setResponseCode(0);
-            response.setResponseType(ResponseType.Erro);
-            response.setObject(null);
-            response.setMessage(" Falha no sistema.");
-            return response;
-        }
-    }
+//                 if (listadenuncia != null && !listadenuncia.isEmpty()) {
+//                     response.setResponseCode(1);
+//                     response.setResponseType(ResponseType.Sucesso);
+//                     response.setObject(listadenuncia);
+//                     response.setMessage(" Listar denúncias de utilizador com sucesso.");
+//                     return response;
+//                 } else if (listadenuncia == null) {
+//                     response.setResponseCode(0);
+//                     response.setResponseType(ResponseType.Erro);
+//                     response.setObject(null);
+//                     response.setMessage(" Falha ao listar denúncias de utilizador.");
+//                     return response;
+//                 } else {
+//                     response.setResponseCode(0);
+//                     response.setResponseType(ResponseType.Erro);
+//                     response.setObject(null);
+//                     response.setMessage(" A lista de denúncias de utilizador está vazia.");
+//                     return response;
+//                 }
+//             } else {
+//                 response.setResponseCode(0);
+//                 response.setResponseType(ResponseType.Erro);
+//                 response.setObject(null);
+//                 response.setMessage(" utilizador não existe.");
+//                 return response;
+//             }
+//         } catch (Exception e) {
+//             response.setResponseCode(0);
+//             response.setResponseType(ResponseType.Erro);
+//             response.setObject(null);
+//             response.setMessage(" Falha no sistema.");
+//             return response;
+//         }
+//     }
 
-    @Override
-    public ResponseDto getDenunciaById(int id) {
-        ResponseDto response = new ResponseDto();
+//     @Override
+//     public ResponseDto getDenunciaById(int id) {
+//         ResponseDto response = new ResponseDto();
 
-        try {
-            DenunciaOutputDto denuncia = denunciaRepository.findById(id);
+//         try {
+//             DenunciaOutputDto denuncia = denunciaRepository.findById(id);
 
-            if (denuncia != null) {
-                response.setResponseCode(1);
-                response.setResponseType(ResponseType.Sucesso);
-                response.setObject(denuncia);
-                response.setMessage(" Denúncia encontrada com sucesso.");
-                return response;
-            } else {
-                response.setResponseCode(0);
-                response.setResponseType(ResponseType.Erro);
-                response.setObject(null);
-                response.setMessage(" Denúncia não existe.");
-                return response;
-            }
-        } catch (Exception e) {
-            response.setResponseCode(0);
-            response.setResponseType(ResponseType.Erro);
-            response.setObject(null);
-            response.setMessage(" Falha no sistema.");
-            return response;
-        }
-    }
+//             if (denuncia != null) {
+//                 response.setResponseCode(1);
+//                 response.setResponseType(ResponseType.Sucesso);
+//                 response.setObject(denuncia);
+//                 response.setMessage(" Denúncia encontrada com sucesso.");
+//                 return response;
+//             } else {
+//                 response.setResponseCode(0);
+//                 response.setResponseType(ResponseType.Erro);
+//                 response.setObject(null);
+//                 response.setMessage(" Denúncia não existe.");
+//                 return response;
+//             }
+//         } catch (Exception e) {
+//             response.setResponseCode(0);
+//             response.setResponseType(ResponseType.Erro);
+//             response.setObject(null);
+//             response.setMessage(" Falha no sistema.");
+//             return response;
+//         }
+//     }
 
-    public DenunciaRepository getDenunciaRepository() {
-        return denunciaRepository;
-    }
+//     public DenunciaRepository getDenunciaRepository() {
+//         return denunciaRepository;
+//     }
 
-    public void setDenunciaRepository(DenunciaRepository denunciaRepository) {
-        this.denunciaRepository = denunciaRepository;
-    }
-}
+//     public void setDenunciaRepository(DenunciaRepository denunciaRepository) {
+//         this.denunciaRepository = denunciaRepository;
+//     }
+// }

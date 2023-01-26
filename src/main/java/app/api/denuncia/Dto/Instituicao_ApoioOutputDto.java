@@ -1,44 +1,44 @@
-package app.api.denuncia.Dto;
+// package app.api.denuncia.Dto;
 
-import java.util.Date;
+// import java.util.Date;
 
-public interface Instituicao_ApoioOutputDto {
+// public interface Instituicao_ApoioOutputDto {
 
-    int getId();
+//     int getId();
 
-    Date getData_Atualizacao();
+//     Date getData_Atualizacao();
 
-    Date getData_Criacao();
+//     Date getData_Criacao();
 
-    String getEmail();
+//     String getEmail();
 
-    int getEstado();
+//     int getEstado();
 
-    String getLogotipo();
+//     String getLogotipo();
 
-    String getNome();
+//     String getNome();
 
-    String getPorta();
+//     String getPorta();
 
-    String getRua();
+//     String getRua();
 
-    String getTelefone();
+//     String getTelefone();
 
-    int getTipo_crime_fk();
+//     int getTipo_crime_fk();
 
-    String getCrime();
+//     String getCrime();
 
-    int getLocalizacao_fk();
+//     int getLocalizacao_fk();
 
-    String getLongitude();
+//     String getLongitude();
 
-    String getLatitude();
+//     String getLatitude();
 
-    String getIlha();
+//     String getIlha();
 
-    String getConcelho();
+//     String getConcelho();
 
-    String getZona();
+//     String getZona();
 
-    String getLugar();
-}
+//     String getLugar();
+// }

@@ -6,68 +6,61 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "queixa")
+@Table(name = "dn_t_queixa")
 public class QueixaModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column
+    @Lob
     private String descricao;
 
-    @Column
-    private String grauParentesco;
+    private Date data_ocorrencia;
 
-    @Column
-    private Date dataOcorrencia;
+    private String descricao_endereco;
+
+    private String porta;
+
+    private String rua;
+
+    private String localizacao_mapa;
 
     @ManyToOne
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
-    @Column
-    private String descricaoEndereco;
-
-    @Column
-    private String porta;
-
-    @Column
-    private String rua;
+    @ManyToOne
+    @JoinColumn(name = "grau_parentesco_fk")
+    private DominioModel grau_parentesco;
 
     @ManyToOne
-    @JoinColumn(name = "tipoQueixa_fk")
-    private Tipo_QueixaModel Tipo_Queixa;
+    @JoinColumn(name = "tipo_queixa_fk")
+    private DominioModel tipo_queixa;
 
     @OneToMany(targetEntity = ArquivoModel.class, mappedBy = "queixa", cascade = CascadeType.ALL)
     private List<ArquivoModel> Arquivos = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "tipoCrime_fk")
-    private Tipo_CrimeModel tipoCrime;
+    @JoinColumn(name = "tipo_crime_fk")
+    private DominioModel tipo_crime;
 
-    @Column
-    private String localizacaoGps_Map;
-
-    @Column
     private int estado;
 
-    @Column
-    private Date dataCriacao;
+    private Date data_criacao;
 
-    @Column
-    private Date dataAtualizacao;
+    private Date data_atualizacao;
 
     public QueixaModel() {
     }
@@ -88,20 +81,20 @@ public class QueixaModel implements Serializable {
         this.descricao = descricao;
     }
 
-    public String getGrauParentesco() {
-        return grauParentesco;
+    public Date getData_ocorrencia() {
+        return data_ocorrencia;
     }
 
-    public void setGrauParentesco(String grauParentesco) {
-        this.grauParentesco = grauParentesco;
+    public void setData_ocorrencia(Date data_ocorrencia) {
+        this.data_ocorrencia = data_ocorrencia;
     }
 
-    public Date getDataOcorrencia() {
-        return dataOcorrencia;
+    public String getDescricao_endereco() {
+        return descricao_endereco;
     }
 
-    public void setDataOcorrencia(Date dataOcorrencia) {
-        this.dataOcorrencia = dataOcorrencia;
+    public void setDescricao_endereco(String descricao_endereco) {
+        this.descricao_endereco = descricao_endereco;
     }
 
     public String getPorta() {
@@ -120,60 +113,12 @@ public class QueixaModel implements Serializable {
         this.rua = rua;
     }
 
-    public int getEstado() {
-        return estado;
+    public String getLocalizacao_mapa() {
+        return localizacao_mapa;
     }
 
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
-    public Date getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(Date dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
-    public Date getDataAtualizacao() {
-        return dataAtualizacao;
-    }
-
-    public void setDataAtualizacao(Date dataAtualizacao) {
-        this.dataAtualizacao = dataAtualizacao;
-    }
-
-    public Tipo_QueixaModel getTipo_Queixa() {
-        return Tipo_Queixa;
-    }
-
-    public void setTipo_Queixa(Tipo_QueixaModel tipo_Queixa) {
-        Tipo_Queixa = tipo_Queixa;
-    }
-
-    public List<ArquivoModel> getArquivos() {
-        return Arquivos;
-    }
-
-    public void setArquivos(List<ArquivoModel> arquivos) {
-        Arquivos = arquivos;
-    }
-
-    public Tipo_CrimeModel getTipoCrime() {
-        return tipoCrime;
-    }
-
-    public void setTipoCrime(Tipo_CrimeModel tipoCrime) {
-        this.tipoCrime = tipoCrime;
-    }
-
-    public String getDescricaoEndereco() {
-        return descricaoEndereco;
-    }
-
-    public void setDescricaoEndereco(String descricaoEndereco) {
-        this.descricaoEndereco = descricaoEndereco;
+    public void setLocalizacao_mapa(String localizacao_mapa) {
+        this.localizacao_mapa = localizacao_mapa;
     }
 
     public LocalizacaoModel getLocalizacao() {
@@ -184,11 +129,59 @@ public class QueixaModel implements Serializable {
         this.localizacao = localizacao;
     }
 
-    public String getLocalizacaoGps_Map() {
-        return localizacaoGps_Map;
+    public DominioModel getGrau_parentesco() {
+        return grau_parentesco;
     }
 
-    public void setLocalizacaoGps_Map(String localizacaoGps_Map) {
-        this.localizacaoGps_Map = localizacaoGps_Map;
+    public void setGrau_parentesco(DominioModel grau_parentesco) {
+        this.grau_parentesco = grau_parentesco;
+    }
+
+    public DominioModel getTipo_queixa() {
+        return tipo_queixa;
+    }
+
+    public void setTipo_queixa(DominioModel tipo_queixa) {
+        this.tipo_queixa = tipo_queixa;
+    }
+
+    public List<ArquivoModel> getArquivos() {
+        return Arquivos;
+    }
+
+    public void setArquivos(List<ArquivoModel> arquivos) {
+        Arquivos = arquivos;
+    }
+
+    public DominioModel getTipo_crime() {
+        return tipo_crime;
+    }
+
+    public void setTipo_crime(DominioModel tipo_crime) {
+        this.tipo_crime = tipo_crime;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+
+    public Date getData_criacao() {
+        return data_criacao;
+    }
+
+    public void setData_criacao(Date data_criacao) {
+        this.data_criacao = data_criacao;
+    }
+
+    public Date getData_atualizacao() {
+        return data_atualizacao;
+    }
+
+    public void setData_atualizacao(Date data_atualizacao) {
+        this.data_atualizacao = data_atualizacao;
     }
 }
