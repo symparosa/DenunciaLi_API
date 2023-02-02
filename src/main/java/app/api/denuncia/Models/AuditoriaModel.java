@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -24,14 +25,17 @@ public class AuditoriaModel implements Serializable{
     @Column(nullable = false)
     private String tipo_objeto;
 
-    @Column(nullable = false)
+    @Lob
     private String valor_atual;
-
-    @Column(nullable = false)
+    
+    @Lob
     private String valor_novo;
 
     @Column(nullable = false)
     private int id_utilizador;
+
+    @Column(nullable = false)
+    private String accao;
 
     private int estado;
 
@@ -39,7 +43,7 @@ public class AuditoriaModel implements Serializable{
 
     public AuditoriaModel() {
     }
-
+    
     public int getId() {
         return id;
     }
@@ -102,5 +106,13 @@ public class AuditoriaModel implements Serializable{
 
     public void setTipo_objeto(String tipo_objeto) {
         this.tipo_objeto = tipo_objeto;
+    }
+
+    public String getAccao() {
+        return accao;
+    }
+
+    public void setAccao(String accao) {
+        this.accao = accao;
     }
 }

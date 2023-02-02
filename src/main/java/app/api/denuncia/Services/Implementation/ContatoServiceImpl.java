@@ -1,397 +1,194 @@
-// package app.api.denuncia.Services.Implementation;
+package app.api.denuncia.Services.Implementation;
 
-// import java.util.List;
+import java.util.Date;
+import java.util.List;
 
-// import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 
-// import app.api.denuncia.Constants.ResponseType;
-// import app.api.denuncia.Dto.Response.ResponseDto;
-// import app.api.denuncia.Models.ContatoModel;
-// import app.api.denuncia.Services.ContatoService;
-// import app.api.denuncia.Repositories.ContatoRepository;
+import app.api.denuncia.Constants.Domain;
+import app.api.denuncia.Constants.GlobalFunctions;
+import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Constants.ResponseType;
+import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response.ResponseDto;
+import app.api.denuncia.Models.ContatoModel;
+import app.api.denuncia.Services.ContatoService;
+import app.api.denuncia.Repositories.ContatoRepository;
+import app.api.denuncia.Repositories.DenuncianteRepository;
+import app.api.denuncia.Repositories.DominioRepository;
+import app.api.denuncia.Repositories.EntidadeRepository;
+import app.api.denuncia.Repositories.UtilizadorBackofficeRepository;
 
-// @Service
-// public class ContatoServiceImpl implements ContatoService {
+@Service
+public class ContatoServiceImpl implements ContatoService {
 
-//     private ContatoRepository ContatoRepository;
+    private ContatoRepository contatoRepository;
+    private DominioRepository dominioRepository;
+    private EntidadeRepository entidadeRepository;
+    private DenuncianteRepository denuncianteRepository;
+    private UtilizadorBackofficeRepository utilizadorBackofficeRepository;
+    
 
-//     public ContatoServiceImpl(ContatoRepository contatoRepository) {
-//         ContatoRepository = contatoRepository;
-//     }
+    private Status status = new Status();
+    private Message msg = new Message();
+    private GlobalFunctions gf = new GlobalFunctions();
+    private Domain dom =  new Domain();
 
-//     @Override
-//     public ResponseDto adicionarContato(String telefone, String logotipo, String nome) {
+    public ContatoServiceImpl(ContatoRepository contatoRepository, DominioRepository dominioRepository,
+            EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository) {
+        this.contatoRepository = contatoRepository;
+        this.dominioRepository = dominioRepository;
+        this.entidadeRepository = entidadeRepository;
+        this.denuncianteRepository = denuncianteRepository;
+    }
 
-//         ResponseDto response = new ResponseDto();
+    @Override
+    public ResponseDto adicionar_atualizar(List<ContatoModel> contatoModels) {
+        try {
 
-//         try {
+            if (contatoModels.size() > 0) {
 
-//             String msg = validarInput(logotipo, nome, 1);
+                if (!validateDuplicateData(contatoModels)) {
 
-//             if (msg == null) {
+                    String metodo = "salvar";
+                    int contUpdate = 0, contInsert = 0;
+                    boolean update = false, insert = false;
 
-//                 if (ContatoRepository.findByNome(nome) == null) {
+                    for (ContatoModel contato : contatoModels) {
 
-//                     if (ContatoRepository.findByTelefone(telefone) == null) {
+                        if (contato.getTipo_contato() != null
+                                && dominioRepository.existsByIdAndDominio(contato.getTipo_contato().getId(), dom.getDomainTipoContato())
+                                && contato.getIdObjeto() != null
+                                && validateIdObjeto(contato.getIdObjeto(), contato.getTipoObjeto())) {
 
-//                         if (validarTelemovel(telefone) == 1) {
+                            if (contato.getId() != null) { // update
 
-//                             int ContatoSave = ContatoRepository.save(telefone, logotipo, nome);
+                                if (contatoRepository.existsById(contato.getId())) {
+                                    update = true;
+                                    if (contatoRepository.existsByValorAndIdNot(contato.getValor(), contato.getId())) {
+                                        contUpdate++;
+                                    }
+                                    contato.setData_atualizacao(new Date());
+                                } else {
+                                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                                }
+                            } else if (contato.getId() == null) { // insert
+                                insert = true;
+                                if (contatoRepository.existsByValor(contato.getValor())) {
+                                    contInsert++;
+                                }
+                                contato.setData_atualizacao(null);
+                            }
+                            contato.setEstado(status.getAtivo());
+                            contato.setData_criacao(new Date());
+                            contato.setLast_user_change(gf.getId_user_logado());
+                        } else {
+                            return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                        }
+                    }
 
-//                             if (ContatoSave != 0) {
-//                                 response.setResponseCode(1);
-//                                 response.setResponseType(ResponseType.Sucesso);
-//                                 response.setObject(null);
-//                                 response.setMessage(" Contato salvo com sucesso.");
-//                                 return response;
-//                             } else {
-//                                 response.setResponseCode(0);
-//                                 response.setResponseType(ResponseType.Erro);
-//                                 response.setObject(null);
-//                                 response.setMessage(" Falha ao salvar contato.");
-//                                 return response;
-//                             }
-//                         } else {
-//                             response.setResponseCode(0);
-//                             response.setResponseType(ResponseType.Erro);
-//                             response.setObject(null);
-//                             response.setMessage(
-//                                     "O número de telefone deve ter no máximo 7 dígitos (somente números são permitidos).");
-//                             return response;
-//                         }
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Número de telefone já existe.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Contato já existe.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(msg);
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                    if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
 
-//     @Override
-//     public ResponseDto listarContatoAtivos() {
-//         ResponseDto response = new ResponseDto();
+                        List<ContatoModel> cont = contatoRepository.saveAll(contatoModels);
+                        return gf.validateGetSaveMsgWithList(metodo, cont);
 
-//         try {
-//             List<ContatoModel> listaContato = ContatoRepository.findAllByEstado(1);
+                    } else {
+                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
+                    }
+                } else {
+                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage08(), null);
+                }
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//             if (listaContato != null && !listaContato.isEmpty()) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaContato);
-//                 response.setMessage(" Listar contatos ativos com sucesso.");
-//                 return response;
-//             } else if (listaContato == null) {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar contatos ativos.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" A lista de contatos ativos está vazia.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+    @Override
+    public ResponseDto alterarEstado(int id, int estado) {
+        try {
+            if (contatoRepository.existsById(id)) {
 
-//     @Override
-//     public ResponseDto listarContatoInativos() {
+                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
 
-//         ResponseDto response = new ResponseDto();
+                    String metodo = "salvar";
 
-//         try {
-//             List<ContatoModel> listaContato = ContatoRepository.findAllByEstado(0);
+                    Integer result = contatoRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    return gf.validateGetUpdateMsg(metodo, result);
+                } else {
+                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                }
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//             if (listaContato != null && !listaContato.isEmpty()) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaContato);
-//                 response.setMessage(" Listar contatos inativos com sucesso.");
-//                 return response;
-//             } else if (listaContato == null) {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar contatos inativos.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" A lista de contatos inativos está vazia.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+    @Override
+    public ResponseDto getInfoByIdObjeto(int id) {
+        try {
 
-//     @Override
-//     public ResponseDto getContatoById(int id) {
-//         ResponseDto response = new ResponseDto();
+            if (contatoRepository.count() > 0) {
 
-//         try {
+                if (contatoRepository.existsByIdObjeto(id)) {
 
-//             ContatoModel Contato = ContatoRepository.findByIdAndEstado(id, 1);
+                    String metodo = "listar";
 
-//             if (Contato != null) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(Contato);
-//                 response.setMessage(" Contato encontrado com sucesso.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Contato não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                    List<ContatoModel> lista = contatoRepository.findByIdObjetoAndEstadoIn(id, gf.getStatusAtivoInativo());
+                    return gf.validateGetListMsg(metodo, lista);
 
-//     @Override
-//     public ResponseDto atualizarContatoInfo(String telefone, String nome, String logotipo, int id) {
-//         ResponseDto response = new ResponseDto();
+                } else {
+                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                }
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//         try {
+    public Boolean validateDuplicateData(List<ContatoModel> contato) {
 
-//             String msg = validarInput(logotipo, nome, id);
+        boolean msg = false;
 
-//             if (msg == null) {
+        for (ContatoModel cont : contato) {
+            if (contato.stream().filter(
+                    item -> item.getValor().equals(cont.getValor()))
+                    .count() > 1) {
+                msg = true;
+            }
+        }
+        return msg;
+    }
 
-//                 if (ContatoRepository.findByIdAndEstado(id, 1) != null) {
+    public Boolean validateIdObjeto(int id_objeto, String tipo_objeto) {
 
-//                     if (ContatoRepository.validarContato(id, nome) == null) {
+        boolean msg = false;
 
-//                         if (ContatoRepository.findByTelefone(telefone) == null) {
-
-//                             if (validarTelemovel(telefone) == 1) {
-
-//                                 int result = ContatoRepository.atualizarContatoInfo(telefone, nome, logotipo, id);
-
-//                                 if (result == 1) {
-//                                     response.setResponseCode(1);
-//                                     response.setResponseType(ResponseType.Sucesso);
-//                                     response.setObject(null);
-//                                     response.setMessage(" Contato atualizado com sucesso.");
-//                                     return response;
-//                                 } else {
-//                                     response.setResponseCode(0);
-//                                     response.setResponseType(ResponseType.Erro);
-//                                     response.setObject(null);
-//                                     response.setMessage(" Falha ao atualizar contato.");
-//                                     return response;
-//                                 }
-//                             } else {
-//                                 response.setResponseCode(0);
-//                                 response.setResponseType(ResponseType.Erro);
-//                                 response.setObject(null);
-//                                 response.setMessage(
-//                                         "O número de telefone deve ter no máximo 7 dígitos (somente números são permitidos).");
-//                                 return response;
-//                             }
-//                         } else {
-//                             response.setResponseCode(0);
-//                             response.setResponseType(ResponseType.Erro);
-//                             response.setObject(null);
-//                             response.setMessage(" Número de telefone já existe.");
-//                             return response;
-//                         }
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Contato já existe.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Contato não existe.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(msg);
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     @Override
-//     public ResponseDto desativarContato(int id) {
-//         ResponseDto response = new ResponseDto();
-
-//         try {
-
-//             if (ContatoRepository.findById(id) != null) {
-
-//                 if (ContatoRepository.findById(id).getEstado() == 1) {
-
-//                     int result = ContatoRepository.ativar_desativarContato(0, id);
-
-//                     if (result == 1) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Contato desativado com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao desativar contato");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Contato já foi desativado.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Contato não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     @Override
-//     public ResponseDto ativarContato(int id) {
-//         ResponseDto response = new ResponseDto();
-
-//         try {
-
-//             if (ContatoRepository.findById(id) != null) {
-
-//                 if (ContatoRepository.findById(id).getEstado() == 0) {
-
-//                     int result = ContatoRepository.ativar_desativarContato(1, id);
-
-//                     if (result == 1) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Contato ativado com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao ativar contato.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Contato já foi ativado.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Contato não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     public int validarTelemovel(String telefone) {
-//         if (telefone == null || (telefone.length() <= 7 && telefone.matches("[0-9]+"))) {
-//             return 1;
-//         } else {
-//             return 0;
-//         }
-//     }
-
-//     public String validarInput(String logotipo, String nome, int id) {
-
-//         String msg = null;
-
-//         if (nome == null) {
-//             return msg = "O nome não pode ser null";
-//         } else if (logotipo == null) {
-//             return msg = "O logotipo não pode ser null";
-//         } else if (id == 0) {
-//             return msg = "O id não pode ser 0";
-//         } else {
-//             return msg;
-//         }
-//     }
-
-//     public ContatoRepository getContatoRepository() {
-//         return ContatoRepository;
-//     }
-
-//     public void setContatoRepository(ContatoRepository contatoRepository) {
-//         ContatoRepository = contatoRepository;
-//     }
-// }
+        switch (tipo_objeto) {
+            case "dn_t_entidade":
+                if (entidadeRepository.existsById(id_objeto)) {
+                    msg = true;
+                }
+                break;
+            case "dn_t_denunciante":
+                if (denuncianteRepository.existsById(id_objeto)) {
+                    msg = true;
+                }
+                break;
+            case "dn_t_utilizador_backoffice":
+                if (utilizadorBackofficeRepository.existsById(id_objeto)) {
+                    msg = true;
+                }
+                break;
+            default:
+                System.out.println("tipo_objeto não está mapeado");
+        }
+        return msg;
+    }
+}

@@ -11,19 +11,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_reprocessamento")
 public class ReprocessamentoModel implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "denuncia_fk")
     private DenunciaModel denuncia;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -32,11 +37,11 @@ public class ReprocessamentoModel implements Serializable{
     public ReprocessamentoModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,11 +53,19 @@ public class ReprocessamentoModel implements Serializable{
         this.denuncia = denuncia;
     }
 
-    public int getEstado() {
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 

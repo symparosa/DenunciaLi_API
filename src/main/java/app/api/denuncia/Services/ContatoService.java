@@ -1,20 +1,15 @@
-// package app.api.denuncia.Services;
+package app.api.denuncia.Services;
 
-// import app.api.denuncia.Dto.Response.ResponseDto;
+import java.util.List;
 
-// public interface ContatoService {
+import app.api.denuncia.Dto.Response.ResponseDto;
+import app.api.denuncia.Models.ContatoModel;
 
-//     ResponseDto adicionarContato(String telefone, String logotipo, String nome);
+public interface ContatoService {
 
-//     ResponseDto listarContatoAtivos();
+    ResponseDto adicionar_atualizar(List<ContatoModel> contatoModels);
 
-//     ResponseDto listarContatoInativos();
+    ResponseDto alterarEstado(int id, int estado);
 
-//     ResponseDto getContatoById(int id);
-
-//     ResponseDto atualizarContatoInfo(String telefone, String nome, String logotipo, int id);
-
-//     ResponseDto desativarContato(int id);
-
-//     ResponseDto ativarContato(int id);
-// }
+    ResponseDto getInfoByIdObjeto(int id);
+}

@@ -9,57 +9,72 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "dn_t_utilizador_backoffice")
 public class UtilizadorBackofficeModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) do utilizador")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Schema(description = "O username do utilizador")
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Schema(description = "O password do utilizador")
     @Column(nullable = false)
     private String password;
 
+    @Schema(description = "O nome do utilizador")
     @Column(nullable = false)
     private String nome;
 
+    @Schema(description = "A foto de perfil do utilizador")
+    @Lob
     private String foto_perfil;
 
+    @Schema(description = "O identificador (ID) da localização")
     @ManyToOne()
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
+    @Schema(description = "O identificador (ID) do tipo de utilizador")
     @ManyToOne
     @JoinColumn(name = "tipo_utilizador_fk")
     private DominioModel tipo_utilizador;
 
+    @Schema(description = "O identificador (ID) da entidade")
     @ManyToOne
     @JoinColumn(name = "entidade_fk")
     private EntidadeModel entidade;
 
-    @Column
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
+    private Integer last_user_change;
 
-    @Column
+    @Schema(description = "O estado do utilizador", hidden = true)
+    private Integer estado;
+
+    @Schema(description = "A data de criação do utilizador", hidden = true)
     private Date data_criacao;
 
-    @Column
+    @Schema(description = "A data de atualização do utilizador", hidden = true)
     private Date data_atualizacao;
 
     public UtilizadorBackofficeModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -77,6 +92,14 @@ public class UtilizadorBackofficeModel implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getFoto_perfil() {
@@ -103,11 +126,27 @@ public class UtilizadorBackofficeModel implements Serializable {
         this.tipo_utilizador = tipo_utilizador;
     }
 
-    public int getEstado() {
+    public EntidadeModel getEntidade() {
+        return entidade;
+    }
+
+    public void setEntidade(EntidadeModel entidade) {
+        this.entidade = entidade;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -125,21 +164,5 @@ public class UtilizadorBackofficeModel implements Serializable {
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public EntidadeModel getEntidade() {
-        return entidade;
-    }
-
-    public void setEntidade(EntidadeModel entidade) {
-        this.entidade = entidade;
     }
 }

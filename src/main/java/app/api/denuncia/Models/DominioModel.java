@@ -11,38 +11,42 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_dominio")
 public class DominioModel implements Serializable{
     
+    @Schema(description = "O identificador (ID) do domínio")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Schema(description = "O domínio")
     @Column(nullable = false)
     private String dominio;
 
+    @Schema(description = "O valor do domínio")
     @Column(nullable = false)
     private String valor;
 
+    @Schema(description = "O descrição do domínio")
     @Lob
     private String descricao;
 
-    private int estado;
+    @Schema(description = "O estado do domínio", hidden = true)
+    private Integer estado;
 
+    @Schema(description = "A data de criação do domínio", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização do domínio", hidden = true)
     private Date data_atualizacao;
 
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
+    private Integer last_user_change;
+
     public DominioModel() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDominio() {
@@ -69,14 +73,6 @@ public class DominioModel implements Serializable{
         this.descricao = descricao;
     }
 
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
     public Date getData_criacao() {
         return data_criacao;
     }
@@ -91,5 +87,29 @@ public class DominioModel implements Serializable{
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
     }
 }

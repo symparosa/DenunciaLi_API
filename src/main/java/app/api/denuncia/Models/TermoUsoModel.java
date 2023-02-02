@@ -12,13 +12,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_termo_uso")
 public class TermoUsoModel implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String titulo;
 
@@ -29,7 +31,10 @@ public class TermoUsoModel implements Serializable{
     @JoinColumn(name = "tipo_termo_uso_fk")
     private DominioModel tipo_termo_uso;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -38,11 +43,11 @@ public class TermoUsoModel implements Serializable{
     public TermoUsoModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -70,11 +75,11 @@ public class TermoUsoModel implements Serializable{
         this.tipo_termo_uso = tipo_termo_uso;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -92,5 +97,13 @@ public class TermoUsoModel implements Serializable{
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
     }
 }

@@ -1,11 +1,8 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,57 +11,72 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "dn_t_entidade")
 public class EntidadeModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) da entidade")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Schema(description = "O nome da entidade")
     @Column(unique = true, nullable = false)
     private String nome;
 
+    @Schema(description = "A porta da entidade")
     private String porta;
 
+    @Schema(description = "A rua da entidade")
     private String rua;
 
+    @Schema(description = "A imagem da entidade")
+    @Lob
     @Column(nullable = false)
     private String imagem;
 
+    @Schema(description = "O sigla da entidade")
     private String sigla;
 
+    @Schema(description = "A descrição da entidade")
     @Lob
     private String descricao;
 
+    @Schema(description = "A localização da entidade")
     @ManyToOne
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
+    @Schema(description = "O tipo de entidade")
     @ManyToOne
     @JoinColumn(name = "tipo_entidade_fk")
     private DominioModel tipo_entidade;
 
-    @OneToMany(targetEntity = EntidadeTipoCrimeModel.class, mappedBy = "entidade", cascade = CascadeType.ALL)
-    private List<EntidadeTipoCrimeModel> tipos_crimes = new ArrayList<>();
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
+    private Integer last_user_change;
     
-    private int estado;
+    @Schema(description = "O estado da entidade", hidden = true)
+    private Integer estado;
 
+    @Schema(description = "A data de criação da entidade", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização da entidade", hidden = true)
     private Date data_atualizacao;
 
     public EntidadeModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -74,14 +86,6 @@ public class EntidadeModel implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public LocalizacaoModel getLocalizacao() {
-        return localizacao;
-    }
-
-    public void setLocalizacao(LocalizacaoModel localizacao) {
-        this.localizacao = localizacao;
     }
 
     public String getPorta() {
@@ -124,6 +128,14 @@ public class EntidadeModel implements Serializable {
         this.descricao = descricao;
     }
 
+    public LocalizacaoModel getLocalizacao() {
+        return localizacao;
+    }
+
+    public void setLocalizacao(LocalizacaoModel localizacao) {
+        this.localizacao = localizacao;
+    }
+
     public DominioModel getTipo_entidade() {
         return tipo_entidade;
     }
@@ -132,11 +144,19 @@ public class EntidadeModel implements Serializable {
         this.tipo_entidade = tipo_entidade;
     }
 
-    public int getEstado() {
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -154,13 +174,5 @@ public class EntidadeModel implements Serializable {
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
-    }
-
-    public List<EntidadeTipoCrimeModel> getTipos_crimes() {
-        return tipos_crimes;
-    }
-
-    public void setTipos_crimes(List<EntidadeTipoCrimeModel> tipos_crimes) {
-        this.tipos_crimes = tipos_crimes;
     }
 }

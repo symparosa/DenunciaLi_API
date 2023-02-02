@@ -1,20 +1,17 @@
 package app.api.denuncia.Services;
 
+import java.util.List;
+
 import app.api.denuncia.Dto.Response.ResponseDto;
+import app.api.denuncia.Models.DominioModel;
 
 public interface DominioService {
 
-    ResponseDto adicionarTipoArquivo(String nome);
+    ResponseDto adicionar_atualizar(List<DominioModel> dominio);
 
-    ResponseDto listarTipoArquivosAtivos();
+    ResponseDto alterarEstado(int id, int estado);
 
-    ResponseDto listarTipoArquivosInativos();
+    ResponseDto listar();
 
-    ResponseDto getTipoArquivoById(int id);
-
-    ResponseDto atualizarTipoArquivo(String nome, int id);
-
-    ResponseDto desativarTipoArquivo(int id);
-
-    ResponseDto ativarTipoArquivo(int id);
+    ResponseDto getDominio(String dominio);
 }

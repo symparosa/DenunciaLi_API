@@ -1,40 +1,35 @@
-// package app.api.denuncia.Repositories;
+package app.api.denuncia.Repositories;
 
-// import java.util.List;
+import java.util.List;
 
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Modifying;
-// import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
-// import org.springframework.stereotype.Repository;
-// import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-// import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Models.DominioModel;
 
-// @Repository
-// @Transactional
-// public interface DominioRepository extends JpaRepository<DominioModel, Integer> {
+@Repository
+@Transactional
+public interface DominioRepository extends JpaRepository<DominioModel, Integer> {
 
-//     DominioModel findById(@Param("id") int id);
+    Boolean existsByDominio(String dominio);
+    
+    Boolean existsByIdAndDominio(int id, String dominio);
 
-//     DominioModel findByNome(@Param("nome") String nome);
+    DominioModel findByIdAndDominio(int id, String dominio);
 
-//     List<DominioModel> findAllByEstado(@Param("estado") int estado);
+    List<DominioModel> findByEstadoIn(List<Integer> estados);
 
-//     DominioModel findByIdAndEstado(@Param("id") int id, @Param("estado") int estado);
+    Boolean existsByDominioAndValor(String dominio, String valor);
 
-//     @Query(value = "select * from tipo_arquivo where id!=:id and nome=:nome", nativeQuery = true)
-//     DominioModel validarTipoArquivo(@Param("id") int id, @Param("nome") String nome);
+    Boolean existsByDominioAndValorAndIdNot(String dominio, String valor, int id);
 
-//     @Modifying
-//     @Query(value = "INSERT INTO tipo_arquivo(nome, data_criacao, estado) VALUES (?,now(),1);", nativeQuery = true)
-//     int save(@Param("nome") String nome);
+    List<DominioModel> findByDominioAndEstadoIn(String dominio, List<Integer> estados);
 
-//     @Modifying
-//     @Query(value = "update tipo_arquivo set estado=:estado, data_atualizacao=now() where id=:id", nativeQuery = true)
-//     int ativar_desativarTipoArquivo(@Param("estado") int fav, @Param("id") int id);
-
-//     @Modifying
-//     @Query(value = "UPDATE tipo_arquivo SET nome=:nome,data_atualizacao=now() where id=:id and estado = 1", nativeQuery = true)
-//     int atualizarTipoArquivo(@Param("nome") String nome, @Param("id") int id);
-// }
+    @Modifying
+    @Query(value = "UPDATE dbo.dn_t_dominio SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
+    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+}

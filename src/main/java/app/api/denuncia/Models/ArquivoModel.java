@@ -15,13 +15,15 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_arquivo")
 public class ArquivoModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Lob
     private String arquivo;
@@ -35,8 +37,11 @@ public class ArquivoModel implements Serializable {
     @JoinColumn(name = "queixa_fk")
     private QueixaModel queixa;
 
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
     @Column
-    private int estado;
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -45,28 +50,12 @@ public class ArquivoModel implements Serializable {
     public ArquivoModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
-    public QueixaModel getQueixa() {
-        return queixa;
-    }
-
-    public void setQueixa(QueixaModel queixa) {
-        this.queixa = queixa;
     }
 
     public String getArquivo() {
@@ -83,6 +72,30 @@ public class ArquivoModel implements Serializable {
 
     public void setTipo_arquivo(DominioModel tipo_arquivo) {
         this.tipo_arquivo = tipo_arquivo;
+    }
+
+    public QueixaModel getQueixa() {
+        return queixa;
+    }
+
+    public void setQueixa(QueixaModel queixa) {
+        this.queixa = queixa;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
     }
 
     public Date getData_criacao() {

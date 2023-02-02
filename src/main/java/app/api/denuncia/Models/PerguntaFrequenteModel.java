@@ -10,20 +10,25 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_pergunta_frequente")
 public class PerguntaFrequenteModel implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String titulo;
 
     @Lob
     private String descricao;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -32,11 +37,11 @@ public class PerguntaFrequenteModel implements Serializable{
     public PerguntaFrequenteModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -56,11 +61,11 @@ public class PerguntaFrequenteModel implements Serializable{
         this.descricao = descricao;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -78,5 +83,13 @@ public class PerguntaFrequenteModel implements Serializable{
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
     }
 }

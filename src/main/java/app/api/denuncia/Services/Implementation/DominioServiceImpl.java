@@ -1,314 +1,160 @@
-// package app.api.denuncia.Services.Implementation;
+package app.api.denuncia.Services.Implementation;
 
-// import java.util.List;
+import java.util.Date;
+import java.util.List;
 
-// import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 
-// import app.api.denuncia.Constants.ResponseType;
-// import app.api.denuncia.Dto.Response.ResponseDto;
-// import app.api.denuncia.Repositories.DominioRepository;
-// import app.api.denuncia.Services.DominioService;
+import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Constants.GlobalFunctions;
+import app.api.denuncia.Constants.ResponseType;
+import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response.ResponseDto;
+import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Repositories.DominioRepository;
+import app.api.denuncia.Services.DominioService;
 
-// @Service
-// public class DominioServiceImpl implements DominioService {
+@Service
+public class DominioServiceImpl implements DominioService {
 
-//     private DominioRepository tipoArquivoRepository;
+    private DominioRepository dominioRepository;
+    private Status status = new Status();
+    private Message msg = new Message();
+    private GlobalFunctions gf = new GlobalFunctions();
 
-//     public DominioServiceImpl(DominioRepository tipoArquivoRepository) {
-//         this.tipoArquivoRepository = tipoArquivoRepository;
-//     }
+    public DominioServiceImpl(DominioRepository dominioRepository) {
+        this.dominioRepository = dominioRepository;
+    }
 
-//     @Override
-//     public ResponseDto adicionarTipoArquivo(String nome) {
+    @Override
+    public ResponseDto adicionar_atualizar(List<DominioModel> dominio) {
+        try {
 
-//         ResponseDto response = new ResponseDto();
+            if (dominio.size() > 0) {
 
-//         try {
+                if (!validateDuplicateData(dominio)) {
 
-//             if (tipoArquivoRepository.findByNome(nome) == null) {
+                    String metodo = "salvar";
+                    int contUpdate = 0, contInsert = 0;
+                    boolean update = false, insert = false;
 
-//                 int tipoArquivoSave = tipoArquivoRepository.save(nome);
+                    for (DominioModel dom : dominio) {
 
-//                 if (tipoArquivoSave != 0) {
-//                     response.setResponseCode(1);
-//                     response.setResponseType(ResponseType.Sucesso);
-//                     response.setObject(null);
-//                     response.setMessage(" Tipo de arquivo salvo com sucesso.");
-//                     return response;
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Falha ao salvar o tipo de arquivo.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Tipo de arquivo já existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                        if (dom.getId() != null) { // update
 
-//     @Override
-//     public ResponseDto listarTipoArquivosAtivos() {
+                            if (dominioRepository.existsById(dom.getId())) {
+                                update = true;
+                                if (dominioRepository.existsByDominioAndValorAndIdNot(dom.getDominio(), dom.getValor(),
+                                        dom.getId())) {
+                                    contUpdate++;
+                                }
+                                dom.setData_atualizacao(new Date());
+                            } else {
+                                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                            }
+                        } else if (dom.getId() == null) { // insert
+                            insert = true;
+                            if (dominioRepository.existsByDominioAndValor(dom.getDominio(), dom.getValor())) {
+                                contInsert++;
+                            }
+                            dom.setData_atualizacao(null);
+                        }
+                        dom.setEstado(status.getAtivo());
+                        dom.setData_criacao(new Date());
+                        dom.setLast_user_change(gf.getId_user_logado());
+                    }
 
-//         ResponseDto response = new ResponseDto();
+                    if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
 
-//         try {
-//             List<Tipo_ArquivoModel> listaTipoArquivos = tipoArquivoRepository.findAllByEstado(1);
+                        List<DominioModel> dom = dominioRepository.saveAll(dominio);
+                        return gf.validateGetSaveMsgWithList(metodo, dom);
 
-//             if (listaTipoArquivos != null && !listaTipoArquivos.isEmpty()) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaTipoArquivos);
-//                 response.setMessage(" Listar tipo de arquivos ativos com sucesso.");
-//                 return response;
-//             } else if (listaTipoArquivos == null) {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar tipo de arquivos ativos.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" A lista de tipo de arquivos ativos está vazia.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" ExceptionMessage = " + e.getMessage());
-//             return response;
-//         }
-//     }
+                    } else {
+                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
+                    }
+                } else {
+                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage08(), null);
+                }
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//     @Override
-//     public ResponseDto listarTipoArquivosInativos() {
+    @Override
+    public ResponseDto alterarEstado(int id, int estado) {
+        try {
 
-//         ResponseDto response = new ResponseDto();
+            if (dominioRepository.existsById(id)) {
 
-//         try {
-//             List<Tipo_ArquivoModel> listaTipoArquivos = tipoArquivoRepository.findAllByEstado(0);
+                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
 
-//             if (listaTipoArquivos != null && !listaTipoArquivos.isEmpty()) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(listaTipoArquivos);
-//                 response.setMessage(" Listar tipo de arquivos inativos com sucesso.");
-//                 return response;
-//             } else if (listaTipoArquivos == null) {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Falha ao listar tipo de arquivos inativos.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" A lista de tipo de arquivos inativos está vazia.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                    String metodo = "salvar";
 
-//     @Override
-//     public ResponseDto getTipoArquivoById(int id) {
-//         ResponseDto response = new ResponseDto();
+                    Integer result = dominioRepository.alterarEstado(estado,gf.getId_user_logado(), id);
+                    return gf.validateGetUpdateMsg(metodo, result);
+                } else {
+                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                }
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//         try {
+    @Override
+    public ResponseDto listar() {
+        try {
 
-//             Tipo_ArquivoModel Tipo_Arquivo = tipoArquivoRepository.findByIdAndEstado(id, 1);
+            if (dominioRepository.count() > 0) {
 
-//             if (Tipo_Arquivo != null) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(Tipo_Arquivo);
-//                 response.setMessage(" Tipo de arquivo encontrado com sucesso.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Tipo de arquivo não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                String metodo = "listar";
 
-//     @Override
-//     public ResponseDto atualizarTipoArquivo(String nome, int id) {
-//         ResponseDto response = new ResponseDto();
+                List<DominioModel> listaDom = dominioRepository.findByEstadoIn(gf.getStatusAtivoInativo());
+                return gf.validateGetListMsg(metodo, listaDom);
 
-//         try {
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//             if (tipoArquivoRepository.findByIdAndEstado(id, 1) != null) {
+    @Override
+    public ResponseDto getDominio(String dominio) {
+        try {
 
-//                 if (tipoArquivoRepository.validarTipoArquivo(id, nome) == null) {
+            if (dominioRepository.existsByDominio(dominio)) {
 
-//                     int result = tipoArquivoRepository.atualizarTipoArquivo(nome, id);
+                String metodo = "listar";
 
-//                     if (result == 1) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Tipo de arquivo atualizado com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao atualizar o tipo de arquivo.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Tipo de arquivo já existe.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Tipo de arquivo não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                List<DominioModel> listaDom = dominioRepository.findByDominioAndEstadoIn(dominio, gf.getStatusAtivoInativo());
+                return gf.validateGetListMsg(metodo, listaDom);
 
-//     @Override
-//     public ResponseDto desativarTipoArquivo(int id) {
-//         ResponseDto response = new ResponseDto();
+            } else {
+                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+            }
+        } catch (Exception e) {
+            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        }
+    }
 
-//         try {
+    public Boolean validateDuplicateData(List<DominioModel> dominio) {
 
-//             if (tipoArquivoRepository.findById(id) != null) {
+        boolean msg = false;
 
-//                 if (tipoArquivoRepository.findById(id).getEstado() == 1) {
-
-//                     int result = tipoArquivoRepository.ativar_desativarTipoArquivo(0, id);
-
-//                     if (result == 1) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Tipo de arquivo desativado com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao desativar o Tipo de arquivo.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Tipo de arquivo já foi desativado.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Tipo de arquivo não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     @Override
-//     public ResponseDto ativarTipoArquivo(int id) {
-//         ResponseDto response = new ResponseDto();
-
-//         try {
-
-//             if (tipoArquivoRepository.findById(id) != null) {
-
-//                 if (tipoArquivoRepository.findById(id).getEstado() == 0) {
-
-//                     int result = tipoArquivoRepository.ativar_desativarTipoArquivo(1, id);
-
-//                     if (result == 1) {
-//                         response.setResponseCode(1);
-//                         response.setResponseType(ResponseType.Sucesso);
-//                         response.setObject(null);
-//                         response.setMessage(" Tipo de arquivo ativado com sucesso.");
-//                         return response;
-//                     } else {
-//                         response.setResponseCode(0);
-//                         response.setResponseType(ResponseType.Erro);
-//                         response.setObject(null);
-//                         response.setMessage(" Falha ao ativar o Tipo de arquivo.");
-//                         return response;
-//                     }
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Tipo de arquivo já foi ativado.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Tipo de arquivo não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
-
-//     public DominioRepository getTipoArquivoRepository() {
-//         return tipoArquivoRepository;
-//     }
-
-//     public void setTipoArquivoRepository(DominioRepository tipoArquivoRepository) {
-//         this.tipoArquivoRepository = tipoArquivoRepository;
-//     }
-// }
+        for (DominioModel dom : dominio) {
+            if (dominio.stream().filter(
+                    item -> item.getDominio().equals(dom.getDominio()) && item.getValor().equals(dom.getValor()))
+                    .count() > 1) {
+                msg = true;
+            }
+        }
+        return msg;
+    }
+}

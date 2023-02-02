@@ -12,58 +12,55 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_contato")
 public class ContatoModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) do contato")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Schema(description = "O identificador (ID) do objeto")
     @Column(nullable = false)
-    private int id_objeto;
+    private Integer idObjeto;
 
+    @Schema(description = "O tipo do objeto")
     @Column(nullable = false)
-    private String tipo_objeto;
+    private String tipoObjeto;
 
+    @Schema(description = "O valor do contato")
     @Column(unique = true, nullable = false)
     private String valor;
 
+    @Schema(description = "O tipo do contato")
     @ManyToOne
     @JoinColumn(name = "tipo_contato_fk")
     private DominioModel tipo_contato;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
+    private Integer last_user_change;
 
+    @Schema(description = "O estado do contato", hidden = true)
+    private Integer estado;
+
+    @Schema(description = "A data de criação do contato", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização do contato", hidden = true)
     private Date data_atualizacao;
 
     public ContatoModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public int getId_objeto() {
-        return id_objeto;
-    }
-
-    public void setId_objeto(int id_objeto) {
-        this.id_objeto = id_objeto;
-    }
-
-    public String getTipo_objeto() {
-        return tipo_objeto;
-    }
-
-    public void setTipo_objeto(String tipo_objeto) {
-        this.tipo_objeto = tipo_objeto;
     }
 
     public String getValor() {
@@ -82,11 +79,19 @@ public class ContatoModel implements Serializable {
         this.tipo_contato = tipo_contato;
     }
 
-    public int getEstado() {
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -104,5 +109,21 @@ public class ContatoModel implements Serializable {
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public Integer getIdObjeto() {
+        return idObjeto;
+    }
+
+    public void setIdObjeto(Integer idObjeto) {
+        this.idObjeto = idObjeto;
+    }
+
+    public String getTipoObjeto() {
+        return tipoObjeto;
+    }
+
+    public void setTipoObjeto(String tipoObjeto) {
+        this.tipoObjeto = tipoObjeto;
     }
 }

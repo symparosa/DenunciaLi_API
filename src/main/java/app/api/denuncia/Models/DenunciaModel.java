@@ -12,13 +12,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 @Table(name = "dn_t_denuncia")
 public class DenunciaModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "queixa_fk")
@@ -28,7 +30,10 @@ public class DenunciaModel implements Serializable {
     @JoinColumn(name = "denunciante_fk")
     private DenuncianteModel denunciante;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -37,20 +42,12 @@ public class DenunciaModel implements Serializable {
     public DenunciaModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
     }
 
     public QueixaModel getQueixa() {
@@ -67,6 +64,22 @@ public class DenunciaModel implements Serializable {
 
     public void setDenunciante(DenuncianteModel denunciante) {
         this.denunciante = denunciante;
+    }
+
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
     }
 
     public Date getData_criacao() {

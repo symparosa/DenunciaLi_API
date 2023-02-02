@@ -9,8 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "dn_t_denunciante")
@@ -18,7 +21,7 @@ public class DenuncianteModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -38,6 +41,7 @@ public class DenuncianteModel implements Serializable {
     @Column(unique = true, nullable = false)
     private String doc_identificacao;
     
+    @Lob
     private String foto_perfil;
 
     private Date data_nascimento;
@@ -46,9 +50,12 @@ public class DenuncianteModel implements Serializable {
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
+    @Schema(description = "Id do último utilizador a alterar os dados")
+    private Integer last_user_change;
+
     private String localizacao_mapa;
 
-    private int estado;
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -57,11 +64,11 @@ public class DenuncianteModel implements Serializable {
     public DenuncianteModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -137,6 +144,14 @@ public class DenuncianteModel implements Serializable {
         this.localizacao = localizacao;
     }
 
+    public Integer getLast_user_change() {
+        return last_user_change;
+    }
+
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
+    }
+
     public String getLocalizacao_mapa() {
         return localizacao_mapa;
     }
@@ -145,11 +160,11 @@ public class DenuncianteModel implements Serializable {
         this.localizacao_mapa = localizacao_mapa;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 

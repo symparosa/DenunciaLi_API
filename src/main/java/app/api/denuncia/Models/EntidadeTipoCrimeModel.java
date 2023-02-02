@@ -11,39 +11,47 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "dn_t_entidade_tipo_crime")
 public class EntidadeTipoCrimeModel implements Serializable{
     
+    @Schema(description = "O identificador (ID) da entidade e tipo de crime")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Schema(description = "O identificador (ID) da entidade")
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "entidade_fk")
     private EntidadeModel entidade;
 
+    @Schema(description = "O identificador (ID) do tipo de crime")
     @ManyToOne
     @JoinColumn(name = "tipo_crime_fk")
-    private DominioModel tipo_crime;
+    private DominioModel tipoCrime;
 
-    private int estado;
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
+    private Integer last_user_change;
 
+    @Schema(description = "O estado da entidade e tipo de crime", hidden = true)
+    private Integer estado;
+
+    @Schema(description = "A data de criação da entidade e tipo de crime", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização da entidade e tipo de crime", hidden = true)
     private Date data_atualizacao;
 
     public EntidadeTipoCrimeModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -55,19 +63,19 @@ public class EntidadeTipoCrimeModel implements Serializable{
         this.entidade = entidade;
     }
 
-    public DominioModel getTipo_crime() {
-        return tipo_crime;
+    public Integer getLast_user_change() {
+        return last_user_change;
     }
 
-    public void setTipo_crime(DominioModel tipo_crime) {
-        this.tipo_crime = tipo_crime;
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -85,5 +93,13 @@ public class EntidadeTipoCrimeModel implements Serializable{
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public DominioModel getTipoCrime() {
+        return tipoCrime;
+    }
+
+    public void setTipoCrime(DominioModel tipoCrime) {
+        this.tipoCrime = tipoCrime;
     }
 }

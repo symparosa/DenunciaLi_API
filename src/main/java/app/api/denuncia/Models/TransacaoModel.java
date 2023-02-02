@@ -17,7 +17,7 @@ public class TransacaoModel implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "botao_fk")
@@ -25,9 +25,11 @@ public class TransacaoModel implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "tipo_utilizador_fk")
-    private DominioModel tipo_utilizador;
+    private DominioModel tipoUtilizador;
 
-    private int estado;
+    private Integer last_user_change;
+
+    private Integer estado;
 
     private Date data_criacao;
 
@@ -36,11 +38,11 @@ public class TransacaoModel implements Serializable{
     public TransacaoModel() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -52,19 +54,19 @@ public class TransacaoModel implements Serializable{
         this.botao = botao;
     }
 
-    public DominioModel getTipo_utilizador() {
-        return tipo_utilizador;
+    public Integer getLast_user_change() {
+        return last_user_change;
     }
 
-    public void setTipo_utilizador(DominioModel tipo_utilizador) {
-        this.tipo_utilizador = tipo_utilizador;
+    public void setLast_user_change(Integer last_user_change) {
+        this.last_user_change = last_user_change;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
@@ -82,5 +84,13 @@ public class TransacaoModel implements Serializable{
 
     public void setData_atualizacao(Date data_atualizacao) {
         this.data_atualizacao = data_atualizacao;
+    }
+
+    public DominioModel getTipoUtilizador() {
+        return tipoUtilizador;
+    }
+
+    public void setTipoUtilizador(DominioModel tipoUtilizador) {
+        this.tipoUtilizador = tipoUtilizador;
     }
 }
