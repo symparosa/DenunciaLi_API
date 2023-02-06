@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,120 +9,171 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.EntidadeModel;
-import app.api.denuncia.Repositories.DominioRepository;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
-import app.api.denuncia.Repositories.LocalizacaoRepository;
 import app.api.denuncia.Services.EntidadeService;
 
 @Service
 public class EntidadeServiceImpl implements EntidadeService {
 
-    private EntidadeRepository entidadeRepository;
-    private LocalizacaoRepository localizacaoRepository;
-    private DominioRepository dominioRepository;
+    private EntidadeRepository entRepository;
+    private LocalizacaoServiceImpl localServiceImpl;
+    private DominioServiceImpl DominioServiceImpl;
 
-    private Status status = new Status();
-    private Message msg = new Message();
-    private GlobalFunctions gf = new GlobalFunctions();
     private Domain dom = new Domain();
-    
-    public EntidadeServiceImpl(EntidadeRepository entidadeRepository, LocalizacaoRepository localizacaoRepository,
-            DominioRepository dominioRepository) {
-        this.entidadeRepository = entidadeRepository;
-        this.localizacaoRepository = localizacaoRepository;
-        this.dominioRepository = dominioRepository;
+    private Status status = new Status();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
+    private GlobalFunctions gf = new GlobalFunctions();
+
+    public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoServiceImpl localServiceImpl,
+            app.api.denuncia.Services.Implementation.DominioServiceImpl dominioServiceImpl) {
+        this.entRepository = entRepository;
+        this.localServiceImpl = localServiceImpl;
+        DominioServiceImpl = dominioServiceImpl;
     }
 
     @Override
-    public ResponseDto adicionar_atualizar(EntidadeModel entidade) {
+    public ResponseModel adicionar_atualizar(EntidadeModel entidade) {
+
+        gf.clearList(msg);
+
         try {
 
-            String metodo = "salvar";
+            String metodo = "salvar", obj = "Localização";
 
             entidade.setEstado(status.getAtivo());
             entidade.setData_criacao(new Date());
             entidade.setLast_user_change(gf.getId_user_logado());
 
-            if (entidade.getLocalizacao() != null
-                    && localizacaoRepository.existsById(entidade.getLocalizacao().getId())
-                    && entidade.getTipo_entidade() != null
-                            && dominioRepository.existsByIdAndDominio(entidade.getTipo_entidade().getId(), dom.getDomainTipoEntidade())) {
+            if (localServiceImpl.existsLocalizacao(entidade.getLocalizacao())) {
 
-                if (entidade.getId() != null) { // update
+                obj = "Tipo de entidade";
 
-                    if (entidadeRepository.existsById(entidade.getId())) {
+                if (DominioServiceImpl.existsTipo(entidade.getTipo_entidade(), dom.getTipoEntidade())) {
 
-                        if (!entidadeRepository.existsByNomeAndIdNot(entidade.getNome(), entidade.getId())) {
-                            entidade.setData_atualizacao(new Date());
-                            EntidadeModel e = entidadeRepository.save(entidade);
-                            return gf.validateGetSaveMsgWithObj(metodo, e);
-                        } else {
-                            return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                        }
+                    if (entidade.getId() != null) { // update
+
+                        obj = "Entidade";
+
+                        return update(entidade, metodo, obj);
+
                     } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
-                    }
-                } else { // insert
 
-                    if (!entidadeRepository.existsByNome(entidade.getNome())) {
-                        entidade.setData_atualizacao(null);
-                        EntidadeModel e = entidadeRepository.save(entidade);
-                        return gf.validateGetSaveMsgWithObj(metodo, e);
-                    } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
+                        return insert(entidade, metodo);
+
                     }
+                } else {
+                    msg.add(message.getMessage06(obj));
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto alterarEstado(int id, int estado) {
+    public ResponseModel alterarEstado(int id, int estado) {
+
+        gf.clearList(msg);
+
         try {
 
-            if (entidadeRepository.existsById(id)) {
+            String obj = "Entidade";
 
-                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+            if (entRepository.existsById(id)) {
+
+                if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
-                    Integer result = entidadeRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = entRepository.alterarEstado(estado, gf.getId_user_logado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
+
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                    msg.add(message.getMessage07());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto listar() {
+    public ResponseModel listar() {
+
+        gf.clearList(msg);
+
         try {
 
-            if (entidadeRepository.count() > 0) {
+            if (entRepository.count() > 0) {
 
                 String metodo = "listar";
 
-                List<EntidadeModel> lista = entidadeRepository.findByEstadoIn(gf.getStatusAtivoInativo());
+                List<EntidadeModel> lista = entRepository.findByEstadoIn(gf.getStatusAtivoInativo());
                 return gf.validateGetListMsg(metodo, lista);
 
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
+    }
+
+    public ResponseModel insert(EntidadeModel entidade, String metodo) {
+
+        if (!entRepository.existsBySigla(entidade.getSigla())) {
+
+            entidade.setData_atualizacao(null);
+            EntidadeModel e = entRepository.save(entidade);
+            return gf.validateGetSaveMsgWithObj(metodo, e);
+
+        } else {
+            msg.add(message.getMessage03());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public ResponseModel update(EntidadeModel entidade, String metodo, String obj) {
+
+        if (entRepository.existsById(entidade.getId())) {
+
+            if (!entRepository.existsBySiglaAndIdNot(entidade.getSigla(), entidade.getId())) {
+
+                entidade.setData_atualizacao(new Date());
+                EntidadeModel e = entRepository.save(entidade);
+                return gf.validateGetSaveMsgWithObj(metodo, e);
+
+            } else {
+                msg.add(message.getMessage03());
+                return gf.getResponseError(msg);
+            }
+        } else {
+            msg.add(message.getMessage06(obj));
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public Boolean existsEntidade(EntidadeModel ent) {
+
+        if (ent != null && entRepository.existsById(ent.getId())) {
+            return true;
+        }
+        return false;
     }
 }

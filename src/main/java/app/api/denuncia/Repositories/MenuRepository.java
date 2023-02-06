@@ -28,6 +28,6 @@ public interface MenuRepository extends JpaRepository<MenuModel, Integer>{
     + "m.visibilidade, m.titulo, mp.estado as estado_menu_perfil, mp.tipo_utilizador_fk as perfil"
     + " from dbo.dn_t_menu m"
     + " left join dbo.dn_t_menu_perfil mp on m.id = mp.menu_fk"
-    + " where ( mp.estado in :todosEstados or mp.estado is null ) and m.estado in :estadoAtivoInativo and m.visibilidade in :estadoAtivoInativo", nativeQuery = true)
-    List<MenuDto> listarMenuEPerfilAssociado(@Param("todosEstados") List<Integer> todosEstados, @Param("estadoAtivoInativo") List<Integer> estadoAtivoInativo);
+    + " where ( mp.estado in :estadoAtivoInativo or mp.estado is null ) and m.estado in :estadoAtivoInativo and m.visibilidade in :estadoAtivoInativo", nativeQuery = true)
+    List<MenuDto> listarMenuEPerfilAssociado(@Param("estadoAtivoInativo") List<Integer> estadoAtivoInativo);
 }

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.BannerModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.BannerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class BannerController {
     @Operation(tags = {
             "Banner" }, summary = "Adicionar / Atualizar Banner", description = "Adiciona / Atualiza banner no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseDto adicionar_atualizar(@RequestBody BannerModel banner) {
+    public ResponseModel adicionar_atualizar(@RequestBody BannerModel banner) {
         return bannerService.adicionar_atualizar(banner);
     }
 
@@ -37,14 +37,14 @@ public class BannerController {
                     @Parameter(name = "Id", description = "O identificador (ID) do banner"),
                     @Parameter(name = "Estado", description = "O estado do banner") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseDto alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
         return bannerService.alterarEstado(Id, Estado);
     }
 
     @Operation(tags = {
             "Banner" }, summary = "Listar Banners", description = "Lista todos os banners que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseDto listar() {
+    public ResponseModel listar() {
         return bannerService.listar();
     }
 

@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,12 +10,10 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Models.EntidadeTipoCrimeModel;
-import app.api.denuncia.Repositories.DominioRepository;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
 import app.api.denuncia.Repositories.EntidadeTipoCrimeRepository;
 import app.api.denuncia.Services.EntidadeTipoCrimeService;
@@ -23,120 +22,148 @@ import app.api.denuncia.Services.EntidadeTipoCrimeService;
 public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
     private EntidadeTipoCrimeRepository entidadeTipoCrimeRepository;
-    private EntidadeRepository entidadeRepository;
-    private DominioRepository dominioRepository;
+    private EntidadeServiceImpl entServiceImpl;
+    private EntidadeRepository entRepository;
+    private DominioServiceImpl domServiceImpl;
 
+    private Domain dom = new Domain();
     private Status status = new Status();
-    private Message msg = new Message();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    private Domain dom =  new Domain();
 
     public EntidadeTipoCrimeServiceImpl(EntidadeTipoCrimeRepository entidadeTipoCrimeRepository,
-            EntidadeRepository entidadeRepository, DominioRepository dominioRepository) {
+            EntidadeServiceImpl entServiceImpl, EntidadeRepository entRepository, DominioServiceImpl domServiceImpl) {
         this.entidadeTipoCrimeRepository = entidadeTipoCrimeRepository;
-        this.entidadeRepository = entidadeRepository;
-        this.dominioRepository = dominioRepository;
+        this.entServiceImpl = entServiceImpl;
+        this.entRepository = entRepository;
+        this.domServiceImpl = domServiceImpl;
     }
 
     @Override
-    public ResponseDto adicionar_atualizar(List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
+    public ResponseModel adicionar_atualizar(List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
+
+        gf.clearList(msg);
+
         try {
 
             if (entidadeTipoCrime.size() > 0) {
 
                 if (!validateDuplicateData(entidadeTipoCrime)) {
 
-                    String metodo = "salvar";
+                    String metodo = "salvar", obj = "Entidade";
                     int contUpdate = 0, contInsert = 0;
                     boolean update = false, insert = false;
 
                     for (EntidadeTipoCrimeModel ent : entidadeTipoCrime) {
 
-                        if (ent.getEntidade() != null
-                                && entidadeRepository.existsById(ent.getEntidade().getId())
-                                && ent.getTipoCrime() != null
-                                && dominioRepository.existsByIdAndDominio(ent.getTipoCrime().getId(), dom.getDomainTipoCrime())) {
+                        if (entServiceImpl.existsEntidade(ent.getEntidade())) {
 
-                            if (ent.getId() != null) { // update
+                            obj = "Tipo de crime";
 
-                                if (entidadeTipoCrimeRepository.existsById(ent.getId())) {
-                                    update = true;
-                                    if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrimeAndIdNot(
-                                            ent.getEntidade(),
-                                            ent.getTipoCrime(),
-                                            ent.getId())) {
-                                        contUpdate++;
+                            if (domServiceImpl.existsTipo(ent.getTipoCrime(), dom.getTipoCrime())) {
+
+                                if (ent.getId() != null) { // update
+
+                                    obj = "Entidade tipo de crime";
+
+                                    if (entidadeTipoCrimeRepository.existsById(ent.getId())) {
+                                        update = true;
+                                        if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrimeAndIdNot(
+                                                ent.getEntidade(),
+                                                ent.getTipoCrime(),
+                                                ent.getId())) {
+                                            contUpdate++;
+                                        }
+                                        ent.setData_atualizacao(new Date());
+                                    } else {
+                                        msg.add(message.getMessage06(obj));
+                                        return gf.getResponseError(msg);
                                     }
-                                    ent.setData_atualizacao(new Date());
-                                } else {
-                                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                                } else if (ent.getId() == null) { // insert
+                                    insert = true;
+                                    if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrime(ent.getEntidade(),
+                                            ent.getTipoCrime())) {
+                                        contInsert++;
+                                    }
+                                    ent.setData_atualizacao(null);
                                 }
-                            } else if (ent.getId() == null) { // insert
-                                insert = true;
-                                if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrime(ent.getEntidade(),
-                                        ent.getTipoCrime())) {
-                                    contInsert++;
-                                }
-                                ent.setData_atualizacao(null);
+                                ent.setEstado(status.getAtivo());
+                                ent.setData_criacao(new Date());
+                                ent.setLast_user_change(gf.getId_user_logado());
+                            } else {
+                                msg.add(message.getMessage06(obj));
+                                return gf.getResponseError(msg);
                             }
-                            ent.setEstado(status.getAtivo());
-                            ent.setData_criacao(new Date());
-                            ent.setLast_user_change(gf.getId_user_logado());
                         } else {
-                            return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                            msg.add(message.getMessage06(obj));
+                            return gf.getResponseError(msg);
                         }
                     }
 
-                    if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
+                    return saveAll(entidadeTipoCrime, contUpdate, contInsert, insert, update, metodo);
 
-                        List<EntidadeTipoCrimeModel> ent = entidadeTipoCrimeRepository.saveAll(entidadeTipoCrime);
-                        return gf.validateGetSaveMsgWithList(metodo, ent);
-
-                    } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                    }
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage08(), null);
+                    msg.add(message.getMessage08());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto alterarEstado(int id, int estado) {
+    public ResponseModel alterarEstado(int id, int estado) {
+
+        gf.clearList(msg);
+
         try {
+
+            String obj = "Entidade tipo de crime";
+
             if (entidadeTipoCrimeRepository.existsById(id)) {
 
-                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+                if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
                     Integer result = entidadeTipoCrimeRepository.alterarEstado(estado, gf.getId_user_logado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                    msg.add(message.getMessage07());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto getInfoByEntidade(int id) {
+    public ResponseModel getInfoByEntidade(int id) {
+
+        gf.clearList(msg);
+
         try {
 
             if (entidadeTipoCrimeRepository.count() > 0) {
 
-                if (entidadeRepository.existsById(id)) {
+                String obj = "Entidade";
 
-                    Optional<EntidadeModel> entidade = entidadeRepository.findById(id);
+                if (entRepository.existsById(id)) {
+
+                    Optional<EntidadeModel> entidade = entRepository.findById(id);
+
+                    obj = "Entidade tipo de crime";
 
                     if (entidadeTipoCrimeRepository.existsByEntidade(entidade.get())) {
 
@@ -147,16 +174,20 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                         return gf.validateGetListMsg(metodo, lista);
 
                     } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                        msg.add(message.getMessage06(obj));
+                        return gf.getResponseError(msg);
                     }
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                    msg.add(message.getMessage06(obj));
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
@@ -166,12 +197,25 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
         for (EntidadeTipoCrimeModel ent : ent_tc) {
             if (ent_tc.stream().filter(
-                    item -> item.getEntidade().equals(ent.getEntidade())
-                            && item.getTipoCrime().equals(ent.getTipoCrime()))
+                    item -> item.getTipoCrime().getId().equals(ent.getTipoCrime().getId()))
                     .count() > 1) {
                 msg = true;
             }
         }
         return msg;
+    }
+
+    public ResponseModel saveAll(List<EntidadeTipoCrimeModel> entidadeTipoCrime, int contUpdate, int contInsert,
+            boolean insert, boolean update, String metodo) {
+
+        if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
+
+            List<EntidadeTipoCrimeModel> ent = entidadeTipoCrimeRepository.saveAll(entidadeTipoCrime);
+            return gf.validateGetSaveMsgWithList(metodo, ent);
+
+        } else {
+            msg.add(message.getMessage03());
+            return gf.getResponseError(msg);
+        }
     }
 }

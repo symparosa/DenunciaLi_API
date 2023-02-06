@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.DominioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,7 +30,7 @@ public class DominioController {
     @Operation(tags = {
             "Domínio" }, summary = "Adicionar / Atualizar Domínio", description = "Adiciona / Atualiza domínios no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseDto adicionar_atualizar(@RequestBody List<DominioModel> dominios) {
+    public ResponseModel adicionar_atualizar(@RequestBody List<DominioModel> dominios) {
         return dominioservice.adicionar_atualizar(dominios);
     }
 
@@ -39,14 +39,14 @@ public class DominioController {
                     @Parameter(name = "Id", description = "O identificador (ID) do domínio"),
                     @Parameter(name = "Estado", description = "O estado do domínio") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseDto alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
         return dominioservice.alterarEstado(Id, Estado);
     }
 
     @Operation(tags = {
             "Domínio" }, summary = "Listar Domínios", description = "Lista todos os domínios que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseDto listar() {
+    public ResponseModel listar() {
         return dominioservice.listar();
     }
 
@@ -54,7 +54,7 @@ public class DominioController {
             "Domínio" }, summary = "Get Domínio", description = "Lista todos os dados a partir do domínio.", parameters = {
                     @Parameter(name = "Dominio", description = "O domínio que se quer obter os dados") })
     @GetMapping(path = "/getDominio")
-    public ResponseDto getDominio(@RequestParam(required = true) String Dominio) {
+    public ResponseModel getDominio(@RequestParam(required = true) String Dominio) {
         return dominioservice.getDominio(Dominio);
     }
 }

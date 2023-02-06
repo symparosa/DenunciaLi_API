@@ -1,13 +1,13 @@
 package app.api.denuncia.Services;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.EntidadeModel;
+import app.api.denuncia.Models.ResponseModel;
 
 public interface EntidadeService {
     
-    ResponseDto adicionar_atualizar(EntidadeModel entidade);
+    ResponseModel adicionar_atualizar(EntidadeModel entidade);
 
-    ResponseDto alterarEstado(int id, int estado);
+    ResponseModel alterarEstado(int id, int estado);
 
-    ResponseDto listar();
+    ResponseModel listar();
 }

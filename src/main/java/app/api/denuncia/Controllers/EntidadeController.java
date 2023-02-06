@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.EntidadeModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EntidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class EntidadeController {
     @Operation(tags = {
             "Entidade" }, summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseDto adicionar_atualizar(@RequestBody EntidadeModel entidade) {
+    public ResponseModel adicionar_atualizar(@RequestBody EntidadeModel entidade) {
         return entidadeService.adicionar_atualizar(entidade);
     }
 
@@ -37,14 +37,14 @@ public class EntidadeController {
                     @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
                     @Parameter(name = "Estado", description = "O estado da entidade") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseDto alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
         return entidadeService.alterarEstado(Id, Estado);
     }
 
     @Operation(tags = {
             "Entidade" }, summary = "Listar Entidades", description = "Lista todas as entidades que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseDto listar() {
+    public ResponseModel listar() {
         return entidadeService.listar();
     }
 }

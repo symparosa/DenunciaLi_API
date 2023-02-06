@@ -9,15 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import app.api.denuncia.Models.UtilizadorBackofficeModel;
+import app.api.denuncia.Models.UtilizadorModel;
 
 @Repository
 @Transactional
-public interface UtilizadorBackofficeRepository extends JpaRepository<UtilizadorBackofficeModel, Integer>{
+public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Integer>{
     
     Boolean existsByUsername(String username);
 
-    List<UtilizadorBackofficeModel> findByEstadoIn(List<Integer> estados);
+    List<UtilizadorModel> findByEstadoIn(List<Integer> estados);
 
     Boolean existsByUsernameAndIdNot(String username, int id);
 

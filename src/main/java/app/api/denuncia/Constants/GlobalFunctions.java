@@ -3,17 +3,17 @@ package app.api.denuncia.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
-
+import app.api.denuncia.Models.ResponseModel;
 public class GlobalFunctions {
 
-    private Message msg = new Message();
+    private Message message = new Message();
     private Status status = new Status();
     private final int id_user_logado = 9362;
+    private List<String> msg = new ArrayList<>();
 
-    public ResponseDto getResponse(int code, ResponseType type, String msg, Object obj) {
+    public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
-        ResponseDto response = new ResponseDto();
+        ResponseModel response = new ResponseModel();
 
         response.setResponseCode(code);
         response.setResponseType(type);
@@ -23,42 +23,72 @@ public class GlobalFunctions {
         return response;
     }
 
-    public ResponseDto validateGetUpdateMsg(String metodo, Integer result) {
+    public ResponseModel getResponseError(List<String> listMsg) {
+        return getResponse(0, ResponseType.Erro, listMsg, null);
+    }
+
+    public ResponseModel validateGetUpdateMsg(String metodo, Integer result) {
+
         if (result != null) {
-            return getResponse(1, ResponseType.Sucesso, msg.getMessage01(metodo), null);
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, null);
+
         } else {
-            return getResponse(0, ResponseType.Erro, msg.getMessage02(metodo), null);
+
+            msg.add(message.getMessage02(metodo));
+            return getResponseError(msg);
         }
     }
 
-    public ResponseDto validateGetSaveMsgWithList(String metodo, List<?> lista) {
+    public ResponseModel validateGetSaveMsgWithList(String metodo, List<?> lista) {
+
         if (lista != null) {
-            return getResponse(1, ResponseType.Sucesso, msg.getMessage01(metodo), lista);
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, lista);
+
         } else {
-            return getResponse(0, ResponseType.Erro, msg.getMessage02(metodo), null);
+
+            msg.add(message.getMessage02(metodo));
+            return getResponseError(msg);
         }
     }
 
-    public ResponseDto validateGetSaveMsgWithObj(String metodo, Object obj) {
+    public ResponseModel validateGetSaveMsgWithObj(String metodo, Object obj) {
+
         if (obj != null) {
-            return getResponse(1, ResponseType.Sucesso, msg.getMessage01(metodo), obj);
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, obj);
+
         } else {
-            return getResponse(0, ResponseType.Erro, msg.getMessage02(metodo), null);
+            msg.add(message.getMessage02(metodo));
+            return getResponseError(msg);
         }
     }
 
-    public ResponseDto validateGetListMsg(String metodo, List<?> lista) {
+    public ResponseModel validateGetListMsg(String metodo, List<?> lista) {
+
         if (lista != null && !lista.isEmpty()) {
-            return getResponse(1, ResponseType.Sucesso, msg.getMessage01(metodo), lista);
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, lista);
+
         } else if (lista == null) {
-            return getResponse(0, ResponseType.Erro, msg.getMessage02(metodo), null);
+
+            msg.add(message.getMessage02(metodo));
+            return getResponseError(msg);
+
         } else {
-            return getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+
+            msg.add(message.getMessage05());
+            return getResponseError(msg);
         }
     }
 
     public List<Integer> getStatusAtivoInativo() {
-        
+
         List<Integer> estados = new ArrayList<>();
         estados.add(status.getInativo());
         estados.add(status.getAtivo());
@@ -66,17 +96,22 @@ public class GlobalFunctions {
         return estados;
     }
 
-    public List<Integer> getTodosStatus() {
-        
-        List<Integer> estados = new ArrayList<>();
-        estados.add(status.getInativo());
-        estados.add(status.getAtivo());
-        estados.add(status.getEliminado());
+    public Boolean validateStatus(int estado) {
 
-        return estados;
+        if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+            return true;
+        }
+        return false;
     }
 
     public int getId_user_logado() {
         return id_user_logado;
+    }
+
+    public void clearList(List<String> msg) {
+
+        if (!msg.isEmpty()) {
+            msg.clear();
+        }
     }
 }

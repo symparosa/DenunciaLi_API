@@ -15,13 +15,13 @@ import app.api.denuncia.Models.ContatoModel;
 @Transactional
 public interface ContatoRepository extends JpaRepository<ContatoModel, Integer> {
 
-    Boolean existsByIdObjeto(int id);
+    Boolean existsByIdObjetoAndTipoObjeto(int id_obj, String tipo_obj);
 
     Boolean existsByValor(String valor);
 
     Boolean existsByValorAndIdNot(String valor, int id);
 
-    List<ContatoModel> findByIdObjetoAndEstadoIn(int id, List<Integer> estados);
+    List<ContatoModel> findByIdObjetoAndTipoObjetoAndEstadoIn(int id_obj, String tipo_obj, List<Integer> estados);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_contato SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id=:id", nativeQuery = true)

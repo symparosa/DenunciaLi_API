@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.BotaoModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.BotaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class BotaoController {
     @Operation(tags = {
             "Botão" }, summary = "Adicionar / Atualizar Botão", description = "Adiciona / Atualiza botão no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseDto adicionar_atualizar(@RequestBody BotaoModel botao) {
+    public ResponseModel adicionar_atualizar(@RequestBody BotaoModel botao) {
         return botaoService.adicionar_atualizar(botao);
     }
 
@@ -37,14 +37,14 @@ public class BotaoController {
                     @Parameter(name = "Id", description = "O identificador (ID) do botão"),
                     @Parameter(name = "Estado", description = "O estado do botão") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseDto alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
         return botaoService.alterarEstado(Id, Estado);
     }
 
     @Operation(tags = {
             "Botão" }, summary = "Listar Botões", description = "Lista todos os botões que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseDto listar() {
+    public ResponseModel listar() {
         return botaoService.listar();
     }
 }

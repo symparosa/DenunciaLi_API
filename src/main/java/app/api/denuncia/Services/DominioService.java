@@ -2,16 +2,16 @@ package app.api.denuncia.Services;
 
 import java.util.List;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Models.ResponseModel;
 
 public interface DominioService {
 
-    ResponseDto adicionar_atualizar(List<DominioModel> dominio);
+    ResponseModel adicionar_atualizar(List<DominioModel> dominio);
 
-    ResponseDto alterarEstado(int id, int estado);
+    ResponseModel alterarEstado(int id, int estado);
 
-    ResponseDto listar();
+    ResponseModel listar();
 
-    ResponseDto getDominio(String dominio);
+    ResponseModel getDominio(String dominio);
 }

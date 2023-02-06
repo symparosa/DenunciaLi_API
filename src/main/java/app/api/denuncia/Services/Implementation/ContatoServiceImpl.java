@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,147 +9,177 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.ContatoModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
 import app.api.denuncia.Repositories.ContatoRepository;
 import app.api.denuncia.Repositories.DenuncianteRepository;
-import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.EntidadeRepository;
-import app.api.denuncia.Repositories.UtilizadorBackofficeRepository;
+import app.api.denuncia.Repositories.UtilizadorRepository;
 
 @Service
 public class ContatoServiceImpl implements ContatoService {
 
     private ContatoRepository contatoRepository;
-    private DominioRepository dominioRepository;
+    private DominioServiceImpl domServiceImpl;
     private EntidadeRepository entidadeRepository;
     private DenuncianteRepository denuncianteRepository;
-    private UtilizadorBackofficeRepository utilizadorBackofficeRepository;
-    
+    private UtilizadorRepository utilizadorBackofficeRepository;
 
+    private Domain dom = new Domain();
     private Status status = new Status();
-    private Message msg = new Message();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    private Domain dom =  new Domain();
 
-    public ContatoServiceImpl(ContatoRepository contatoRepository, DominioRepository dominioRepository,
-            EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository) {
+    public ContatoServiceImpl(ContatoRepository contatoRepository, DominioServiceImpl domServiceImpl,
+            EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository,
+            UtilizadorRepository utilizadorBackofficeRepository) {
         this.contatoRepository = contatoRepository;
-        this.dominioRepository = dominioRepository;
+        this.domServiceImpl = domServiceImpl;
         this.entidadeRepository = entidadeRepository;
         this.denuncianteRepository = denuncianteRepository;
+        this.utilizadorBackofficeRepository = utilizadorBackofficeRepository;
     }
 
     @Override
-    public ResponseDto adicionar_atualizar(List<ContatoModel> contatoModels) {
-        try {
+    public ResponseModel adicionar_atualizar(List<ContatoModel> contatoModels) {
 
+        gf.clearList(msg);
+
+        try {
             if (contatoModels.size() > 0) {
 
                 if (!validateDuplicateData(contatoModels)) {
 
-                    String metodo = "salvar";
-                    int contUpdate = 0, contInsert = 0;
-                    boolean update = false, insert = false;
+                    String metodo = "salvar", obj = "Tipo de contato";
 
                     for (ContatoModel contato : contatoModels) {
 
-                        if (contato.getTipo_contato() != null
-                                && dominioRepository.existsByIdAndDominio(contato.getTipo_contato().getId(), dom.getDomainTipoContato())
-                                && contato.getIdObjeto() != null
-                                && validateIdObjeto(contato.getIdObjeto(), contato.getTipoObjeto())) {
+                        if (domServiceImpl.existsTipo(contato.getTipo_contato(), dom.getTipoContato())) {
 
-                            if (contato.getId() != null) { // update
+                            obj = "Id Objeto";
 
-                                if (contatoRepository.existsById(contato.getId())) {
-                                    update = true;
-                                    if (contatoRepository.existsByValorAndIdNot(contato.getValor(), contato.getId())) {
-                                        contUpdate++;
+                            if (contato.getIdObjeto() != null
+                                    && validateIdObjeto(contato.getIdObjeto(), contato.getTipoObjeto())) {
+
+                                if (!contato.getValor().equals("") && !contato.getValor().equals(null)) {
+
+                                    if (contato.getId() != null) { // update
+
+                                        obj = "Contato";
+
+                                        if (contatoRepository.existsById(contato.getId())) {
+                                            contato.setData_atualizacao(new Date());
+                                        } else {
+                                            msg.add(message.getMessage06(obj));
+                                            return gf.getResponseError(msg);
+                                        }
+                                    } else if (contato.getId() == null) { // insert
+                                        contato.setData_atualizacao(null);
                                     }
-                                    contato.setData_atualizacao(new Date());
+                                    contato.setEstado(status.getAtivo());
+                                    contato.setData_criacao(new Date());
+                                    contato.setLast_user_change(gf.getId_user_logado());
+                                    contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                 } else {
-                                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                                    msg.add(message.getMessage09("valor"));
+                                    return gf.getResponseError(msg);
                                 }
-                            } else if (contato.getId() == null) { // insert
-                                insert = true;
-                                if (contatoRepository.existsByValor(contato.getValor())) {
-                                    contInsert++;
-                                }
-                                contato.setData_atualizacao(null);
+                            } else {
+                                msg.add(message.getMessage06(obj));
+                                return gf.getResponseError(msg);
                             }
-                            contato.setEstado(status.getAtivo());
-                            contato.setData_criacao(new Date());
-                            contato.setLast_user_change(gf.getId_user_logado());
                         } else {
-                            return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                            msg.add(message.getMessage06(obj));
+                            return gf.getResponseError(msg);
                         }
                     }
 
-                    if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
+                    List<ContatoModel> cont = contatoRepository.saveAll(contatoModels);
+                    return gf.validateGetSaveMsgWithList(metodo, cont);
 
-                        List<ContatoModel> cont = contatoRepository.saveAll(contatoModels);
-                        return gf.validateGetSaveMsgWithList(metodo, cont);
-
-                    } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                    }
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage08(), null);
+                    msg.add(message.getMessage08());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
-        } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+        } catch (
+
+        Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto alterarEstado(int id, int estado) {
+    public ResponseModel alterarEstado(int id, int estado) {
+
+        gf.clearList(msg);
+
         try {
+
+            String obj = "Contato";
+
             if (contatoRepository.existsById(id)) {
 
-                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+                if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
                     Integer result = contatoRepository.alterarEstado(estado, gf.getId_user_logado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
+
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                    msg.add(message.getMessage07());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto getInfoByIdObjeto(int id) {
+    public ResponseModel getInfoByIdObjeto(int id_obj, String tipo_obj) {
+
+        gf.clearList(msg);
+
         try {
+
+            String obj = "Contato";
+            String tipo_objeto = "dn_t_" + tipo_obj;
 
             if (contatoRepository.count() > 0) {
 
-                if (contatoRepository.existsByIdObjeto(id)) {
+                if (contatoRepository.existsByIdObjetoAndTipoObjeto(id_obj, tipo_objeto)) {
 
                     String metodo = "listar";
 
-                    List<ContatoModel> lista = contatoRepository.findByIdObjetoAndEstadoIn(id, gf.getStatusAtivoInativo());
+                    List<ContatoModel> lista = contatoRepository.findByIdObjetoAndTipoObjetoAndEstadoIn(id_obj,
+                            tipo_objeto,
+                            gf.getStatusAtivoInativo());
                     return gf.validateGetListMsg(metodo, lista);
 
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                    msg.add(message.getMessage06(obj));
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
@@ -169,8 +200,9 @@ public class ContatoServiceImpl implements ContatoService {
     public Boolean validateIdObjeto(int id_objeto, String tipo_objeto) {
 
         boolean msg = false;
+        String tipo_obj = "dn_t_" + tipo_objeto;
 
-        switch (tipo_objeto) {
+        switch (tipo_obj) {
             case "dn_t_entidade":
                 if (entidadeRepository.existsById(id_objeto)) {
                     msg = true;

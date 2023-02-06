@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,27 +8,32 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.GlobalFunctions;
-import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Services.DominioService;
 
 @Service
 public class DominioServiceImpl implements DominioService {
 
-    private DominioRepository dominioRepository;
+    private DominioRepository domRepository;
+
+    private String obj = "dominio";
     private Status status = new Status();
-    private Message msg = new Message();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public DominioServiceImpl(DominioRepository dominioRepository) {
-        this.dominioRepository = dominioRepository;
+    public DominioServiceImpl(DominioRepository domRepository) {
+        this.domRepository = domRepository;
     }
 
     @Override
-    public ResponseDto adicionar_atualizar(List<DominioModel> dominio) {
+    public ResponseModel adicionar_atualizar(List<DominioModel> dominio) {
+
+        gf.clearList(msg);
+
         try {
 
             if (dominio.size() > 0) {
@@ -42,19 +48,20 @@ public class DominioServiceImpl implements DominioService {
 
                         if (dom.getId() != null) { // update
 
-                            if (dominioRepository.existsById(dom.getId())) {
+                            if (domRepository.existsById(dom.getId())) {
                                 update = true;
-                                if (dominioRepository.existsByDominioAndValorAndIdNot(dom.getDominio(), dom.getValor(),
+                                if (domRepository.existsByDominioAndValorAndIdNot(dom.getDominio(), dom.getValor(),
                                         dom.getId())) {
                                     contUpdate++;
                                 }
                                 dom.setData_atualizacao(new Date());
                             } else {
-                                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                                msg.add(message.getMessage06(obj));
+                                return gf.getResponseError(msg);
                             }
                         } else if (dom.getId() == null) { // insert
                             insert = true;
-                            if (dominioRepository.existsByDominioAndValor(dom.getDominio(), dom.getValor())) {
+                            if (domRepository.existsByDominioAndValor(dom.getDominio(), dom.getValor())) {
                                 contInsert++;
                             }
                             dom.setData_atualizacao(null);
@@ -64,83 +71,98 @@ public class DominioServiceImpl implements DominioService {
                         dom.setLast_user_change(gf.getId_user_logado());
                     }
 
-                    if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
+                    return saveAll(dominio, contUpdate, contInsert, insert, update, metodo);
 
-                        List<DominioModel> dom = dominioRepository.saveAll(dominio);
-                        return gf.validateGetSaveMsgWithList(metodo, dom);
-
-                    } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                    }
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage08(), null);
+                    msg.add(message.getMessage08());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto alterarEstado(int id, int estado) {
+    public ResponseModel alterarEstado(int id, int estado) {
+
+        gf.clearList(msg);
+
         try {
 
-            if (dominioRepository.existsById(id)) {
+            if (domRepository.existsById(id)) {
 
-                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+                if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
-                    Integer result = dominioRepository.alterarEstado(estado,gf.getId_user_logado(), id);
+                    Integer result = domRepository.alterarEstado(estado, gf.getId_user_logado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
+
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                    msg.add(message.getMessage07());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto listar() {
+    public ResponseModel listar() {
+
+        gf.clearList(msg);
+
         try {
 
-            if (dominioRepository.count() > 0) {
+            if (domRepository.count() > 0) {
 
                 String metodo = "listar";
 
-                List<DominioModel> listaDom = dominioRepository.findByEstadoIn(gf.getStatusAtivoInativo());
+                List<DominioModel> listaDom = domRepository.findByEstadoIn(gf.getStatusAtivoInativo());
                 return gf.validateGetListMsg(metodo, listaDom);
 
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto getDominio(String dominio) {
+    public ResponseModel getDominio(String dominio) {
+
+        gf.clearList(msg);
+
         try {
 
-            if (dominioRepository.existsByDominio(dominio)) {
+            if (domRepository.existsByDominio(dominio)) {
 
                 String metodo = "listar";
 
-                List<DominioModel> listaDom = dominioRepository.findByDominioAndEstadoIn(dominio, gf.getStatusAtivoInativo());
+                List<DominioModel> listaDom = domRepository.findByDominioAndEstadoIn(dominio,
+                        gf.getStatusAtivoInativo());
                 return gf.validateGetListMsg(metodo, listaDom);
 
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
@@ -156,5 +178,27 @@ public class DominioServiceImpl implements DominioService {
             }
         }
         return msg;
+    }
+
+    public ResponseModel saveAll(List<DominioModel> dominio, int contUpdate, int contInsert, boolean insert,
+            boolean update, String metodo) {
+
+        if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
+
+            List<DominioModel> dom = domRepository.saveAll(dominio);
+            return gf.validateGetSaveMsgWithList(metodo, dom);
+
+        } else {
+            msg.add(message.getMessage03());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public Boolean existsTipo(DominioModel tipo, String dom) {
+
+        if (tipo != null && domRepository.existsByIdAndDominio(tipo.getId(), dom)) {
+            return true;
+        }
+        return false;
     }
 }

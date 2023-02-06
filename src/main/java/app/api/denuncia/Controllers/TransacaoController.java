@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.TransacaoService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class TransacaoController {
                     @Parameter(name = "IdPerfil", description = "O identificador (ID) do perfil"),
                     @Parameter(name = "Estado", description = "O estado de permissão") })
     @PutMapping(path = "/alterarPermissao")
-    public ResponseDto alterarPermissao(
+    public ResponseModel alterarPermissao(
             @RequestParam(required = true) int IdBotao,
             @RequestParam(required = true) int IdPerfil,
             @RequestParam(required = true) int Estado) {

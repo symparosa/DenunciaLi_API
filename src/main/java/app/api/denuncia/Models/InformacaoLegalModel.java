@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -18,16 +19,21 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "dn_t_reprocessamento")
-public class ReprocessamentoModel implements Serializable {
+@Table(name = "dn_t_informacao_legal")
+public class InformacaoLegalModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String titulo;
+
+    @Lob
+    private String descricao;
+
     @ManyToOne
-    @JoinColumn(name = "denuncia_fk")
-    private DenunciaModel denuncia;
+    @JoinColumn(name = "tipo_informacao_legal_fk")
+    private DominioModel tipoInformacaoLegal;
 
     @Schema(description = "Id do último utilizador a alterar os dados")
     private Integer last_user_change;

@@ -14,11 +14,11 @@ import app.api.denuncia.Models.EntidadeModel;
 @Transactional
 public interface EntidadeRepository extends JpaRepository<EntidadeModel, Integer>{
     
-    Boolean existsByNome(String nome);
+    Boolean existsBySigla(String sigla);
 
     List<EntidadeModel> findByEstadoIn(List<Integer> estados);
 
-    Boolean  existsByNomeAndIdNot(String nome, Integer id);
+    Boolean  existsBySiglaAndIdNot(String sigla, Integer id);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_entidade SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)

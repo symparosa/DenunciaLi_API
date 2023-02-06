@@ -2,14 +2,14 @@ package app.api.denuncia.Services;
 
 import java.util.List;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.ContatoModel;
+import app.api.denuncia.Models.ResponseModel;
 
 public interface ContatoService {
 
-    ResponseDto adicionar_atualizar(List<ContatoModel> contatoModels);
+    ResponseModel adicionar_atualizar(List<ContatoModel> contatoModels);
 
-    ResponseDto alterarEstado(int id, int estado);
+    ResponseModel alterarEstado(int id, int estado);
 
-    ResponseDto getInfoByIdObjeto(int id);
+    ResponseModel getInfoByIdObjeto(int id_obj, String tipo_obj);
 }

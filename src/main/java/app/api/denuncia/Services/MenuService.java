@@ -1,13 +1,13 @@
 package app.api.denuncia.Services;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.MenuModel;
+import app.api.denuncia.Models.ResponseModel;
 
 public interface MenuService {
 
-    ResponseDto adicionar_atualizar(MenuModel menu);
+    ResponseModel adicionar_atualizar(MenuModel menu);
 
-    ResponseDto alterarEstado(int id, int estado);
+    ResponseModel alterarEstado(int id, int estado);
 
-    ResponseDto listar();
+    ResponseModel listar();
 }

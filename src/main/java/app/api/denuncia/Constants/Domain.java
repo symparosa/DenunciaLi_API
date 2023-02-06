@@ -1,28 +1,14 @@
 package app.api.denuncia.Constants;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class Domain {
 
-    private final String DomainTipoCrime = "TIPO_CRIME";
-    private final String DomainTipoUtilizador = "TIPO_UTILIZADOR";
-    private final String DomainTipoEntidade = "TIPO_ENTIDADE";
-    private final String DomainTipoContato = "TIPO_CONTATO";
-
-    public Domain() {
-    }
-
-    public String getDomainTipoCrime() {
-        return DomainTipoCrime;
-    }
-
-    public String getDomainTipoUtilizador() {
-        return DomainTipoUtilizador;
-    }
-
-    public String getDomainTipoEntidade() {
-        return DomainTipoEntidade;
-    }
-
-    public String getDomainTipoContato() {
-        return DomainTipoContato;
-    }
+    private final String TipoCrime = "TIPO_CRIME";
+    private final String TipoUser = "TIPO_UTILIZADOR";
+    private final String TipoEntidade = "TIPO_ENTIDADE";
+    private final String TipoContato = "TIPO_CONTATO";
 }

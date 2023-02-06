@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,11 +8,10 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.MenuDto;
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.MenuModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.MenuRepository;
 import app.api.denuncia.Services.MenuService;
 
@@ -19,8 +19,11 @@ import app.api.denuncia.Services.MenuService;
 public class MenuServiceImpl implements MenuService {
 
     private MenuRepository menuRepository;
+
+    private String obj = "menu";
     private Status status = new Status();
-    private Message msg = new Message();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
     public MenuServiceImpl(MenuRepository menuRepository) {
@@ -28,7 +31,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseDto adicionar_atualizar(MenuModel menu) {
+    public ResponseModel adicionar_atualizar(MenuModel menu) {
+
+        gf.clearList(msg);
+
         try {
 
             String metodo = "salvar";
@@ -37,74 +43,105 @@ public class MenuServiceImpl implements MenuService {
             menu.setData_criacao(new Date());
             menu.setLast_user_change(gf.getId_user_logado());
 
-            if (menu.getId() != null) { // update
+            if (menu.getId() != null) {
 
-                if (menuRepository.existsById(menu.getId())) {
+                return update(menu, metodo);
 
-                    if (!menuRepository.existsByCodigoAndIdNot(menu.getCodigo(), menu.getId())) {
-                        menu.setData_atualizacao(new Date());
-                        MenuModel men = menuRepository.save(menu);
-                        return gf.validateGetSaveMsgWithObj(metodo, men);
-                    } else {
-                        return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                    }
-                } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
-                }
-            } else { // insert
+            } else {
 
-                if (!menuRepository.existsByCodigo(menu.getCodigo())) {
-                    menu.setData_atualizacao(null);
-                    MenuModel men = menuRepository.save(menu);
-                    return gf.validateGetSaveMsgWithObj(metodo, men);
-                } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage03(), null);
-                }
+                return insert(menu, metodo);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto alterarEstado(int id, int estado) {
+    public ResponseModel alterarEstado(int id, int estado) {
+
+        gf.clearList(msg);
+
         try {
 
             if (menuRepository.existsById(id)) {
 
-                if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+                if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
-                    Integer result = menuRepository.alterarEstado(estado,gf.getId_user_logado(), id);
+                    Integer result = menuRepository.alterarEstado(estado, gf.getId_user_logado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
-                    return gf.getResponse(0, ResponseType.Erro, msg.getMessage07(), null);
+                    msg.add(message.getMessage07());
+                    return gf.getResponseError(msg);
                 }
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage06(), null);
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
     @Override
-    public ResponseDto listar() {
+    public ResponseModel listar() {
+
+        gf.clearList(msg);
+
         try {
 
             if (menuRepository.count() > 0) {
 
                 String metodo = "listar";
 
-                List<MenuDto> lista = menuRepository.listarMenuEPerfilAssociado(gf.getTodosStatus(), gf.getStatusAtivoInativo());
+                List<MenuDto> lista = menuRepository.listarMenuEPerfilAssociado(gf.getStatusAtivoInativo());
                 return gf.validateGetListMsg(metodo, lista);
 
             } else {
-                return gf.getResponse(0, ResponseType.Erro, msg.getMessage05(), null);
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
             }
         } catch (Exception e) {
-            return gf.getResponse(0, ResponseType.Erro, msg.getMessage04(), null);
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public ResponseModel insert(MenuModel menu, String metodo) {
+
+        if (!menuRepository.existsByCodigo(menu.getCodigo())) {
+
+            menu.setData_atualizacao(null);
+            MenuModel men = menuRepository.save(menu);
+            return gf.validateGetSaveMsgWithObj(metodo, men);
+
+        } else {
+            msg.add(message.getMessage03());
+            return gf.getResponseError(msg);
+        }
+
+    }
+
+    public ResponseModel update(MenuModel menu, String metodo) {
+
+        if (menuRepository.existsById(menu.getId())) {
+
+            if (!menuRepository.existsByCodigoAndIdNot(menu.getCodigo(), menu.getId())) {
+
+                menu.setData_atualizacao(new Date());
+                MenuModel men = menuRepository.save(menu);
+                return gf.validateGetSaveMsgWithObj(metodo, men);
+
+            } else {
+                msg.add(message.getMessage03());
+                return gf.getResponseError(msg);
+            }
+        } else {
+            msg.add(message.getMessage06(obj));
+            return gf.getResponseError(msg);
         }
     }
 }

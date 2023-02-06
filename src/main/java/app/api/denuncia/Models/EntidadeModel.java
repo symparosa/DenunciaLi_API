@@ -13,9 +13,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "dn_t_entidade")
 public class EntidadeModel implements Serializable {
@@ -29,11 +32,11 @@ public class EntidadeModel implements Serializable {
     @Column(unique = true, nullable = false)
     private String nome;
 
-    @Schema(description = "A porta da entidade")
-    private String porta;
+    @Schema(description = "A referencia_morada da entidade")
+    private String referencia_morada;
 
-    @Schema(description = "A rua da entidade")
-    private String rua;
+    @Schema(description = "A codigo_postal da entidade")
+    private String codigo_postal;
 
     @Schema(description = "A imagem da entidade")
     @Lob
@@ -59,7 +62,7 @@ public class EntidadeModel implements Serializable {
 
     @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
     private Integer last_user_change;
-    
+
     @Schema(description = "O estado da entidade", hidden = true)
     private Integer estado;
 
@@ -68,111 +71,4 @@ public class EntidadeModel implements Serializable {
 
     @Schema(description = "A data de atualização da entidade", hidden = true)
     private Date data_atualizacao;
-
-    public EntidadeModel() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getPorta() {
-        return porta;
-    }
-
-    public void setPorta(String porta) {
-        this.porta = porta;
-    }
-
-    public String getRua() {
-        return rua;
-    }
-
-    public void setRua(String rua) {
-        this.rua = rua;
-    }
-
-    public String getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
-    }
-
-    public String getSigla() {
-        return sigla;
-    }
-
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public LocalizacaoModel getLocalizacao() {
-        return localizacao;
-    }
-
-    public void setLocalizacao(LocalizacaoModel localizacao) {
-        this.localizacao = localizacao;
-    }
-
-    public DominioModel getTipo_entidade() {
-        return tipo_entidade;
-    }
-
-    public void setTipo_entidade(DominioModel tipo_entidade) {
-        this.tipo_entidade = tipo_entidade;
-    }
-
-    public Integer getLast_user_change() {
-        return last_user_change;
-    }
-
-    public void setLast_user_change(Integer last_user_change) {
-        this.last_user_change = last_user_change;
-    }
-
-    public Integer getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Integer estado) {
-        this.estado = estado;
-    }
-
-    public Date getData_criacao() {
-        return data_criacao;
-    }
-
-    public void setData_criacao(Date data_criacao) {
-        this.data_criacao = data_criacao;
-    }
-
-    public Date getData_atualizacao() {
-        return data_atualizacao;
-    }
-
-    public void setData_atualizacao(Date data_atualizacao) {
-        this.data_atualizacao = data_atualizacao;
-    }
 }

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Dto.Response.ResponseDto;
 import app.api.denuncia.Models.MenuModel;
+import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class MenuController {
     @Operation(tags = {
             "Menu" }, summary = "Adicionar / Atualizar Menu", description = "Adiciona / Atualiza menu no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseDto adicionar_atualizar(@RequestBody MenuModel menu) {
+    public ResponseModel adicionar_atualizar(@RequestBody MenuModel menu) {
         return menuService.adicionar_atualizar(menu);
     }
 
@@ -37,14 +37,14 @@ public class MenuController {
                     @Parameter(name = "Id", description = "O identificador (ID) do menu"),
                     @Parameter(name = "Estado", description = "O estado do menu") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseDto alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
         return menuService.alterarEstado(Id, Estado);
     }
 
     @Operation(tags = {
             "Menu" }, summary = "Listar Menus", description = "Lista todos os menus e os perfis associados ao mesmo.")
     @GetMapping(path = "/listar")
-    public ResponseDto listar() {
+    public ResponseModel listar() {
         return menuService.listar();
     }
 }
