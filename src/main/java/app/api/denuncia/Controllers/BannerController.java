@@ -37,7 +37,8 @@ public class BannerController {
                     @Parameter(name = "Id", description = "O identificador (ID) do banner"),
                     @Parameter(name = "Estado", description = "O estado do banner") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
+    public ResponseModel alterarEstado(@RequestParam(required = true) int Id,
+            @RequestParam(required = true) int Estado) {
         return bannerService.alterarEstado(Id, Estado);
     }
 

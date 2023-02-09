@@ -19,7 +19,7 @@ public class BannerServiceImpl implements BannerService {
 
     private BannerRepository bannerRepository;
 
-    private String obj = "banner";
+    private String obj = "Banner";
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
@@ -120,6 +120,8 @@ public class BannerServiceImpl implements BannerService {
     }
 
     public ResponseModel update(BannerModel banner, String metodo) {
+
+        gf.clearList(msg);
 
         if (bannerRepository.existsById(banner.getId())) {
 

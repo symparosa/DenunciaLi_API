@@ -1,14 +1,19 @@
 package app.api.denuncia.Constants;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 import app.api.denuncia.Models.ResponseModel;
+
 public class GlobalFunctions {
 
     private Message message = new Message();
     private Status status = new Status();
     private final int id_user_logado = 9362;
+    private final String username ="symparosa@gmail.com";
     private List<String> msg = new ArrayList<>();
 
     public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
@@ -29,6 +34,8 @@ public class GlobalFunctions {
 
     public ResponseModel validateGetUpdateMsg(String metodo, Integer result) {
 
+        clearList(msg);
+
         if (result != null) {
 
             msg.add(message.getMessage01(metodo));
@@ -42,6 +49,8 @@ public class GlobalFunctions {
     }
 
     public ResponseModel validateGetSaveMsgWithList(String metodo, List<?> lista) {
+
+        clearList(msg);
 
         if (lista != null) {
 
@@ -57,6 +66,8 @@ public class GlobalFunctions {
 
     public ResponseModel validateGetSaveMsgWithObj(String metodo, Object obj) {
 
+        clearList(msg);
+
         if (obj != null) {
 
             msg.add(message.getMessage01(metodo));
@@ -69,6 +80,8 @@ public class GlobalFunctions {
     }
 
     public ResponseModel validateGetListMsg(String metodo, List<?> lista) {
+
+        clearList(msg);
 
         if (lista != null && !lista.isEmpty()) {
 
@@ -108,10 +121,50 @@ public class GlobalFunctions {
         return id_user_logado;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void clearList(List<String> msg) {
 
         if (!msg.isEmpty()) {
             msg.clear();
         }
+    }
+
+    public String generateHash() {
+
+        MessageDigest digest;
+        byte[] encodedhash;
+
+        try {
+
+            digest = MessageDigest.getInstance("SHA-256");
+            encodedhash = digest.digest(generateSalt());
+            return bytesToHex(encodedhash);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
+    public byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random.nextBytes(bytes);
+        return bytes;
     }
 }

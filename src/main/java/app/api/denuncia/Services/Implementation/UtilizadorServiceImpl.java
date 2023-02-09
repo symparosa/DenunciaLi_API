@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.AES.AES256;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -151,9 +152,9 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         if (!userRepository.existsByUsername(uti.getUsername())) {
 
             uti.setData_atualizacao(null);
-            uti.setHash(metodo);
+            uti.setHash(gf.generateHash());
             UtilizadorModel user = userRepository.save(uti);
-            return creatEmail(metodo, user, user.getUsername());
+            return createEmailSave(metodo, user, user.getUsername(), user.getHash());
 
         } else {
             msg.add(message.getMessage03());
@@ -183,7 +184,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
-    public ResponseModel creatEmail(String metodo, Object obj, String email) {
+    public ResponseModel createEmailSave(String metodo, Object obj, String email, String hash) {
 
         ResponseModel val = gf.validateGetSaveMsgWithObj(metodo, obj);
 
@@ -192,7 +193,25 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             EmailDetailsModel emailDetail = new EmailDetailsModel();
 
             emailDetail.setRecipient(email);
-            emailDetail.setMsgBody("ola teste send email");
+            emailDetail.setMsgBody("ola teste send email seu hash é " + hash);
+            emailDetail.setSubject("teste send email");
+
+            return emailService.sendEmail(emailDetail, val.getMessage().get(0));
+        } else {
+            return val;
+        }
+    }
+
+    public ResponseModel createEmailUpdate(String metodo, Integer result, String email, String hash) {
+
+        ResponseModel val = gf.validateGetUpdateMsg(metodo, result);
+
+        if (val.getResponseCode() == 1) {
+
+            EmailDetailsModel emailDetail = new EmailDetailsModel();
+
+            emailDetail.setRecipient(email);
+            emailDetail.setMsgBody("ola teste send email seu hash é " + hash);
             emailDetail.setSubject("teste send email");
 
             return emailService.sendEmail(emailDetail, val.getMessage().get(0));
@@ -203,7 +222,36 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     @Override
     public ResponseModel alterarPassword(String hashAtual, String passwordNovo1, String passwordNovo2) {
-        // TODO Auto-generated method stub
-        return null;
+
+        gf.clearList(msg);
+
+        try {
+            
+            if (userRepository.existsByUsernameAndHash(gf.getUsername(), hashAtual)) {
+
+                AES256 aes256 = new AES256();
+
+                if (aes256.decrypt(passwordNovo1).equals(aes256.decrypt(passwordNovo2))) {
+
+                    String metodo = "salvar";
+                    String nvhash = gf.generateHash();
+                    int idUser = userRepository.findByUsername(gf.getUsername()).getId();
+
+                    System.out.println("user "+gf.getId_user_logado());
+                    Integer result = userRepository.changePassword(passwordNovo1, nvhash, gf.getId_user_logado(),idUser);
+                    return createEmailUpdate(metodo, result, gf.getUsername(), nvhash);
+
+                } else {
+                    msg.add(message.getMessage13());
+                    return gf.getResponseError(msg);
+                }
+            } else {
+                msg.add(message.getMessage12());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 }

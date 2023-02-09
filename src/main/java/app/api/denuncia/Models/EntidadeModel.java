@@ -29,7 +29,7 @@ public class EntidadeModel implements Serializable {
     private Integer id;
 
     @Schema(description = "O nome da entidade")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String nome;
 
     @Schema(description = "A referencia_morada da entidade")
@@ -44,6 +44,7 @@ public class EntidadeModel implements Serializable {
     private String imagem;
 
     @Schema(description = "O sigla da entidade")
+    @Column(nullable = false, unique = true)
     private String sigla;
 
     @Schema(description = "A descrição da entidade")

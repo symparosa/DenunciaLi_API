@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 				@Tag(name = "Entidade", description = "Onde serão gerenciados os endpoits de entidade."),
 				@Tag(name = "Entidade Tipo Crime", description = "Onde serão gerenciados os endpoits de entidade tipo crime."),
 				@Tag(name = "Contato", description = "Onde serão gerenciados os endpoits do contato."),
+				@Tag(name = "Informação Legal", description = "Onde serão gerenciados os endpoits de informação legal.")
 		// @Tag(name = "Estatística Por Ano", description = "Onde serão gerenciados os
 		// endpoits de estatística por ano."),
 		// @Tag(name = "Estatística Por Ilha", description = "Onde serão gerenciados os
@@ -47,6 +48,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 		// @Tag(name = "Estatística Por Faixa Etária", description = "Onde serão
 		// gerenciados os endpoits de estatística por faixa etária.")
 		})
+
 public class DenunciaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DenunciaApplication.class, args);
