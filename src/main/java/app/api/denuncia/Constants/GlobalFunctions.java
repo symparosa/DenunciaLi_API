@@ -1,11 +1,14 @@
 package app.api.denuncia.Constants;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
 
 public class GlobalFunctions {
@@ -16,6 +19,17 @@ public class GlobalFunctions {
     private final String username ="symparosa@gmail.com";
     private List<String> msg = new ArrayList<>();
 
+    private String pathRegistration = "C:\\vs-code exercicios\\denuncia\\Template\\registrationTemplate.html";
+    private String pathRecover = "C:\\vs-code exercicios\\denuncia\\Template\\accountRecoverTemplate.html";
+
+    public String getPathRegistration() {
+        return pathRegistration;
+    }
+
+    public String getPathRecover() {
+        return pathRecover;
+    }
+    
     public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
         ResponseModel response = new ResponseModel();
@@ -166,5 +180,45 @@ public class GlobalFunctions {
         byte bytes[] = new byte[20];
         random.nextBytes(bytes);
         return bytes;
+    }
+
+    public EmailDetailsModel createEmail(String to, String Body, String Subject){
+
+        EmailDetailsModel emailDetail = new EmailDetailsModel();
+
+        emailDetail.setRecipient(to);
+        emailDetail.setMsgBody(Body);
+        emailDetail.setSubject(Subject);
+
+        return emailDetail;
+    }
+
+    public String getTemplate(String path){
+
+        StringBuilder html;
+        FileReader fr;
+        BufferedReader br;
+        String val, result;
+
+        try {
+
+            html = new StringBuilder();
+
+            fr = new FileReader(path);
+
+            br = new BufferedReader(fr);
+ 
+            while ((val = br.readLine()) != null) {
+                html.append(val);
+            }
+ 
+            result = html.toString();
+            br.close();
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -42,7 +42,7 @@ public class ContatoModel implements Serializable {
     @Schema(description = "O tipo do contato")
     @ManyToOne
     @JoinColumn(name = "tipo_contato_fk")
-    private DominioModel tipo_contato;
+    private DominioModel tipoContato;
 
     @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
     private Integer last_user_change;

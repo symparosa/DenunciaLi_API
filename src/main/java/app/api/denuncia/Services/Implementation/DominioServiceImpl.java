@@ -19,7 +19,7 @@ public class DominioServiceImpl implements DominioService {
 
     private DominioRepository domRepository;
 
-    private String obj = "dominio";
+    private String obj = "Dominio";
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
@@ -152,8 +152,8 @@ public class DominioServiceImpl implements DominioService {
 
                 String metodo = "listar";
 
-                List<DominioModel> listaDom = domRepository.findByDominioAndEstadoIn(dominio,
-                        gf.getStatusAtivoInativo());
+                List<DominioModel> listaDom = domRepository.findByDominioAndEstado(dominio,
+                        status.getAtivo());
                 return gf.validateGetListMsg(metodo, listaDom);
 
             } else {

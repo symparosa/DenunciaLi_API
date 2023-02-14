@@ -1,11 +1,12 @@
 package app.api.denuncia.Services.Implementation;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.GlobalFunctions;
@@ -16,7 +17,7 @@ import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EmailService;
 
 @Service
-public class EmailServiceImpl implements EmailService{
+public class EmailServiceImpl implements EmailService {
 
     private JavaMailSender javaMailSender;
     private Message message = new Message();
@@ -26,28 +27,28 @@ public class EmailServiceImpl implements EmailService{
         this.javaMailSender = javaMailSender;
     }
 
-    @Value("${spring.mail.username}") private String sender;
-    
-    @Override
-    public ResponseModel sendEmail(EmailDetailsModel details, String msg1) {
+    @Value("${spring.mail.username}")
+    private String sender;
 
-        List<String> msg = new ArrayList<>();
-        msg.add(msg1);
+    @Override
+    public ResponseModel sendEmail(EmailDetailsModel details, List<String> msg) {
 
         try {
 
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(details.getRecipient());
-            mailMessage.setText(details.getMsgBody());
-            mailMessage.setSubject(details.getSubject());
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-            javaMailSender.send(mailMessage);
-            
+            helper.setText(details.getMsgBody(), true);
+            helper.setTo(details.getRecipient());
+            helper.setSubject(details.getSubject());
+            helper.setFrom(sender);
+
+            javaMailSender.send(mimeMessage);
+
             msg.add(message.getMessage10());
             return gf.getResponse(1, ResponseType.Sucesso, msg, null);
-            
+
         } catch (Exception e) {
             msg.add(message.getMessage11());
             return gf.getResponseError(msg);

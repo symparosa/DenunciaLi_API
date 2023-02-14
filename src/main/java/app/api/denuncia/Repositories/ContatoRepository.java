@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import app.api.denuncia.Models.ContatoModel;
+import app.api.denuncia.Models.DominioModel;
 
 @Repository
 @Transactional
@@ -18,6 +19,8 @@ public interface ContatoRepository extends JpaRepository<ContatoModel, Integer> 
     Boolean existsByIdObjetoAndTipoObjeto(int id_obj, String tipo_obj);
 
     Boolean existsByValor(String valor);
+
+    Boolean existsByTipoContatoAndValor(DominioModel tipoCont, String valor);
 
     Boolean existsByValorAndIdNot(String valor, int id);
 

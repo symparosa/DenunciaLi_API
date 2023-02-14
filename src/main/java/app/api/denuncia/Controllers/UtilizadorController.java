@@ -51,14 +51,22 @@ public class UtilizadorController {
 
     @Operation(tags = {
             "Utilizador Back-Office" }, summary = "Alterar Password", description = "Altera o password do utilizador no banco de dados.", parameters = {
-                    @Parameter(name = "Hash", description = "O hash"),
-                    @Parameter(name = "Password1", description = "O novo password"),
-                    @Parameter(name = "Password2", description = "O novo password novamente") })
+                    @Parameter(name = "Hash", description = "O hash do utilizador"),
+                    @Parameter(name = "Password", description = "O novo password do utilizador"),
+                    @Parameter(name = "Email", description = "O email do utilizador") })
     @PutMapping(path = "/alterarPassword")
     public ResponseModel alterarPassword(
-        @RequestParam(required = true) String Hash,
-        @RequestParam(required = true) String Password1,
-        @RequestParam(required = true) String Password2) {
-        return utilizadorBackofficeService.alterarPassword(Hash, Password1, Password2);
+            @RequestParam(required = true) String Hash,
+            @RequestParam(required = true) String Password,
+            @RequestParam(required = true) String Email) {
+        return utilizadorBackofficeService.alterarPassword(Email, Hash, Password);
+    }
+
+    @Operation(tags = {
+            "Utilizador Back-Office" }, summary = "Recuperar Conta", description = "Envia hash para o email.", parameters = {
+                    @Parameter(name = "Email", description = "O email para onde o hash será enviado") })
+    @PostMapping(path = "/recuperarConta")
+    public ResponseModel recuperarConta(@RequestParam(required = true) String Email) {
+        return utilizadorBackofficeService.recuperarConta(Email);
     }
 }

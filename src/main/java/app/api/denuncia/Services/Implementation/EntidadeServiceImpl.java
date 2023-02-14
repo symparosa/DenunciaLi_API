@@ -171,7 +171,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
     public Boolean existsEntidade(EntidadeModel ent) {
 
-        if (ent != null && entRepository.existsById(ent.getId())) {
+        if (ent != null && entRepository.existsByIdAndEstado(ent.getId(),status.getAtivo())) {
             return true;
         }
         return false;

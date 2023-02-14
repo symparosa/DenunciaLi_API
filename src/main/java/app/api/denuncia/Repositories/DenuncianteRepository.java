@@ -10,4 +10,5 @@ import app.api.denuncia.Models.DenuncianteModel;
 @Transactional
 public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, Integer> {
 
+    Boolean existsByIdAndEstado(int id, int estado);
 }

@@ -20,6 +20,8 @@ public interface EntidadeRepository extends JpaRepository<EntidadeModel, Integer
 
     Boolean  existsBySiglaAndIdNot(String sigla, Integer id);
 
+    Boolean existsByIdAndEstado(int id, int estado);
+
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_entidade SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
     Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);

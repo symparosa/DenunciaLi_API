@@ -10,4 +10,6 @@ public interface InformacaoLegalService {
     ResponseModel alterarEstado(int id, int estado);
 
     ResponseModel listar();
+
+    ResponseModel getInfoByTipo(String tipo);
 }

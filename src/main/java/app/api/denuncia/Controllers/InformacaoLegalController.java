@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 @RestController
 @RequestMapping(path = "/api/informacaoLegal", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InformacaoLegalController {
-    
+
     private InformacaoLegalService informacaoLegalService;
 
     public InformacaoLegalController(InformacaoLegalService informacaoLegalService) {
@@ -47,5 +47,13 @@ public class InformacaoLegalController {
     @GetMapping(path = "/listar")
     public ResponseModel listar() {
         return informacaoLegalService.listar();
+    }
+
+    @Operation(tags = {
+            "Informação Legal" }, summary = "Get Informação Legal By Tipo", description = "Lista todos os dados a partir do tipo de informação legal.", parameters = {
+                    @Parameter(name = "TipoInfo", description = "O tipo de informação legal que se quer obter os dados") })
+    @GetMapping(path = "/getInfoByTipo")
+    public ResponseModel getInfoByTipo(@RequestParam(required = true) String TipoInfo) {
+        return informacaoLegalService.getInfoByTipo(TipoInfo);
     }
 }

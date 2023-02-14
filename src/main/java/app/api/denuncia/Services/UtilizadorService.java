@@ -11,5 +11,7 @@ public interface UtilizadorService {
 
     ResponseModel listar();
 
-    ResponseModel alterarPassword(String hashAtual, String passwordNovo1, String passwordNovo2);
+    ResponseModel recuperarConta(String email);
+
+    ResponseModel alterarPassword(String email, String hash,String password);
 }

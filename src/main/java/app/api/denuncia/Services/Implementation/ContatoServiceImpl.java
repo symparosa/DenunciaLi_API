@@ -57,7 +57,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     for (ContatoModel contato : contatoModels) {
 
-                        if (domServiceImpl.existsTipo(contato.getTipo_contato(), dom.getTipoContato())) {
+                        if (domServiceImpl.existsTipo(contato.getTipoContato(), dom.getTipoContato())) {
 
                             obj = "Id Objeto";
 
@@ -204,17 +204,17 @@ public class ContatoServiceImpl implements ContatoService {
 
         switch (tipo_obj) {
             case "dn_t_entidade":
-                if (entidadeRepository.existsById(id_objeto)) {
+                if (entidadeRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;
             case "dn_t_denunciante":
-                if (denuncianteRepository.existsById(id_objeto)) {
+                if (denuncianteRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;
             case "dn_t_utilizador_backoffice":
-                if (utilizadorBackofficeRepository.existsById(id_objeto)) {
+                if (utilizadorBackofficeRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;

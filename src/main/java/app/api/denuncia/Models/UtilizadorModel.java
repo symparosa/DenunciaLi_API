@@ -61,8 +61,12 @@ public class UtilizadorModel implements Serializable {
     @JoinColumn(name = "entidade_fk")
     private EntidadeModel entidade;
 
+    @Schema(description = "A validação da conta", hidden = true)
+    @Column(name = "conta_confirmada")
+    private Boolean contaConfirmada;
+
     @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
-    private Integer last_user_change;
+    private Integer last_user_change;   
 
     @Schema(description = "O estado do utilizador", hidden = true)
     private Integer estado;

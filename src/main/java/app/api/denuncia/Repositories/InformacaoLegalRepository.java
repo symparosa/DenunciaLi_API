@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.InformacaoLegalModel;
 
 @Repository
@@ -18,6 +19,7 @@ public interface InformacaoLegalRepository extends JpaRepository<InformacaoLegal
 
     List<InformacaoLegalModel> findByEstadoIn(List<Integer> estados);
     
+    List<InformacaoLegalModel> findByTipoInformacaoLegalAndEstado(DominioModel dominioModel, int estado);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_informacao_legal SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
