@@ -13,6 +13,7 @@ import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Models.ContatoModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
+import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Repositories.ContatoRepository;
 import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Repositories.EntidadeRepository;
@@ -22,7 +23,7 @@ import app.api.denuncia.Repositories.UtilizadorRepository;
 public class ContatoServiceImpl implements ContatoService {
 
     private ContatoRepository contatoRepository;
-    private DominioServiceImpl domServiceImpl;
+    private DominioService domService;
     private EntidadeRepository entidadeRepository;
     private DenuncianteRepository denuncianteRepository;
     private UtilizadorRepository utilizadorBackofficeRepository;
@@ -33,11 +34,11 @@ public class ContatoServiceImpl implements ContatoService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public ContatoServiceImpl(ContatoRepository contatoRepository, DominioServiceImpl domServiceImpl,
+    public ContatoServiceImpl(ContatoRepository contatoRepository, DominioService domService,
             EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository,
             UtilizadorRepository utilizadorBackofficeRepository) {
         this.contatoRepository = contatoRepository;
-        this.domServiceImpl = domServiceImpl;
+        this.domService = domService;
         this.entidadeRepository = entidadeRepository;
         this.denuncianteRepository = denuncianteRepository;
         this.utilizadorBackofficeRepository = utilizadorBackofficeRepository;
@@ -57,7 +58,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     for (ContatoModel contato : contatoModels) {
 
-                        if (domServiceImpl.existsTipo(contato.getTipoContato(), dom.getTipoContato())) {
+                        if (domService.existsTipo(contato.getTipoContato(), dom.getTipoContato())) {
 
                             obj = "Id Objeto";
 
@@ -81,7 +82,7 @@ public class ContatoServiceImpl implements ContatoService {
                                     }
                                     contato.setEstado(status.getAtivo());
                                     contato.setData_criacao(new Date());
-                                    contato.setLast_user_change(gf.getId_user_logado());
+                                    contato.setLast_user_change(gf.getUser().getUserLogado().getId());
                                     contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                 } else {
                                     msg.add(message.getMessage09("valor"));
@@ -131,7 +132,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     String metodo = "salvar";
 
-                    Integer result = contatoRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = contatoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

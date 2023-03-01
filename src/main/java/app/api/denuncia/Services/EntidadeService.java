@@ -10,4 +10,6 @@ public interface EntidadeService {
     ResponseModel alterarEstado(int id, int estado);
 
     ResponseModel listar();
+
+    Boolean existsEntidade(EntidadeModel ent);
 }

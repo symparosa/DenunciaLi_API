@@ -25,7 +25,7 @@ public class BotaoServiceImpl implements BotaoService {
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-
+    
     public BotaoServiceImpl(BotaoRepository botaoRepository) {
         this.botaoRepository = botaoRepository;
     }
@@ -41,7 +41,7 @@ public class BotaoServiceImpl implements BotaoService {
 
             botao.setEstado(status.getAtivo());
             botao.setData_criacao(new Date());
-            botao.setLast_user_change(gf.getId_user_logado());
+            botao.setLast_user_change(gf.getUser().getUserLogado().getId());
 
             if (botao.getId() != null) {
 
@@ -71,7 +71,7 @@ public class BotaoServiceImpl implements BotaoService {
 
                     String metodo = "salvar";
 
-                    Integer result = botaoRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = botaoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

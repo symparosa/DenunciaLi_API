@@ -5,6 +5,8 @@ import app.api.denuncia.Models.UtilizadorModel;
 
 public interface UtilizadorService {
 
+    UtilizadorModel getUserLogado();
+
     ResponseModel adicionar_atualizar(UtilizadorModel utilizador);
 
     ResponseModel alterarEstado(int id, int estado);
@@ -13,5 +15,5 @@ public interface UtilizadorService {
 
     ResponseModel recuperarConta(String email);
 
-    ResponseModel alterarPassword(String email, String hash,String password);
+    ResponseModel alterarPassword(String username, String hash,String password);
 }

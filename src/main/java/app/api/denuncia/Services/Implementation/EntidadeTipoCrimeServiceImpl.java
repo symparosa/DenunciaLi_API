@@ -16,15 +16,17 @@ import app.api.denuncia.Models.EntidadeTipoCrimeModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
 import app.api.denuncia.Repositories.EntidadeTipoCrimeRepository;
+import app.api.denuncia.Services.DominioService;
+import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.EntidadeTipoCrimeService;
 
 @Service
 public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
-    private EntidadeTipoCrimeRepository entidadeTipoCrimeRepository;
-    private EntidadeServiceImpl entServiceImpl;
+    private EntidadeTipoCrimeRepository entTipoCrimeRepository;
+    private EntidadeService entService;
     private EntidadeRepository entRepository;
-    private DominioServiceImpl domServiceImpl;
+    private DominioService domService;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -33,11 +35,11 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public EntidadeTipoCrimeServiceImpl(EntidadeTipoCrimeRepository entidadeTipoCrimeRepository,
-            EntidadeServiceImpl entServiceImpl, EntidadeRepository entRepository, DominioServiceImpl domServiceImpl) {
-        this.entidadeTipoCrimeRepository = entidadeTipoCrimeRepository;
-        this.entServiceImpl = entServiceImpl;
+            EntidadeService entService, EntidadeRepository entRepository, DominioService domService) {
+        this.entTipoCrimeRepository = entidadeTipoCrimeRepository;
+        this.entService = entService;
         this.entRepository = entRepository;
-        this.domServiceImpl = domServiceImpl;
+        this.domService = domService;
     }
 
     @Override
@@ -57,19 +59,19 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
                     for (EntidadeTipoCrimeModel ent : entidadeTipoCrime) {
 
-                        if (entServiceImpl.existsEntidade(ent.getEntidade())) {
+                        if (entService.existsEntidade(ent.getEntidade())) {
 
                             obj = "Tipo de crime";
 
-                            if (domServiceImpl.existsTipo(ent.getTipoCrime(), dom.getTipoCrime())) {
+                            if (domService.existsTipo(ent.getTipoCrime(), dom.getTipoCrime())) {
 
                                 if (ent.getId() != null) { // update
 
                                     obj = "Entidade tipo de crime";
 
-                                    if (entidadeTipoCrimeRepository.existsById(ent.getId())) {
+                                    if (entTipoCrimeRepository.existsById(ent.getId())) {
                                         update = true;
-                                        if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrimeAndIdNot(
+                                        if (entTipoCrimeRepository.existsByEntidadeAndTipoCrimeAndIdNot(
                                                 ent.getEntidade(),
                                                 ent.getTipoCrime(),
                                                 ent.getId())) {
@@ -82,7 +84,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                     }
                                 } else if (ent.getId() == null) { // insert
                                     insert = true;
-                                    if (entidadeTipoCrimeRepository.existsByEntidadeAndTipoCrime(ent.getEntidade(),
+                                    if (entTipoCrimeRepository.existsByEntidadeAndTipoCrime(ent.getEntidade(),
                                             ent.getTipoCrime())) {
                                         contInsert++;
                                     }
@@ -90,7 +92,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                 }
                                 ent.setEstado(status.getAtivo());
                                 ent.setData_criacao(new Date());
-                                ent.setLast_user_change(gf.getId_user_logado());
+                                ent.setLast_user_change(gf.getUser().getUserLogado().getId());
                             } else {
                                 msg.add(message.getMessage06(obj));
                                 return gf.getResponseError(msg);
@@ -126,13 +128,13 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
             String obj = "Entidade tipo de crime";
 
-            if (entidadeTipoCrimeRepository.existsById(id)) {
+            if (entTipoCrimeRepository.existsById(id)) {
 
                 if (gf.validateStatus(estado)) {
 
                     String metodo = "salvar";
 
-                    Integer result = entidadeTipoCrimeRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = entTipoCrimeRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
                     msg.add(message.getMessage07());
@@ -155,7 +157,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
         try {
 
-            if (entidadeTipoCrimeRepository.count() > 0) {
+            if (entTipoCrimeRepository.count() > 0) {
 
                 String obj = "Entidade";
 
@@ -165,11 +167,11 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
                     obj = "Entidade tipo de crime";
 
-                    if (entidadeTipoCrimeRepository.existsByEntidade(entidade.get())) {
+                    if (entTipoCrimeRepository.existsByEntidade(entidade.get())) {
 
                         String metodo = "listar";
 
-                        List<EntidadeTipoCrimeModel> lista = entidadeTipoCrimeRepository
+                        List<EntidadeTipoCrimeModel> lista = entTipoCrimeRepository
                                 .findByEntidadeAndEstadoIn(entidade.get(), gf.getStatusAtivoInativo());
                         return gf.validateGetListMsg(metodo, lista);
 
@@ -210,7 +212,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
         if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
 
-            List<EntidadeTipoCrimeModel> ent = entidadeTipoCrimeRepository.saveAll(entidadeTipoCrime);
+            List<EntidadeTipoCrimeModel> ent = entTipoCrimeRepository.saveAll(entidadeTipoCrime);
             return gf.validateGetSaveMsgWithList(metodo, ent);
 
         } else {

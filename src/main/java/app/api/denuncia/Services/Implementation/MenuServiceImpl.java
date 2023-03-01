@@ -41,7 +41,7 @@ public class MenuServiceImpl implements MenuService {
 
             menu.setEstado(status.getAtivo());
             menu.setData_criacao(new Date());
-            menu.setLast_user_change(gf.getId_user_logado());
+            menu.setLast_user_change(gf.getUser().getUserLogado().getId());
 
             if (menu.getId() != null) {
 
@@ -70,7 +70,7 @@ public class MenuServiceImpl implements MenuService {
 
                     String metodo = "salvar";
 
-                    Integer result = menuRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = menuRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
                     msg.add(message.getMessage07());

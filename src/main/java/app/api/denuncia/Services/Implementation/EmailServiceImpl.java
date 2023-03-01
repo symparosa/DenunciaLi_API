@@ -2,8 +2,6 @@ package app.api.denuncia.Services.Implementation;
 
 import java.util.List;
 
-import javax.mail.internet.MimeMessage;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,6 +13,7 @@ import app.api.denuncia.Constants.ResponseType;
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EmailService;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailServiceImpl implements EmailService {

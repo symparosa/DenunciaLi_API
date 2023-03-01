@@ -14,4 +14,6 @@ public interface DominioService {
     ResponseModel listar();
 
     ResponseModel getDominio(String dominio);
+
+    Boolean existsTipo(DominioModel tipo, String dom);
 }

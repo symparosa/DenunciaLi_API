@@ -63,7 +63,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
 
                         if (menuPerfilRepository.existsByMenuAndTipoUtilizador(menu.get(), perfil)) {
 
-                            Integer result = menuPerfilRepository.alterarEstado(estado, gf.getId_user_logado(), id_menu,
+                            Integer result = menuPerfilRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id_menu,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -74,7 +74,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
                             menuPerfilModel.setTipoUtilizador(perfil);
                             menuPerfilModel.setEstado(estado);
                             menuPerfilModel.setData_criacao(new Date());
-                            menuPerfilModel.setLast_user_change(gf.getId_user_logado());
+                            menuPerfilModel.setLast_user_change(gf.getUser().getUserLogado().getId());
 
                             MenuPerfilModel mp = menuPerfilRepository.save(menuPerfilModel);
                             return gf.validateGetSaveMsgWithObj(metodo, mp);

@@ -13,14 +13,16 @@ import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
+import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EntidadeService;
+import app.api.denuncia.Services.LocalizacaoService;
 
 @Service
 public class EntidadeServiceImpl implements EntidadeService {
 
     private EntidadeRepository entRepository;
-    private LocalizacaoServiceImpl localServiceImpl;
-    private DominioServiceImpl DominioServiceImpl;
+    private LocalizacaoService localService;
+    private DominioService domService;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -29,10 +31,10 @@ public class EntidadeServiceImpl implements EntidadeService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoServiceImpl localServiceImpl,
-            app.api.denuncia.Services.Implementation.DominioServiceImpl dominioServiceImpl) {
+            DominioService domService) {
         this.entRepository = entRepository;
-        this.localServiceImpl = localServiceImpl;
-        DominioServiceImpl = dominioServiceImpl;
+        this.localService = localServiceImpl;
+        this.domService = domService;
     }
 
     @Override
@@ -46,13 +48,13 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             entidade.setEstado(status.getAtivo());
             entidade.setData_criacao(new Date());
-            entidade.setLast_user_change(gf.getId_user_logado());
+            entidade.setLast_user_change(gf.getUser().getUserLogado().getId());
 
-            if (localServiceImpl.existsLocalizacao(entidade.getLocalizacao())) {
+            if (localService.existsLocalizacao(entidade.getLocalizacao())) {
 
                 obj = "Tipo de entidade";
 
-                if (DominioServiceImpl.existsTipo(entidade.getTipo_entidade(), dom.getTipoEntidade())) {
+                if (domService.existsTipo(entidade.getTipo_entidade(), dom.getTipoEntidade())) {
 
                     if (entidade.getId() != null) { // update
 
@@ -94,7 +96,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
                     String metodo = "salvar";
 
-                    Integer result = entRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = entRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

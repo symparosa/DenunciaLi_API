@@ -1,6 +1,7 @@
 package app.api.denuncia.Controllers;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,8 +15,12 @@ import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.BannerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "Banner")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/banner", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BannerController {
 
@@ -25,28 +30,24 @@ public class BannerController {
         this.bannerService = bannerService;
     }
 
-    @Operation(tags = {
-            "Banner" }, summary = "Adicionar / Atualizar Banner", description = "Adiciona / Atualiza banner no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Banner", description = "Adiciona / Atualiza banner no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseModel adicionar_atualizar(@RequestBody BannerModel banner) {
-        return bannerService.adicionar_atualizar(banner);
+    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody BannerModel banner) {
+        return ResponseEntity.ok(bannerService.adicionar_atualizar(banner));
     }
 
-    @Operation(tags = {
-            "Banner" }, summary = "Alterar Estado Banner", description = "Altera o estado do banner no banco de dados.", parameters = {
-                    @Parameter(name = "Id", description = "O identificador (ID) do banner"),
-                    @Parameter(name = "Estado", description = "O estado do banner") })
+    @Operation(summary = "Alterar Estado Banner", description = "Altera o estado do banner no banco de dados.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do banner"),
+            @Parameter(name = "Estado", description = "O estado do banner") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseModel alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
-        return bannerService.alterarEstado(Id, Estado);
+        return ResponseEntity.ok(bannerService.alterarEstado(Id, Estado));
     }
 
-    @Operation(tags = {
-            "Banner" }, summary = "Listar Banners", description = "Lista todos os banners que estão no banco de dados.")
+    @Operation(summary = "Listar Banners", description = "Lista todos os banners que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseModel listar() {
-        return bannerService.listar();
+    public ResponseEntity<ResponseModel> listar() {
+        return ResponseEntity.ok(bannerService.listar());
     }
-
 }

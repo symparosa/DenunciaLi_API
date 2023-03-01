@@ -1,6 +1,7 @@
 package app.api.denuncia.Controllers;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,8 +15,12 @@ import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EntidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "Entidade")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/entidade", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntidadeController {
 
@@ -25,26 +30,24 @@ public class EntidadeController {
         this.entidadeService = entidadeService;
     }
 
-    @Operation(tags = {
-            "Entidade" }, summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseModel adicionar_atualizar(@RequestBody EntidadeModel entidade) {
-        return entidadeService.adicionar_atualizar(entidade);
+    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody EntidadeModel entidade) {
+        return ResponseEntity.ok(entidadeService.adicionar_atualizar(entidade));
     }
 
-    @Operation(tags = {
-            "Entidade" }, summary = "Alterar Estado Entidade", description = "Altera o estado da entidade no banco de dados.", parameters = {
-                    @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
-                    @Parameter(name = "Estado", description = "O estado da entidade") })
+    @Operation(summary = "Alterar Estado Entidade", description = "Altera o estado da entidade no banco de dados.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
+            @Parameter(name = "Estado", description = "O estado da entidade") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
-        return entidadeService.alterarEstado(Id, Estado);
+    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+            @RequestParam(required = true) int Estado) {
+        return ResponseEntity.ok(entidadeService.alterarEstado(Id, Estado));
     }
 
-    @Operation(tags = {
-            "Entidade" }, summary = "Listar Entidades", description = "Lista todas as entidades que estão no banco de dados.")
+    @Operation(summary = "Listar Entidades", description = "Lista todas as entidades que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseModel listar() {
-        return entidadeService.listar();
+    public ResponseEntity<ResponseModel> listar() {
+        return ResponseEntity.ok(entidadeService.listar());
     }
 }

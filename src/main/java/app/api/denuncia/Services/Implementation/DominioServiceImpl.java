@@ -68,7 +68,7 @@ public class DominioServiceImpl implements DominioService {
                         }
                         dom.setEstado(status.getAtivo());
                         dom.setData_criacao(new Date());
-                        dom.setLast_user_change(gf.getId_user_logado());
+                        dom.setLast_user_change(gf.getUser().getUserLogado().getId());
                     }
 
                     return saveAll(dominio, contUpdate, contInsert, insert, update, metodo);
@@ -100,7 +100,7 @@ public class DominioServiceImpl implements DominioService {
 
                     String metodo = "salvar";
 
-                    Integer result = domRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = domRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

@@ -18,7 +18,7 @@ import app.api.denuncia.Services.BannerService;
 public class BannerServiceImpl implements BannerService {
 
     private BannerRepository bannerRepository;
-
+    
     private String obj = "Banner";
     private Status status = new Status();
     private Message message = new Message();
@@ -40,7 +40,7 @@ public class BannerServiceImpl implements BannerService {
 
             banner.setEstado(status.getAtivo());
             banner.setData_criacao(new Date());
-            banner.setLast_user_change(gf.getId_user_logado());
+            banner.setLast_user_change(gf.getUser().getUserLogado().getId());
 
             if (banner.getId() != null) {
 
@@ -70,7 +70,7 @@ public class BannerServiceImpl implements BannerService {
 
                     String metodo = "salvar";
 
-                    Integer result = bannerRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = bannerRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

@@ -63,7 +63,7 @@ public class TransacaoServiceImpl implements TransacaoService {
 
                         if (transacaoRepository.existsByBotaoAndTipoUtilizador(botao.get(), perfil)) {
 
-                            Integer result = transacaoRepository.alterarEstado(estado, gf.getId_user_logado(), id_botao,
+                            Integer result = transacaoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id_botao,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -74,7 +74,7 @@ public class TransacaoServiceImpl implements TransacaoService {
                             transacaoModel.setTipoUtilizador(perfil);
                             transacaoModel.setEstado(estado);
                             transacaoModel.setData_criacao(new Date());
-                            transacaoModel.setLast_user_change(gf.getId_user_logado());
+                            transacaoModel.setLast_user_change(gf.getUser().getUserLogado().getId());
 
                             TransacaoModel t = transacaoRepository.save(transacaoModel);
                             return gf.validateGetSaveMsgWithObj(metodo, t);

@@ -3,6 +3,7 @@ package app.api.denuncia.Controllers;
 import java.util.List;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,8 +17,12 @@ import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "Contato")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/contato", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ContatoController {
 
@@ -27,30 +32,28 @@ public class ContatoController {
         ContatoService = contatoService;
     }
 
-    @Operation(tags = {
-            "Contato" }, summary = "Adicionar / Atualizar Contato", description = "Adiciona / Atualiza contato no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Contato", description = "Adiciona / Atualiza contato no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseModel adicionar_atualizar(@RequestBody List<ContatoModel> contato) {
-        return ContatoService.adicionar_atualizar(contato);
+    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody List<ContatoModel> contato) {
+        return ResponseEntity.ok(ContatoService.adicionar_atualizar(contato));
     }
 
-    @Operation(tags = {
-            "Contato" }, summary = "Alterar Estado Contato", description = "Altera o estado do contato no banco de dados.", parameters = {
-                    @Parameter(name = "Id", description = "O identificador (ID) do contato"),
-                    @Parameter(name = "Estado", description = "O estado do contato") })
+    @Operation(summary = "Alterar Estado Contato", description = "Altera o estado do contato no banco de dados.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do contato"),
+            @Parameter(name = "Estado", description = "O estado do contato") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseModel alterarEstado(@RequestParam(required = true) int Id, @RequestParam(required = true) int Estado) {
-        return ContatoService.alterarEstado(Id, Estado);
+    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+            @RequestParam(required = true) int Estado) {
+        return ResponseEntity.ok(ContatoService.alterarEstado(Id, Estado));
     }
 
-    @Operation(tags = {
-            "Contato" }, summary = "Get Info By IdObjeto e TipoObjeto", description = "Lista todos os dados a partir do id objeto e do tipo de objeto.", parameters = {
-                    @Parameter(name = "IdObjeto", description = "O id objeto que se quer obter dados"),
-                    @Parameter(name = "TipoObjeto", description = "O tipo objeto que se quer obter dados") })
+    @Operation(summary = "Get Info By IdObjeto e TipoObjeto", description = "Lista todos os dados a partir do id objeto e do tipo de objeto.", parameters = {
+            @Parameter(name = "IdObjeto", description = "O id objeto que se quer obter dados"),
+            @Parameter(name = "TipoObjeto", description = "O tipo objeto que se quer obter dados") })
     @GetMapping(path = "/getInfoByIdObjeto")
-    public ResponseModel getInfoByIdObjeto(
-        @RequestParam(required = true) int IdObjeto,
-        @RequestParam(required = true) String TipoObjeto) {
-        return ContatoService.getInfoByIdObjeto(IdObjeto, TipoObjeto);
+    public ResponseEntity<ResponseModel> getInfoByIdObjeto(
+            @RequestParam(required = true) int IdObjeto,
+            @RequestParam(required = true) String TipoObjeto) {
+        return ResponseEntity.ok(ContatoService.getInfoByIdObjeto(IdObjeto, TipoObjeto));
     }
 }

@@ -15,13 +15,14 @@ import app.api.denuncia.Models.InformacaoLegalModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.InformacaoLegalRepository;
+import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.InformacaoLegalService;
 
 @Service
 public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
     private InformacaoLegalRepository infoRepository;
-    private DominioServiceImpl domServiceImpl;
+    private DominioService domService;
     private DominioRepository domRepository;
 
     private Domain dom = new Domain();
@@ -30,10 +31,10 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public InformacaoLegalServiceImpl(InformacaoLegalRepository infoRepository, DominioServiceImpl domServiceImpl,
+    public InformacaoLegalServiceImpl(InformacaoLegalRepository infoRepository, DominioService domService,
             DominioRepository domRepository) {
         this.infoRepository = infoRepository;
-        this.domServiceImpl = domServiceImpl;
+        this.domService = domService;
         this.domRepository = domRepository;
     }
 
@@ -48,7 +49,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
             infoLegal.setEstado(status.getAtivo());
             infoLegal.setData_criacao(new Date());
-            infoLegal.setLast_user_change(gf.getId_user_logado());
+            infoLegal.setLast_user_change(gf.getUser().getUserLogado().getId());
 
             String obj = "Tipo de informação legal";
 
@@ -88,7 +89,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
                     String metodo = "salvar";
 
-                    Integer result = infoRepository.alterarEstado(estado, gf.getId_user_logado(), id);
+                    Integer result = infoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -191,9 +192,9 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         boolean msg = false;
 
-        if (domServiceImpl.existsTipo(tipoInfo, dom.getTipoFAQ())
-                || domServiceImpl.existsTipo(tipoInfo, dom.getTipoPolitica())
-                || domServiceImpl.existsTipo(tipoInfo, dom.getTipoTermo())) {
+        if (domService.existsTipo(tipoInfo, dom.getTipoFAQ())
+                || domService.existsTipo(tipoInfo, dom.getTipoPolitica())
+                || domService.existsTipo(tipoInfo, dom.getTipoTermo())) {
             msg = true;
         }
 

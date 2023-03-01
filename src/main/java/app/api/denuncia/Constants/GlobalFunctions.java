@@ -10,17 +10,21 @@ import java.util.List;
 
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Services.UtilizadorService;
 
 public class GlobalFunctions {
 
     private Message message = new Message();
     private Status status = new Status();
-    private final int id_user_logado = 9362;
-    private final String username ="symparosa@gmail.com";
     private List<String> msg = new ArrayList<>();
+    private UtilizadorService user;
 
     private String pathRegistration = "C:\\vs-code exercicios\\denuncia\\Template\\registrationTemplate.html";
     private String pathRecover = "C:\\vs-code exercicios\\denuncia\\Template\\accountRecoverTemplate.html";
+
+    public UtilizadorService getUser() {
+        return user;
+    }
 
     public String getPathRegistration() {
         return pathRegistration;
@@ -29,7 +33,7 @@ public class GlobalFunctions {
     public String getPathRecover() {
         return pathRecover;
     }
-    
+
     public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
         ResponseModel response = new ResponseModel();
@@ -129,14 +133,6 @@ public class GlobalFunctions {
             return true;
         }
         return false;
-    }
-
-    public int getId_user_logado() {
-        return id_user_logado;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public void clearList(List<String> msg) {
