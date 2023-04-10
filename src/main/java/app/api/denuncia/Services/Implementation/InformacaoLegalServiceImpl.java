@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -24,6 +25,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     private InformacaoLegalRepository infoRepository;
     private DominioService domService;
     private DominioRepository domRepository;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -32,10 +34,11 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public InformacaoLegalServiceImpl(InformacaoLegalRepository infoRepository, DominioService domService,
-            DominioRepository domRepository) {
+            DominioRepository domRepository, AuthenticationService auth) {
         this.infoRepository = infoRepository;
         this.domService = domService;
         this.domRepository = domRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
             infoLegal.setEstado(status.getAtivo());
             infoLegal.setData_criacao(new Date());
-            infoLegal.setLast_user_change(gf.getUser().getUserLogado().getId());
+            infoLegal.setLast_user_change(auth.getUserLogado().getId());
 
             String obj = "Tipo de informação legal";
 
@@ -89,7 +92,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
                     String metodo = "salvar";
 
-                    Integer result = infoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = infoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

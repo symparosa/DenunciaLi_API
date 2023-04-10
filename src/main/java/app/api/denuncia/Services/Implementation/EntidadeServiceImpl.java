@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -23,6 +24,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     private EntidadeRepository entRepository;
     private LocalizacaoService localService;
     private DominioService domService;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -31,10 +33,11 @@ public class EntidadeServiceImpl implements EntidadeService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoServiceImpl localServiceImpl,
-            DominioService domService) {
+            DominioService domService, AuthenticationService auth) {
         this.entRepository = entRepository;
         this.localService = localServiceImpl;
         this.domService = domService;
+        this.auth = auth;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             entidade.setEstado(status.getAtivo());
             entidade.setData_criacao(new Date());
-            entidade.setLast_user_change(gf.getUser().getUserLogado().getId());
+            entidade.setLast_user_change(auth.getUserLogado().getId());
 
             if (localService.existsLocalizacao(entidade.getLocalizacao())) {
 
@@ -96,7 +99,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
                     String metodo = "salvar";
 
-                    Integer result = entRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = entRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

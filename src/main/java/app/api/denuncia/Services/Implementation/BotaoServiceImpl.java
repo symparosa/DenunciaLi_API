@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
@@ -19,6 +20,7 @@ import app.api.denuncia.Services.BotaoService;
 public class BotaoServiceImpl implements BotaoService {
 
     private BotaoRepository botaoRepository;
+    private AuthenticationService auth;
 
     private String obj = "botão";
     private Status status = new Status();
@@ -26,8 +28,9 @@ public class BotaoServiceImpl implements BotaoService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
     
-    public BotaoServiceImpl(BotaoRepository botaoRepository) {
+    public BotaoServiceImpl(BotaoRepository botaoRepository, AuthenticationService auth) {
         this.botaoRepository = botaoRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class BotaoServiceImpl implements BotaoService {
 
             botao.setEstado(status.getAtivo());
             botao.setData_criacao(new Date());
-            botao.setLast_user_change(gf.getUser().getUserLogado().getId());
+            botao.setLast_user_change(auth.getUserLogado().getId());
 
             if (botao.getId() != null) {
 
@@ -71,7 +74,7 @@ public class BotaoServiceImpl implements BotaoService {
 
                     String metodo = "salvar";
 
-                    Integer result = botaoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = botaoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

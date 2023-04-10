@@ -31,4 +31,12 @@ public class Message {
     public String getMessage09(String campo) {
         return campo + " não pode ser null ou vazio.";
     }
+
+    public String getMessage13(String metodo) {
+        return metodo + " com sucesso.";
+    }
+
+    public String getMessage14(String metodo) {
+        return "falha no " + metodo;
+    }
 }

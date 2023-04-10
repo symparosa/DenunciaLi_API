@@ -27,7 +27,7 @@ public class JwtService {
   @Value("${spring.minexp}")
   private int expMin;
 
-  private  UtilizadorRepository repository;
+  private UtilizadorRepository repository;
 
   public JwtService(UtilizadorRepository repository) {
     this.repository = repository;
@@ -62,12 +62,15 @@ public class JwtService {
   public boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
     var user = repository.findByUsername(username).orElseThrow();
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token,user.getToken_iat());
+    return (username.equals(userDetails.getUsername())) && !isTokenExpired(user.getToken_iat());
   }
 
-  private boolean isTokenExpired(String token, LocalDateTime token_iat) {
-    final LocalDateTime now = LocalDateTime.now();
-    return Math.abs(ChronoUnit.MINUTES.between(now, token_iat)) >= expMin;
+  private boolean isTokenExpired(LocalDateTime token_iat) {
+    if (token_iat != null) {
+      final LocalDateTime now = LocalDateTime.now();
+      return Math.abs(ChronoUnit.MINUTES.between(now, token_iat)) >= expMin;
+    }
+    return true;
   }
 
   private Claims extractAllClaims(String token) {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
@@ -18,6 +19,7 @@ import app.api.denuncia.Services.BannerService;
 public class BannerServiceImpl implements BannerService {
 
     private BannerRepository bannerRepository;
+    private AuthenticationService auth;
     
     private String obj = "Banner";
     private Status status = new Status();
@@ -25,8 +27,9 @@ public class BannerServiceImpl implements BannerService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public BannerServiceImpl(BannerRepository bannerRepository) {
+    public BannerServiceImpl(BannerRepository bannerRepository, AuthenticationService auth) {
         this.bannerRepository = bannerRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class BannerServiceImpl implements BannerService {
 
             banner.setEstado(status.getAtivo());
             banner.setData_criacao(new Date());
-            banner.setLast_user_change(gf.getUser().getUserLogado().getId());
+            banner.setLast_user_change(auth.getUserLogado().getId());
 
             if (banner.getId() != null) {
 
@@ -70,7 +73,7 @@ public class BannerServiceImpl implements BannerService {
 
                     String metodo = "salvar";
 
-                    Integer result = bannerRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = bannerRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

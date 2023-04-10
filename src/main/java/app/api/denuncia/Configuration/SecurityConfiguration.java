@@ -26,7 +26,7 @@ public class SecurityConfiguration{
         .disable()
         .authorizeHttpRequests()
         .requestMatchers(
-          "/api/auth/**","/api/utilizadorBackoffice/alterarPassword","/api/utilizadorBackoffice/recuperarConta","/v3/**", "/swagger-ui/**").permitAll()
+          "/api/auth/login","/api/utilizadorBackoffice/alterarPassword","/api/utilizadorBackoffice/recuperarConta","/v3/**", "/swagger-ui/**").permitAll()
         .anyRequest()
         .authenticated()
         .and()
@@ -35,7 +35,6 @@ public class SecurityConfiguration{
         .and()
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
     return http.build();
   }
 }

@@ -17,11 +17,13 @@ import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.DominioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Tag(name = "Domínio")
+@ApiResponse(responseCode = "200", description = "Success response.")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/dominio", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DominioController {

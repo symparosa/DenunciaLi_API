@@ -51,4 +51,8 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
     Integer updateHash(@Param("hash") String hash, @Param("id") int id);
+
+    @Modifying
+    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
+    Integer logout(@Param("id") int id);
 }

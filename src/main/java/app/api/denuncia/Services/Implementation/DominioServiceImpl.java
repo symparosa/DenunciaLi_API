@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Models.DominioModel;
@@ -18,6 +19,7 @@ import app.api.denuncia.Services.DominioService;
 public class DominioServiceImpl implements DominioService {
 
     private DominioRepository domRepository;
+    private AuthenticationService auth;
 
     private String obj = "Dominio";
     private Status status = new Status();
@@ -25,8 +27,9 @@ public class DominioServiceImpl implements DominioService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public DominioServiceImpl(DominioRepository domRepository) {
+    public DominioServiceImpl(DominioRepository domRepository, AuthenticationService auth) {
         this.domRepository = domRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -68,7 +71,7 @@ public class DominioServiceImpl implements DominioService {
                         }
                         dom.setEstado(status.getAtivo());
                         dom.setData_criacao(new Date());
-                        dom.setLast_user_change(gf.getUser().getUserLogado().getId());
+                        dom.setLast_user_change(auth.getUserLogado().getId());
                     }
 
                     return saveAll(dominio, contUpdate, contInsert, insert, update, metodo);
@@ -100,7 +103,7 @@ public class DominioServiceImpl implements DominioService {
 
                     String metodo = "salvar";
 
-                    Integer result = domRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = domRepository.alterarEstado(estado,auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

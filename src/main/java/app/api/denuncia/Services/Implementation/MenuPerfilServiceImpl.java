@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -26,6 +27,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
     private MenuPerfilRepository menuPerfilRepository;
     private DominioRepository dominioRepository;
     private MenuRepository menuRepository;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -34,10 +36,11 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public MenuPerfilServiceImpl(MenuPerfilRepository menuPerfilRepository, DominioRepository dominioRepository,
-            MenuRepository menuRepository) {
+            MenuRepository menuRepository, AuthenticationService auth) {
         this.menuPerfilRepository = menuPerfilRepository;
         this.dominioRepository = dominioRepository;
         this.menuRepository = menuRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
 
                         if (menuPerfilRepository.existsByMenuAndTipoUtilizador(menu.get(), perfil)) {
 
-                            Integer result = menuPerfilRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id_menu,
+                            Integer result = menuPerfilRepository.alterarEstado(estado, auth.getUserLogado().getId(), id_menu,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -74,7 +77,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
                             menuPerfilModel.setTipoUtilizador(perfil);
                             menuPerfilModel.setEstado(estado);
                             menuPerfilModel.setData_criacao(new Date());
-                            menuPerfilModel.setLast_user_change(gf.getUser().getUserLogado().getId());
+                            menuPerfilModel.setLast_user_change(auth.getUserLogado().getId());
 
                             MenuPerfilModel mp = menuPerfilRepository.save(menuPerfilModel);
                             return gf.validateGetSaveMsgWithObj(metodo, mp);

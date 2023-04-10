@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -27,6 +28,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     private EntidadeService entService;
     private EntidadeRepository entRepository;
     private DominioService domService;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -35,11 +37,12 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public EntidadeTipoCrimeServiceImpl(EntidadeTipoCrimeRepository entidadeTipoCrimeRepository,
-            EntidadeService entService, EntidadeRepository entRepository, DominioService domService) {
+            EntidadeService entService, EntidadeRepository entRepository, DominioService domService, AuthenticationService auth) {
         this.entTipoCrimeRepository = entidadeTipoCrimeRepository;
         this.entService = entService;
         this.entRepository = entRepository;
         this.domService = domService;
+        this.auth = auth;
     }
 
     @Override
@@ -92,7 +95,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                 }
                                 ent.setEstado(status.getAtivo());
                                 ent.setData_criacao(new Date());
-                                ent.setLast_user_change(gf.getUser().getUserLogado().getId());
+                                ent.setLast_user_change(auth.getUserLogado().getId());
                             } else {
                                 msg.add(message.getMessage06(obj));
                                 return gf.getResponseError(msg);
@@ -134,7 +137,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
                     String metodo = "salvar";
 
-                    Integer result = entTipoCrimeRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = entTipoCrimeRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
                     msg.add(message.getMessage07());

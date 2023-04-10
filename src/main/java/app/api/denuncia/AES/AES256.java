@@ -13,11 +13,18 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class AES256 {
 
-    private final String algorithm = "AES/CBC/PKCS5Padding";
     private final SecretKey key = getKey();
     private final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
+
+    @Value("${spring.algorithm}")
+    private String algorithm;
+
+    @Value("${spring.b64}")
+    private String b64;
 
     public String encrypt(String input) {
 
@@ -60,8 +67,6 @@ public class AES256 {
     }
 
     public SecretKey getKey() {
-
-        String b64 = "ZFbwj1WRRXNx9wCplDhSKuU4YJFCHMB/0oluWSk3skk=";
 
         byte[] decodedKey = Base64.getDecoder().decode(b64);
         SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");

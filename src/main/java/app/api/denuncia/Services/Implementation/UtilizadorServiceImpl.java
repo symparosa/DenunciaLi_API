@@ -7,6 +7,7 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +39,14 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     private EmailService emailService;
     private ContatoRepository contRepository;
     private DominioRepository domRepository;
-    private AuthenticationService auth;
     private PasswordEncoder passwordEncoder;
+    private AuthenticationService auth;
+
+    @Value("${spring.recover}")
+    private String PathRecover;
+
+    @Value("${spring.registration}")
+    private String pathRegistration;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -60,10 +67,6 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         this.domRepository = domRepository;
         this.auth = auth;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public UtilizadorModel getUserLogado() {
-        return auth.getUserLogado();
     }
 
     @Override
@@ -87,7 +90,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                         user.setEstado(status.getAtivo());
                         user.setData_criacao(new Date());
-                        user.setLast_user_change(getUserLogado().getId());
+                        user.setLast_user_change(auth.getUserLogado().getId());
                         user.setContaConfirmada(false);
 
                         if (user.getId() != null) {
@@ -131,7 +134,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                     String metodo = "salvar";
 
-                    Integer result = userRepository.alterarEstado(estado, getUserLogado().getId(), id);
+                    Integer result = userRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -187,7 +190,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
             if (val.getResponseCode() == 1) {
 
-                String html = gf.getTemplate(gf.getPathRegistration());
+                String html = gf.getTemplate(pathRegistration);
 
                 Document doc = Jsoup.parse(html);
                 Element p = doc.select("p").first();
@@ -262,10 +265,14 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
         try {
 
-            DominioModel tipoCont = domRepository.findByDominioAndValor(dom.getTipoContato(), "EMAIL");
+            // DominioModel tipoCont =
+            // domRepository.findByDominioAndValor(dom.getTipoContato(), "EMAIL");
+            // || contRepository.existsByTipoContatoAndValor(tipoCont, email)
 
-            if (userRepository.existsByUsername(email) || contRepository.existsByTipoContatoAndValor(tipoCont, email)) {
+            System.out.println("entrou 0 "+email);
+            if (userRepository.existsByUsername(email)) {
 
+                System.out.println("entrou 1");
                 var user = userRepository.findByUsername(email).orElse(null);
 
                 String Subject = "Recuperação da Conta",
@@ -286,7 +293,9 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                         msg.add(val.getMessage().get(0));
 
-                        String html = gf.getTemplate(gf.getPathRecover());
+                        System.out.println("entrou ate aqui");
+
+                        String html = gf.getTemplate(PathRecover);
 
                         Document doc = Jsoup.parse(html);
                         Element p = doc.select("p").first();

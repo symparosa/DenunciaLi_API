@@ -10,29 +10,11 @@ import java.util.List;
 
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
-import app.api.denuncia.Services.UtilizadorService;
-
 public class GlobalFunctions {
 
     private Message message = new Message();
     private Status status = new Status();
     private List<String> msg = new ArrayList<>();
-    private UtilizadorService user;
-
-    private String pathRegistration = "C:\\vs-code exercicios\\denuncia\\Template\\registrationTemplate.html";
-    private String pathRecover = "C:\\vs-code exercicios\\denuncia\\Template\\accountRecoverTemplate.html";
-
-    public UtilizadorService getUser() {
-        return user;
-    }
-
-    public String getPathRegistration() {
-        return pathRegistration;
-    }
-
-    public String getPathRecover() {
-        return pathRecover;
-    }
 
     public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
@@ -178,7 +160,7 @@ public class GlobalFunctions {
         return bytes;
     }
 
-    public EmailDetailsModel createEmail(String to, String Body, String Subject){
+    public EmailDetailsModel createEmail(String to, String Body, String Subject) {
 
         EmailDetailsModel emailDetail = new EmailDetailsModel();
 
@@ -189,7 +171,7 @@ public class GlobalFunctions {
         return emailDetail;
     }
 
-    public String getTemplate(String path){
+    public String getTemplate(String path) {
 
         StringBuilder html;
         FileReader fr;
@@ -203,11 +185,11 @@ public class GlobalFunctions {
             fr = new FileReader(path);
 
             br = new BufferedReader(fr);
- 
+
             while ((val = br.readLine()) != null) {
                 html.append(val);
             }
- 
+
             result = html.toString();
             br.close();
 

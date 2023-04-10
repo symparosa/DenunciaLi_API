@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -26,6 +27,7 @@ public class TransacaoServiceImpl implements TransacaoService {
     private TransacaoRepository transacaoRepository;
     private DominioRepository dominioRepository;
     private BotaoRepository botaoRepository;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -34,10 +36,11 @@ public class TransacaoServiceImpl implements TransacaoService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public TransacaoServiceImpl(TransacaoRepository transacaoRepository, DominioRepository dominioRepository,
-            BotaoRepository botaoRepository) {
+            BotaoRepository botaoRepository, AuthenticationService auth) {
         this.transacaoRepository = transacaoRepository;
         this.dominioRepository = dominioRepository;
         this.botaoRepository = botaoRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class TransacaoServiceImpl implements TransacaoService {
 
                         if (transacaoRepository.existsByBotaoAndTipoUtilizador(botao.get(), perfil)) {
 
-                            Integer result = transacaoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id_botao,
+                            Integer result = transacaoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id_botao,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -74,7 +77,7 @@ public class TransacaoServiceImpl implements TransacaoService {
                             transacaoModel.setTipoUtilizador(perfil);
                             transacaoModel.setEstado(estado);
                             transacaoModel.setData_criacao(new Date());
-                            transacaoModel.setLast_user_change(gf.getUser().getUserLogado().getId());
+                            transacaoModel.setLast_user_change(auth.getUserLogado().getId());
 
                             TransacaoModel t = transacaoRepository.save(transacaoModel);
                             return gf.validateGetSaveMsgWithObj(metodo, t);

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Domain;
 import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
@@ -27,6 +28,7 @@ public class ContatoServiceImpl implements ContatoService {
     private EntidadeRepository entidadeRepository;
     private DenuncianteRepository denuncianteRepository;
     private UtilizadorRepository utilizadorBackofficeRepository;
+    private AuthenticationService auth;
 
     private Domain dom = new Domain();
     private Status status = new Status();
@@ -36,12 +38,13 @@ public class ContatoServiceImpl implements ContatoService {
 
     public ContatoServiceImpl(ContatoRepository contatoRepository, DominioService domService,
             EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository,
-            UtilizadorRepository utilizadorBackofficeRepository) {
+            UtilizadorRepository utilizadorBackofficeRepository, AuthenticationService auth) {
         this.contatoRepository = contatoRepository;
         this.domService = domService;
         this.entidadeRepository = entidadeRepository;
         this.denuncianteRepository = denuncianteRepository;
         this.utilizadorBackofficeRepository = utilizadorBackofficeRepository;
+        this.auth = auth;
     }
 
     @Override
@@ -82,7 +85,7 @@ public class ContatoServiceImpl implements ContatoService {
                                     }
                                     contato.setEstado(status.getAtivo());
                                     contato.setData_criacao(new Date());
-                                    contato.setLast_user_change(gf.getUser().getUserLogado().getId());
+                                    contato.setLast_user_change(auth.getUserLogado().getId());
                                     contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                 } else {
                                     msg.add(message.getMessage09("valor"));
@@ -132,7 +135,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     String metodo = "salvar";
 
-                    Integer result = contatoRepository.alterarEstado(estado, gf.getUser().getUserLogado().getId(), id);
+                    Integer result = contatoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {

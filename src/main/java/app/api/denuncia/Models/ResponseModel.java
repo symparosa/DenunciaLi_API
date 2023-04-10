@@ -17,7 +17,7 @@ public class ResponseModel {
     @Schema(description = "Tipo de saída")
     private ResponseType responseType;
 
-    @Schema(description = "Código de saída")
+    @Schema(description = "Código de saída", example = "1")
     private int responseCode;
 
     @Schema(description = "Objeto de saída")

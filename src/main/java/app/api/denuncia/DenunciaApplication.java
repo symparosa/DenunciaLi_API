@@ -54,8 +54,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 		// gerenciados os endpoits de estatística por faixa etária.")
 		})
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer", description = "A JWT token is required to access this API...")
-
 public class DenunciaApplication {
+	
 	public static void main(String[] args) {
 		SpringApplication.run(DenunciaApplication.class, args);
 	}

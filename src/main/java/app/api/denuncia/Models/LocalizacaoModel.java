@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import lombok.Data;
@@ -36,5 +37,6 @@ public class LocalizacaoModel implements Serializable {
 
     private String colmatch;
 
+    @Lob
     private String polygonarea;
 }
