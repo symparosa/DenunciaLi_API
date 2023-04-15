@@ -26,16 +26,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping(path = "/api/informacaoLegal", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InformacaoLegalController {
 
-    private InformacaoLegalService informacaoLegalService;
+    private InformacaoLegalService info;
 
-    public InformacaoLegalController(InformacaoLegalService informacaoLegalService) {
-        this.informacaoLegalService = informacaoLegalService;
+    public InformacaoLegalController(InformacaoLegalService info) {
+        this.info = info;
     }
 
     @Operation(summary = "Adicionar / Atualizar Informação Legal", description = "Adiciona / Atualiza informação legal no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody InformacaoLegalModel informacao) {
-        return ResponseEntity.ok(informacaoLegalService.adicionar_atualizar(informacao));
+        return ResponseEntity.ok(info.adicionar_atualizar(informacao));
     }
 
     @Operation(summary = "Alterar Estado Informação Legal", description = "Altera o estado da informação legal no banco de dados.", parameters = {
@@ -44,19 +44,26 @@ public class InformacaoLegalController {
     @PutMapping(path = "/alterarEstado")
     public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
-        return ResponseEntity.ok(informacaoLegalService.alterarEstado(Id, Estado));
+        return ResponseEntity.ok(info.alterarEstado(Id, Estado));
     }
 
     @Operation(summary = "Listar Informações Legais", description = "Lista todas as informações legais que estão no banco de dados.")
     @GetMapping(path = "/listar")
     public ResponseEntity<ResponseModel> listar() {
-        return ResponseEntity.ok(informacaoLegalService.listar());
+        return ResponseEntity.ok(info.listar());
     }
 
     @Operation(summary = "Get Informação Legal By Tipo", description = "Lista todos os dados a partir do tipo de informação legal.", parameters = {
             @Parameter(name = "TipoInfo", description = "O tipo de informação legal que se quer obter os dados") })
     @GetMapping(path = "/getInfoByTipo")
     public ResponseEntity<ResponseModel> getInfoByTipo(@RequestParam(required = true) String TipoInfo) {
-        return ResponseEntity.ok(informacaoLegalService.getInfoByTipo(TipoInfo));
+        return ResponseEntity.ok(info.getInfoByTipo(TipoInfo));
+    }
+
+    @Operation(summary = "Get Detalhes Informação Legal", description = "Lista todos os detalhes da informação legal.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) da informação legal") })
+    @GetMapping(path = "/get_detalhes_by_id")
+    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+        return ResponseEntity.ok(info.get_by_id(Id));
     }
 }

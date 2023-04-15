@@ -22,7 +22,7 @@ public class MenuServiceImpl implements MenuService {
     private MenuRepository menuRepository;
     private AuthenticationService auth;
 
-    private String obj = "menu";
+    private String obj = "Menu";
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
@@ -144,6 +144,30 @@ public class MenuServiceImpl implements MenuService {
             }
         } else {
             msg.add(message.getMessage06(obj));
+            return gf.getResponseError(msg);
+        }
+    }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (menuRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                MenuModel menu = menuRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, menu, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
     }

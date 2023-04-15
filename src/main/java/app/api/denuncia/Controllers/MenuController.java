@@ -52,4 +52,11 @@ public class MenuController {
     public ResponseEntity<ResponseModel> listar() {
         return ResponseEntity.ok(menuService.listar());
     }
+
+    @Operation(summary = "Get Detalhes Menu", description = "Lista todos os detalhes do menu.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do menu") })
+    @GetMapping(path = "/get_detalhes_by_id")
+    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+        return ResponseEntity.ok(menuService.get_by_id(Id));
+    }
 }

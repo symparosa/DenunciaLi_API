@@ -47,7 +47,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
       if (jwtService.isTokenValid(jwt, userDetails)) {
         final LocalDateTime now = LocalDateTime.now();
-        repository.updateDateToken(now, userDetails.getUsername()).orElseThrow();
+        var user = repository.findByUsername(userDetails.getUsername()).orElseThrow();
+        repository.updateDateToken(now, user.getId(), user.getUsername()).orElseThrow();
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
             userDetails,
             null,

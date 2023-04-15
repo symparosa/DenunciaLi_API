@@ -52,4 +52,11 @@ public class EntidadeController {
     public ResponseEntity<ResponseModel> listar() {
         return ResponseEntity.ok(entidadeService.listar());
     }
+
+    @Operation(summary = "Get Detalhes Entidade", description = "Lista todos os detalhes da entidade.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) da entidade") })
+    @GetMapping(path = "/get_detalhes_by_id")
+    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+        return ResponseEntity.ok(entidadeService.get_by_id(Id));
+    }
 }

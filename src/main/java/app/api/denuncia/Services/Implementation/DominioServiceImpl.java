@@ -204,4 +204,28 @@ public class DominioServiceImpl implements DominioService {
         }
         return false;
     }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (domRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                DominioModel dom = domRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, dom, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
 }

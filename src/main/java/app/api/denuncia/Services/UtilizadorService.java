@@ -14,4 +14,6 @@ public interface UtilizadorService {
     ResponseModel recuperarConta(String email);
 
     ResponseModel alterarPassword(String username, String hash,String password);
+
+    ResponseModel get_by_id(int id);
 }

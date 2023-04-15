@@ -42,7 +42,8 @@ public class BannerController {
             @Parameter(name = "Id", description = "O identificador (ID) do banner"),
             @Parameter(name = "Estado", description = "O estado do banner") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<ResponseModel> alterarEstado(
+            @RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(bannerService.alterarEstado(Id, Estado));
     }
@@ -51,5 +52,12 @@ public class BannerController {
     @GetMapping(path = "/listar")
     public ResponseEntity<ResponseModel> listar() {
         return ResponseEntity.ok(bannerService.listar());
+    }
+
+    @Operation(summary = "Get Detalhes Banner", description = "Lista todos os detalhes do banner.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do banner") })
+    @GetMapping(path = "/get_detalhes_by_id")
+    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+        return ResponseEntity.ok(bannerService.get_by_id(Id));
     }
 }

@@ -32,13 +32,13 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
     Boolean existsByUsernameAndHash(String username, String hash);
 
     @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET token=:token, token_iat=:token_iat WHERE username =:username", nativeQuery = true)
-    Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
+    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(),token=:token, token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
+    Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,@Param("id") int id,
             @Param("username") String username);
 
     @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET token_iat=:token_iat WHERE username =:username", nativeQuery = true)
-    Optional<Integer> updateDateToken(@Param("token_iat") LocalDateTime token_iat, @Param("username") String username);
+    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
+    Optional<Integer> updateDateToken(@Param("token_iat") LocalDateTime token_iat,@Param("id") int id, @Param("username") String username);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)

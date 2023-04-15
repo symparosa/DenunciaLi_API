@@ -164,8 +164,8 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         try {
 
-            if (tipo.equals(dom.getTipoFAQ()) || tipo.equals(dom.getTipoPolitica())
-                    || tipo.equals(dom.getTipoTermo())) {
+            if (tipo.equals(dom.getTipoInfoLegal_Faq()) || tipo.equals(dom.getTipoInfoLegal_Politica())
+                    || tipo.equals(dom.getTipoInfoLegal_Termo())) {
 
                 DominioModel dominioModel = domRepository.findByDominio(tipo);
 
@@ -195,12 +195,33 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         boolean msg = false;
 
-        if (domService.existsTipo(tipoInfo, dom.getTipoFAQ())
-                || domService.existsTipo(tipoInfo, dom.getTipoPolitica())
-                || domService.existsTipo(tipoInfo, dom.getTipoTermo())) {
+        if (domService.existsTipo(tipoInfo, dom.getTipoInfoLegal())) {
             msg = true;
         }
-
         return msg;
+    }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (infoRepository.count() > 0) {
+
+                String metodo = "listar",obj = "Informação Legal";
+
+                InformacaoLegalModel info = infoRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, info, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 }

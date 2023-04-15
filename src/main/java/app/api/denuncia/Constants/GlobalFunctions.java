@@ -79,6 +79,21 @@ public class GlobalFunctions {
         }
     }
 
+    public ResponseModel validateGetMsgWithObj(String metodo, Object obj, String entities) {
+
+        clearList(msg);
+
+        if (obj != null) {
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, obj);
+
+        } else {
+            msg.add(message.getMessage06(entities));
+            return getResponseError(msg);
+        }
+    }
+
     public ResponseModel validateGetListMsg(String metodo, List<?> lista) {
 
         clearList(msg);

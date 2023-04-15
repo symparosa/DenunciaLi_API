@@ -1,7 +1,13 @@
 package app.api.denuncia.Models;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "dn_t_denunciante")
-public class DenuncianteModel implements Serializable {
+public class DenuncianteModel implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,14 +67,45 @@ public class DenuncianteModel implements Serializable {
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
-    @Schema(description = "Id do último utilizador a alterar os dados")
-    private Integer last_user_change;
-
     private String localizacao_mapa;
 
+    @Schema(description = "O estado do denunciante", hidden = true)
     private Integer estado;
 
+    @Schema(description = "A data de criação do denunciante", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização do denunciante", hidden = true)
     private Date data_atualizacao;
+
+    @Schema(description = "O token de acesso do denunciante", hidden = true)
+    private String token;
+
+    @Schema(description = "A data do token do denunciante", hidden = true)
+    private LocalDateTime token_iat;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("DENUNCIANTE"));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -12,4 +12,6 @@ public interface EntidadeService {
     ResponseModel listar();
 
     Boolean existsEntidade(EntidadeModel ent);
+
+    ResponseModel get_by_id(int id);
 }

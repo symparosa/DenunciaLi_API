@@ -137,4 +137,28 @@ public class BannerServiceImpl implements BannerService {
             return gf.getResponseError(msg);
         }
     }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (bannerRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                BannerModel Banner = bannerRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, Banner, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
 }

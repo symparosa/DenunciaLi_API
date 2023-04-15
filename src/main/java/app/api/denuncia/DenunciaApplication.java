@@ -26,8 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 				// @Tag(name = "Denunciante", description = "Onde serão gerenciados os endpoits
 				// do denunciante."),
 				@Tag(name = "Utilizador Back-Office", description = "Onde serão gerenciados os endpoits do utilizador back-office."),
-				// @Tag(name = "Localização", description = "Onde serão gerenciados os endpoits
-				// da localização."),
+				@Tag(name = "Localização", description = "Onde serão gerenciados os endpoits da localização."),
 				@Tag(name = "Domínio", description = "Onde serão gerenciados os endpoits do domínio."),
 				@Tag(name = "Menu", description = "Onde serão gerenciados os endpoits do menu."),
 				@Tag(name = "Menu Perfil", description = "Onde serão gerenciados os endpoits do menu perfil."),

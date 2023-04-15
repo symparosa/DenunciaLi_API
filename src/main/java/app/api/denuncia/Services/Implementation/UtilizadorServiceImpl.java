@@ -265,14 +265,10 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
         try {
 
-            // DominioModel tipoCont =
-            // domRepository.findByDominioAndValor(dom.getTipoContato(), "EMAIL");
-            // || contRepository.existsByTipoContatoAndValor(tipoCont, email)
+            DominioModel tipoCont = domRepository.findByDominioAndValor(dom.getTipoContato(), "EMAIL");
 
-            System.out.println("entrou 0 "+email);
-            if (userRepository.existsByUsername(email)) {
+            if (userRepository.existsByUsername(email) || contRepository.existsByTipoContatoAndValor(tipoCont, email)) {
 
-                System.out.println("entrou 1");
                 var user = userRepository.findByUsername(email).orElse(null);
 
                 String Subject = "Recuperação da Conta",
@@ -293,8 +289,6 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                         msg.add(val.getMessage().get(0));
 
-                        System.out.println("entrou ate aqui");
-
                         String html = gf.getTemplate(PathRecover);
 
                         Document doc = Jsoup.parse(html);
@@ -313,6 +307,29 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 }
             } else {
                 msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (userRepository.count() > 0) {
+
+                String metodo = "listar", obj = "Utilizador";
+
+                UtilizadorModel Banner = userRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, Banner, obj);
+
+            } else {
+                msg.add(message.getMessage05());
                 return gf.getResponseError(msg);
             }
         } catch (Exception e) {

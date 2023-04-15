@@ -22,7 +22,7 @@ public class BotaoServiceImpl implements BotaoService {
     private BotaoRepository botaoRepository;
     private AuthenticationService auth;
 
-    private String obj = "botão";
+    private String obj = "Botão";
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
@@ -144,6 +144,30 @@ public class BotaoServiceImpl implements BotaoService {
             }
         } else {
             msg.add(message.getMessage06(obj));
+            return gf.getResponseError(msg);
+        }
+    }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (botaoRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                BotaoModel bo = botaoRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, bo, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
     }

@@ -16,4 +16,6 @@ public interface DominioService {
     ResponseModel getDominio(String dominio);
 
     Boolean existsTipo(DominioModel tipo, String dom);
+
+    ResponseModel get_by_id(int id);
 }

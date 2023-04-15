@@ -10,4 +10,6 @@ public interface BotaoService {
     ResponseModel alterarEstado(int id, int estado);
 
     ResponseModel listar();
+
+    ResponseModel get_by_id(int id);
 }

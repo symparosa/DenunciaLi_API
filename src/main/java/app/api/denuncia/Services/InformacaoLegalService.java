@@ -12,4 +12,6 @@ public interface InformacaoLegalService {
     ResponseModel listar();
 
     ResponseModel getInfoByTipo(String tipo);
+
+    ResponseModel get_by_id(int id);
 }

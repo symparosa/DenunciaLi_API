@@ -181,4 +181,28 @@ public class EntidadeServiceImpl implements EntidadeService {
         }
         return false;
     }
+
+    @Override
+    public ResponseModel get_by_id(int id) {
+
+        gf.clearList(msg);
+
+        try {
+
+            if (entRepository.count() > 0) {
+
+                String metodo = "listar", obj = "Entidade";;
+
+                EntidadeModel ent = entRepository.findById(id).orElse(null);
+                return gf.validateGetMsgWithObj(metodo, ent, obj);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
 }

@@ -14,7 +14,8 @@ public class Domain {
     private final String TipoArquivo = "TIPO_ARQUIVO";
     private final String TipoQueixa = "TIPO_QUEIXA";
     private final String GrauParentesco = "GRAU_PARENTESCO";
-    private final String TipoTermo = "TIPO_TERMO";
-    private final String TipoPolitica = "TIPO_POLITICA";
-    private final String TipoFAQ = "TIPO_FAQ";
+    private final String tipoInfoLegal = "TIPO_INFO_LEGAL";
+    private final String tipoInfoLegal_Termo = "TERMO";
+    private final String tipoInfoLegal_Politica = "POLITICA";
+    private final String tipoInfoLegal_Faq = "FAQ";
 }

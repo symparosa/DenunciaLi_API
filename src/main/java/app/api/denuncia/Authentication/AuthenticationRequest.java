@@ -17,4 +17,7 @@ public class AuthenticationRequest {
 
   @Schema(description = "O password do utilizador", example = "12345", required = true)
   private String password;
+
+  @Schema(description = "O canal de utilização do utilizador", example = "BackOffice", required = true)
+  private String canal;
 }

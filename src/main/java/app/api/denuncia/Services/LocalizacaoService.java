@@ -5,7 +5,7 @@ import app.api.denuncia.Models.ResponseModel;
 
 public interface LocalizacaoService {
 
-    ResponseModel listarLocalizacoes();
+    ResponseModel listarLocalizacoes(String concelho);
 
     ResponseModel getIlhas();
 

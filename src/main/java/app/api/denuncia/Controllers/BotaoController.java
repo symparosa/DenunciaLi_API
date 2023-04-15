@@ -52,4 +52,11 @@ public class BotaoController {
     public ResponseEntity<ResponseModel> listar() {
         return ResponseEntity.ok(botaoService.listar());
     }
+
+    @Operation(summary = "Get Detalhes Botão", description = "Lista todos os detalhes do botão.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do botão") })
+    @GetMapping(path = "/get_detalhes_by_id")
+    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+        return ResponseEntity.ok(botaoService.get_by_id(Id));
+    }
 }
