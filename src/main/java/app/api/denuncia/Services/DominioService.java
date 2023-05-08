@@ -7,15 +7,17 @@ import app.api.denuncia.Models.ResponseModel;
 
 public interface DominioService {
 
-    ResponseModel adicionar_atualizar(List<DominioModel> dominio);
-
-    ResponseModel alterarEstado(int id, int estado);
-
     ResponseModel listar();
+
+    ResponseModel get_by_id(int id);
 
     ResponseModel getDominio(String dominio);
 
+    ResponseModel alterarEstado(int id, int estado);
+
     Boolean existsTipo(DominioModel tipo, String dom);
 
-    ResponseModel get_by_id(int id);
+    DominioModel findByDominioAndValor(String dom, String tipo);
+
+    ResponseModel adicionar_atualizar(List<DominioModel> dominio);
 }

@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "jwt.secretkey",
+    "type": "java.lang.String",
+    "description": "O secretkey para JWT'"
+  },
+  {
+    "name": "jwt.minexp",
+    "type": "java.lang.String",
+    "description": "O tempo limite para expirar token'"
+  },
+  {
+    "name": "aes56.algorithm",
+    "type": "java.lang.String",
+    "description": "O algorithm usado no AES 256'"
+  },
+  {
+    "name": "aes56.b64",
+    "type": "java.lang.String",
+    "description": "Uma string em base64'"
+  },
+  {
+    "name": "template.registration",
+    "type": "java.lang.String",
+    "description": "O caminho para o template de registration"
+  },
+  {
+    "name": "template.recover",
+    "type": "java.lang.String",
+    "description": "O caminho para o template de recover"
+  }
+]}

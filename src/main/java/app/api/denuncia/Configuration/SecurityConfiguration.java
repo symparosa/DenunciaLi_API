@@ -1,4 +1,5 @@
 package app.api.denuncia.Configuration;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration{
+public class SecurityConfiguration {
 
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
@@ -26,7 +27,10 @@ public class SecurityConfiguration{
         .disable()
         .authorizeHttpRequests()
         .requestMatchers(
-          "/api/auth/login","/api/utilizadorBackoffice/alterarPassword","/api/utilizadorBackoffice/recuperarConta","/v3/**", "/swagger-ui/**").permitAll()
+            "/api/auth/login", "/api/utilizadorBackoffice/alterarPassword", "/api/utilizadorBackoffice/recuperarConta",
+            "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
+            "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia","/api/aes256/**")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()

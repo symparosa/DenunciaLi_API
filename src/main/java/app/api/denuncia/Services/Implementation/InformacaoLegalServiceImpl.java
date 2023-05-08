@@ -7,38 +7,39 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
+import app.api.denuncia.Enums.DomainValue;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.InformacaoLegalModel;
 import app.api.denuncia.Models.ResponseModel;
-import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.InformacaoLegalRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.InformacaoLegalService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
     private InformacaoLegalRepository infoRepository;
     private DominioService domService;
-    private DominioRepository domRepository;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
     public InformacaoLegalServiceImpl(InformacaoLegalRepository infoRepository, DominioService domService,
-            DominioRepository domRepository, AuthenticationService auth) {
+            AuthenticationService auth) {
         this.infoRepository = infoRepository;
         this.domService = domService;
-        this.domRepository = domRepository;
         this.auth = auth;
+    }
+
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
             infoLegal.setEstado(status.getAtivo());
             infoLegal.setData_criacao(new Date());
-            infoLegal.setLast_user_change(auth.getUserLogado().getId());
+            infoLegal.setLast_user_change(IdUserLogado());
 
             String obj = "Tipo de informação legal";
 
@@ -92,7 +93,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
                     String metodo = "salvar";
 
-                    Integer result = infoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = infoRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -164,10 +165,10 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         try {
 
-            if (tipo.equals(dom.getTipoInfoLegal_Faq()) || tipo.equals(dom.getTipoInfoLegal_Politica())
-                    || tipo.equals(dom.getTipoInfoLegal_Termo())) {
+            if (tipo.equals(DomainValue.FAQ.name()) || tipo.equals(DomainValue.POLITICA.name())
+                    || tipo.equals(DomainValue.TERMO.name())) {
 
-                DominioModel dominioModel = domRepository.findByDominio(tipo);
+                DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_INFO_LEGAL.name(), tipo);
 
                 if (dominioModel != null) {
 
@@ -195,7 +196,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         boolean msg = false;
 
-        if (domService.existsTipo(tipoInfo, dom.getTipoInfoLegal())) {
+        if (domService.existsTipo(tipoInfo, Domain.TIPO_INFO_LEGAL.name())) {
             msg = true;
         }
         return msg;
@@ -210,7 +211,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
             if (infoRepository.count() > 0) {
 
-                String metodo = "listar",obj = "Informação Legal";
+                String metodo = "listar", obj = "Informação Legal";
 
                 InformacaoLegalModel info = infoRepository.findById(id).orElse(null);
                 return gf.validateGetMsgWithObj(metodo, info, obj);

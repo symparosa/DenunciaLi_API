@@ -1,149 +1,211 @@
-// package app.api.denuncia.Services.Implementation;
+package app.api.denuncia.Services.Implementation;
 
-// import java.util.List;
+import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 
-// import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 
-// import app.api.denuncia.Constants.ResponseType;
-// import app.api.denuncia.Dto.DenunciaOutputDto;
-// import app.api.denuncia.Dto.Response.ResponseDto;
-// import app.api.denuncia.Models.ArquivoModel;
-// import app.api.denuncia.Models.DenunciaModel;
-// import app.api.denuncia.Repositories.DenunciaRepository;
-// import app.api.denuncia.Repositories.UtilizadorRepository;
-// import app.api.denuncia.Services.DenunciaService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-// @Service
-// public class DenunciaServiceImpl implements DenunciaService {
+import app.api.denuncia.AES.AES256Service;
+import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.DenunciaOutputDto;
+import app.api.denuncia.Enums.ResponseType;
+import app.api.denuncia.Models.ArquivoModel;
+import app.api.denuncia.Models.DenunciaModel;
+import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Repositories.DenunciaRepository;
+import app.api.denuncia.Services.DenunciaService;
+import app.api.denuncia.Services.LocalizacaoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
+import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 
-//     private DenunciaRepository denunciaRepository;
-//     private UtilizadorRepository denuncianteRepository;
+@Service
+public class DenunciaServiceImpl implements DenunciaService {
 
-//     public DenunciaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository denuncianteRepository) {
-//         this.denunciaRepository = denunciaRepository;
-//         this.denuncianteRepository = denuncianteRepository;
-//     }
+    private DenunciaRepository denunciaRepository;
+    private LocalizacaoService localService;
+    private AES256Service aes256Service;
 
-//     @Override
-//     public ResponseDto adicionarDenuncia(DenunciaModel denuncia) {
+    private Status status = new Status();
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
+    private GlobalFunctions gf = new GlobalFunctions();
 
-//         ResponseDto response = new ResponseDto();
+    public DenunciaServiceImpl(DenunciaRepository denunciaRepository, LocalizacaoService localService,
+            AES256Service aes256Service) {
+        this.denunciaRepository = denunciaRepository;
+        this.localService = localService;
+        this.aes256Service = aes256Service;
+    }
 
-//         try {
-            
-//             DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
+    @Override
+    public ResponseModel adicionarDenuncia(String denu) {
 
-//             if (denunciaSave != null) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
 
-//                 List<ArquivoModel> arquivo = denunciaSave.getQueixa().getArquivos();
+        gf.clearList(msg);
 
-//                 if (arquivo != null && !arquivo.isEmpty()) {
+        try {
 
-//                     for (int i = 0; i < arquivo.size(); i++) {
-//                         denunciaRepository.atualizarArquivo(denunciaSave.getQueixa().getId(), arquivo.get(i).getId());
-//                     }
-//                 }
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(denuncia);
-//                 response.setMessage(" Denúncia salvo com sucesso.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Falha ao salvar a denúncia.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+            String decrypt = aes256Service.decrypt(denu);
+            DenunciaModel denuncia = gson.fromJson(decrypt, DenunciaModel.class);
 
-//     @Override
-//     public ResponseDto listarDenunciasByUserId(int id) {
+            if (decrypt != null && denuncia != null) {
 
-//         ResponseDto response = new ResponseDto();
+                String metodo = "salvar", obj = "Localização";
 
-//         try {
+                ResponseModel validar = validarCampos(denuncia);
 
-//             if (denuncianteRepository.findById(id) != null) {
+                if (validar.getResponseCode() == 1) {
 
-//                 List<DenunciaOutputDto> listadenuncia = denunciaRepository.listarDenunciasByUserId(id);
+                    if ((denuncia.getQueixa().getLocalizacao() != null
+                            && localService.existsLocalizacao(denuncia.getQueixa().getLocalizacao()))
+                            || denuncia.getQueixa().getLocalizacao_mapa() != null) {
 
-//                 if (listadenuncia != null && !listadenuncia.isEmpty()) {
-//                     response.setResponseCode(1);
-//                     response.setResponseType(ResponseType.Sucesso);
-//                     response.setObject(listadenuncia);
-//                     response.setMessage(" Listar denúncias de utilizador com sucesso.");
-//                     return response;
-//                 } else if (listadenuncia == null) {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" Falha ao listar denúncias de utilizador.");
-//                     return response;
-//                 } else {
-//                     response.setResponseCode(0);
-//                     response.setResponseType(ResponseType.Erro);
-//                     response.setObject(null);
-//                     response.setMessage(" A lista de denúncias de utilizador está vazia.");
-//                     return response;
-//                 }
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" utilizador não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                        Date now = new Date();
 
-//     @Override
-//     public ResponseDto getDenunciaById(int id) {
-//         ResponseDto response = new ResponseDto();
+                        denuncia.setData_criacao(now);
+                        denuncia.setEstado(status.getAtivo());
+                        denuncia.setLast_user_change(denuncia.getDenunciante().getId());
 
-//         try {
-//             DenunciaOutputDto denuncia = denunciaRepository.findById(id);
+                        denuncia.getQueixa().setData_criacao(now);
+                        denuncia.getQueixa().setEstado(status.getAtivo());
+                        denuncia.getQueixa().setLast_user_change(denuncia.getDenunciante().getId());
 
-//             if (denuncia != null) {
-//                 response.setResponseCode(1);
-//                 response.setResponseType(ResponseType.Sucesso);
-//                 response.setObject(denuncia);
-//                 response.setMessage(" Denúncia encontrada com sucesso.");
-//                 return response;
-//             } else {
-//                 response.setResponseCode(0);
-//                 response.setResponseType(ResponseType.Erro);
-//                 response.setObject(null);
-//                 response.setMessage(" Denúncia não existe.");
-//                 return response;
-//             }
-//         } catch (Exception e) {
-//             response.setResponseCode(0);
-//             response.setResponseType(ResponseType.Erro);
-//             response.setObject(null);
-//             response.setMessage(" Falha no sistema.");
-//             return response;
-//         }
-//     }
+                        if (denuncia.getQueixa().getLocalizacao_mapa() != null) {
+                            denuncia.getQueixa().setLocalizacao(null);
+                        }
 
-//     public DenunciaRepository getDenunciaRepository() {
-//         return denunciaRepository;
-//     }
+                        List<ArquivoModel> arquivos = denuncia.getQueixa().getArquivos();
 
-//     public void setDenunciaRepository(DenunciaRepository denunciaRepository) {
-//         this.denunciaRepository = denunciaRepository;
-//     }
-// }
+                        if(arquivos != null && arquivos.size()!=0){
+                            arquivos.forEach(arquivo -> {
+                                arquivo.setLast_user_change(denuncia.getDenunciante().getId());
+                                arquivo.setData_criacao(now);
+                                arquivo.setEstado(status.getAtivo());
+                             });
+                        }
+                        
+                        DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
+
+                        if (denunciaSave != null) {
+
+                            List<ArquivoModel> arquivo = denunciaSave.getQueixa().getArquivos();
+
+                            if (arquivo != null && !arquivo.isEmpty()) {
+
+                                for (int i = 0; i < arquivo.size(); i++) {
+                                    denunciaRepository.atualizarArquivo(denuncia.getDenunciante().getId(),
+                                            denunciaSave.getQueixa().getId(),arquivo.get(i).getId());
+                                }
+                            }
+                            return gf.validateGetSaveMsgWithObj(metodo, denunciaSave);
+                        } else {
+                            msg.add(message.getMessage02(metodo));
+                            return gf.getResponseError(msg);
+                        }
+                    } else {
+                        msg.add(message.getMessage06(obj));
+                        return gf.getResponseError(msg);
+                    }
+                } else {
+                    return validar;
+                }
+            } else {
+                msg.add(message.getMessage14("decrypt"));
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public ResponseModel validarCampos(DenunciaModel denuncia) {
+
+        String obj = "";
+
+        if (denuncia.getQueixa().getDescricao() == null || denuncia.getQueixa().getDescricao().isEmpty()) {
+            obj = "Descrição";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getData_ocorrencia() == null) {
+            obj = "Data de ocorrência";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getReferencia_morada() == null
+                || denuncia.getQueixa().getReferencia_morada().isEmpty()) {
+            obj = "Referência de morada";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getCodigo_postal() == null
+                || denuncia.getQueixa().getCodigo_postal().isEmpty()) {
+            obj = "Código postal";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if ((denuncia.getQueixa().getLocalizacao_mapa() == null
+                || denuncia.getQueixa().getLocalizacao_mapa().isEmpty())
+                && denuncia.getQueixa().getLocalizacao() == null) {
+            obj = "Localização";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getGrau_parentesco() == null) {
+            obj = "Grau de parentesco";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getTipo_queixa() == null) {
+            obj = "Tipo de queixa";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getQueixa().getTipo_crime() == null) {
+            obj = "Tipo de crime";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else if (denuncia.getDenunciante() == null) {
+            obj = "Denunciante";
+            msg.add(message.getMessage09(obj));
+            return gf.getResponseError(msg);
+        } else {
+            return gf.getResponse(1, ResponseType.Sucesso, null, null);
+        }
+    }
+
+    @Override
+    public List<DenunciaOutputDto> listarDenunciasByUserId(int id) {
+        return denunciaRepository.listarDenunciasByUserId(id);
+    }
+
+    // @Override
+    // public ResponseModel getDenunciaById(int id) {
+    // ResponseDto response = new ResponseDto();
+
+    // try {
+    // DenunciaOutputDto denuncia = denunciaRepository.findById(id);
+
+    // if (denuncia != null) {
+    // response.setResponseCode(1);
+    // response.setResponseType(ResponseType.Sucesso);
+    // response.setObject(denuncia);
+    // response.setMessage(" Denúncia encontrada com sucesso.");
+    // return response;
+    // } else {
+    // response.setResponseCode(0);
+    // response.setResponseType(ResponseType.Erro);
+    // response.setObject(null);
+    // response.setMessage(" Denúncia não existe.");
+    // return response;
+    // }
+    // } catch (Exception e) {
+    // response.setResponseCode(0);
+    // response.setResponseType(ResponseType.Erro);
+    // response.setObject(null);
+    // response.setMessage(" Falha no sistema.");
+    // return response;
+    // }
+    // }
+}

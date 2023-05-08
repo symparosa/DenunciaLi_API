@@ -5,15 +5,17 @@ import app.api.denuncia.Models.UtilizadorModel;
 
 public interface UtilizadorService {
 
-    ResponseModel adicionar_atualizar(UtilizadorModel utilizador);
-
-    ResponseModel alterarEstado(int id, int estado);
-
     ResponseModel listar();
+
+    ResponseModel get_by_id(int id);
 
     ResponseModel recuperarConta(String email);
 
-    ResponseModel alterarPassword(String username, String hash,String password);
+    ResponseModel alterarEstado(int id, int estado);
 
-    ResponseModel get_by_id(int id);
+    Boolean existsByIdAndEstado(int id, int estado);
+
+    ResponseModel adicionar_atualizar(UtilizadorModel utilizador);
+
+    ResponseModel alterarPassword(String username, String hash, String password);
 }

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Dto.LocalizacaoDto;
 import app.api.denuncia.Dto.ConcelhoDto;
@@ -12,6 +11,7 @@ import app.api.denuncia.Models.LocalizacaoModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.LocalizacaoRepository;
 import app.api.denuncia.Services.LocalizacaoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class LocalizacaoServiceImpl implements LocalizacaoService {

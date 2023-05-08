@@ -17,6 +17,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import app.api.denuncia.Models.DenuncianteModel;
+import app.api.denuncia.Models.UtilizadorModel;
+import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 
 
@@ -25,7 +28,8 @@ import app.api.denuncia.Repositories.UtilizadorRepository;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
-  private final UtilizadorRepository repository;
+  private final UtilizadorRepository utiRepository;
+  private final DenuncianteRepository denuRepository;
   private final UserDetailsService userDetailsService;
 
   @Override
@@ -46,9 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
       if (jwtService.isTokenValid(jwt, userDetails)) {
-        final LocalDateTime now = LocalDateTime.now();
-        var user = repository.findByUsername(userDetails.getUsername()).orElseThrow();
-        repository.updateDateToken(now, user.getId(), user.getUsername()).orElseThrow();
+        updateDateToken(userDetails);
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
             userDetails,
             null,
@@ -61,5 +63,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
     }
     filterChain.doFilter(request, response);
+  }
+
+  public void updateDateToken(UserDetails userDetails){
+
+    final LocalDateTime now = LocalDateTime.now();
+    
+    if (userDetails instanceof UtilizadorModel) {
+      UtilizadorModel user = (UtilizadorModel) userDetails;
+      utiRepository.updateDateToken(now, user.getId(), user.getUsername()).orElseThrow();
+    } else if (userDetails instanceof DenuncianteModel) {
+      DenuncianteModel user = (DenuncianteModel) userDetails;
+      denuRepository.updateDateToken(now, user.getId(), user.getUsername()).orElseThrow();
+    }
   }
 }

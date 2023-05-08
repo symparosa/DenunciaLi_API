@@ -2,13 +2,15 @@ package app.api.denuncia.Models;
 
 import java.util.List;
 
-import app.api.denuncia.Constants.ResponseType;
+import app.api.denuncia.Enums.ResponseType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ResponseModel {
 
     @Schema(description = "Mensagem de saída")

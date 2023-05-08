@@ -7,12 +7,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
+import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EmailService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 import jakarta.mail.internet.MimeMessage;
 
 @Service

@@ -13,11 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "dn_t_denuncia")
 public class DenunciaModel implements Serializable {
@@ -34,12 +36,15 @@ public class DenunciaModel implements Serializable {
     @JoinColumn(name = "denunciante_fk")
     private DenuncianteModel denunciante;
 
-    @Schema(description = "Id do último utilizador a alterar os dados")
+    @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
     private Integer last_user_change;
 
+    @Schema(description = "O estado da denuncia", hidden = true)
     private Integer estado;
 
+    @Schema(description = "A data de criação da denuncia", hidden = true)
     private Date data_criacao;
 
+    @Schema(description = "A data de atualização da denuncia", hidden = true)
     private Date data_atualizacao;
 }

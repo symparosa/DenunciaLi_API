@@ -7,16 +7,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
+import app.api.denuncia.Enums.DomainValue;
+import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.LocalizacaoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class EntidadeServiceImpl implements EntidadeService {
@@ -26,20 +28,24 @@ public class EntidadeServiceImpl implements EntidadeService {
     private DominioService domService;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
+    
 
-    public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoServiceImpl localServiceImpl,
+    public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoService localService,
             DominioService domService, AuthenticationService auth) {
         this.entRepository = entRepository;
-        this.localService = localServiceImpl;
+        this.localService = localService;
         this.domService = domService;
         this.auth = auth;
     }
 
+    public int IdUserLogado(){
+        return auth.getUtiLogado().getId();
+    }
+    
     @Override
     public ResponseModel adicionar_atualizar(EntidadeModel entidade) {
 
@@ -51,13 +57,13 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             entidade.setEstado(status.getAtivo());
             entidade.setData_criacao(new Date());
-            entidade.setLast_user_change(auth.getUserLogado().getId());
+            entidade.setLast_user_change(IdUserLogado());
 
             if (localService.existsLocalizacao(entidade.getLocalizacao())) {
 
                 obj = "Tipo de entidade";
 
-                if (domService.existsTipo(entidade.getTipo_entidade(), dom.getTipoEntidade())) {
+                if (domService.existsTipo(entidade.getTipoEntidade(), Domain.TIPO_ENTIDADE.name())) {
 
                     if (entidade.getId() != null) { // update
 
@@ -99,7 +105,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
                     String metodo = "salvar";
 
-                    Integer result = entRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = entRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -176,7 +182,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
     public Boolean existsEntidade(EntidadeModel ent) {
 
-        if (ent != null && entRepository.existsByIdAndEstado(ent.getId(),status.getAtivo())) {
+        if (ent != null && entRepository.existsByIdAndEstado(ent.getId(), status.getAtivo())) {
             return true;
         }
         return false;
@@ -191,7 +197,8 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             if (entRepository.count() > 0) {
 
-                String metodo = "listar", obj = "Entidade";;
+                String metodo = "listar", obj = "Entidade";
+                ;
 
                 EntidadeModel ent = entRepository.findById(id).orElse(null);
                 return gf.validateGetMsgWithObj(metodo, ent, obj);
@@ -204,5 +211,42 @@ public class EntidadeServiceImpl implements EntidadeService {
             msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
+    }
+
+    @Override
+    public ResponseModel getEntidadeByTipo(String tipo) {
+        
+        gf.clearList(msg);
+
+        try {
+
+            if (tipo.equals(DomainValue.INSTITUICAO_APOIO.name()) || tipo.equals(DomainValue.CONTATO_IMPORTANTE.name())) {
+
+                DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_ENTIDADE.name(), tipo);
+
+                if (dominioModel != null) {
+
+                    String metodo = "listar";
+
+                    List<EntidadeModel> lista = entRepository.findByTipoEntidadeAndEstado(dominioModel,status.getAtivo());
+                    return gf.validateGetListMsg(metodo, lista);
+
+                } else {
+                    msg.add(message.getMessage06(tipo));
+                    return gf.getResponseError(msg);
+                }
+            } else {
+                msg.add(message.getMessage12());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    @Override
+    public Boolean existsByIdAndEstado(int id, int estado) {
+        return entRepository.existsByIdAndEstado(id,estado);
     }
 }

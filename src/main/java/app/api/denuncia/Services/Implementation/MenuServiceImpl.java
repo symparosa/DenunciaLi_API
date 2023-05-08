@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.MenuDto;
@@ -15,6 +14,7 @@ import app.api.denuncia.Models.MenuModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.MenuRepository;
 import app.api.denuncia.Services.MenuService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -33,6 +33,10 @@ public class MenuServiceImpl implements MenuService {
         this.auth = auth;
     }
 
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
+    }
+
     @Override
     public ResponseModel adicionar_atualizar(MenuModel menu) {
 
@@ -44,7 +48,7 @@ public class MenuServiceImpl implements MenuService {
 
             menu.setEstado(status.getAtivo());
             menu.setData_criacao(new Date());
-            menu.setLast_user_change(auth.getUserLogado().getId());
+            menu.setLast_user_change(IdUserLogado());
 
             if (menu.getId() != null) {
 
@@ -73,7 +77,7 @@ public class MenuServiceImpl implements MenuService {
 
                     String metodo = "salvar";
 
-                    Integer result = menuRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = menuRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
                     msg.add(message.getMessage07());

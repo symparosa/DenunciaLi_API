@@ -12,11 +12,13 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "dn_t_banner")
 public class BannerModel implements Serializable {

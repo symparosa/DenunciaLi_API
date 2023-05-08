@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.BotaoDto;
@@ -15,6 +14,7 @@ import app.api.denuncia.Models.BotaoModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.BotaoRepository;
 import app.api.denuncia.Services.BotaoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class BotaoServiceImpl implements BotaoService {
@@ -27,10 +27,14 @@ public class BotaoServiceImpl implements BotaoService {
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    
+
     public BotaoServiceImpl(BotaoRepository botaoRepository, AuthenticationService auth) {
         this.botaoRepository = botaoRepository;
         this.auth = auth;
+    }
+
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -44,7 +48,7 @@ public class BotaoServiceImpl implements BotaoService {
 
             botao.setEstado(status.getAtivo());
             botao.setData_criacao(new Date());
-            botao.setLast_user_change(auth.getUserLogado().getId());
+            botao.setLast_user_change(IdUserLogado());
 
             if (botao.getId() != null) {
 
@@ -74,7 +78,7 @@ public class BotaoServiceImpl implements BotaoService {
 
                     String metodo = "salvar";
 
-                    Integer result = botaoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = botaoRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -171,4 +175,6 @@ public class BotaoServiceImpl implements BotaoService {
             return gf.getResponseError(msg);
         }
     }
+
+    
 }

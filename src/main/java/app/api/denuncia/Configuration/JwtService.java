@@ -16,22 +16,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import app.api.denuncia.Repositories.UtilizadorRepository;
+import app.api.denuncia.Models.DenuncianteModel;
+import app.api.denuncia.Models.UtilizadorModel;
 
 @Service
 public class JwtService {
 
-  @Value("${spring.secretkey}")
+  @Value("${jwt.secretkey}")
   private String SECRET_KEY;
 
-  @Value("${spring.minexp}")
+  @Value("${jwt.minexp}")
   private int expMin;
-
-  private UtilizadorRepository repository;
-
-  public JwtService(UtilizadorRepository repository) {
-    this.repository = repository;
-  }
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -60,9 +55,19 @@ public class JwtService {
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
+
     final String username = extractUsername(token);
-    var user = repository.findByUsername(username).orElseThrow();
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(user.getToken_iat());
+
+    LocalDateTime Token_iat = null;
+
+    if (userDetails instanceof UtilizadorModel) {
+      UtilizadorModel user = (UtilizadorModel) userDetails;
+      Token_iat = user.getToken_iat();
+    } else if (userDetails instanceof DenuncianteModel) {
+      DenuncianteModel user = (DenuncianteModel) userDetails;
+      Token_iat = user.getToken_iat();
+    }
+    return (username.equals(userDetails.getUsername())) && !isTokenExpired(Token_iat);
   }
 
   private boolean isTokenExpired(LocalDateTime token_iat) {

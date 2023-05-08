@@ -1,4 +1,4 @@
-package app.api.denuncia.Constants;
+package app.api.denuncia.Utilities;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,6 +8,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
 public class GlobalFunctions {

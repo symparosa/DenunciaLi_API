@@ -5,22 +5,26 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Configuration.JwtService;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Constants.ResponseType;
+import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.DenuncianteModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 @RequiredArgsConstructor
@@ -30,54 +34,95 @@ public class AuthenticationService {
   private final DenuncianteRepository DenunRepository;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final AES256Service aes256Service;
+
   private Message message = new Message();
   private List<String> msg = new ArrayList<>();
   private GlobalFunctions gf = new GlobalFunctions();
 
   public ResponseModel authenticate(AuthenticationRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getUsername(),
-            request.getPassword()));
 
     gf.clearList(msg);
 
     try {
 
-      msg.add(message.getMessage13("Login"));
-      final LocalDateTime now = LocalDateTime.now();
+      String pass = aes256Service.decrypt(request.getPassword());
 
-      if (request.getCanal().equals("BackOffice")) {
+      if (pass != null) {
 
-        var userLogado = UserRepository.findByUsername(request.getUsername()).orElseThrow();
-        var jwtToken = jwtService.generateToken(userLogado);
-        UserRepository.insertToken(jwtToken, now, userLogado.getId(), userLogado.getUsername()).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+        Authentication authentication = authenticationManager
+            .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), pass));
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        msg.add(message.getMessage13("Login"));
+        return sendToken(request.getCanal(), userDetails);
+
       } else {
-
-        var denunLogado = DenunRepository.findByUsername(request.getUsername()).orElseThrow();
-        var jwtToken = jwtService.generateToken(denunLogado);
-        DenunRepository.insertToken(jwtToken, now, denunLogado.getId(), denunLogado.getUsername()).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+        msg.add(message.getMessage14("decrypt"));
+        return gf.getResponseError(msg);
       }
+
+    } catch (BadCredentialsException | IllegalArgumentException | NoSuchElementException ex) {
+
+      msg.add(message.getMessage12());
+      return gf.getResponseError(msg);
+
     } catch (Exception e) {
       msg.add(message.getMessage04());
       return gf.getResponseError(msg);
     }
   }
 
-  public ResponseModel logout(String canal) {
+  public ResponseModel sendToken(String canal, UserDetails userDetails) {
 
-    gf.clearList(msg);
+    LocalDateTime now = LocalDateTime.now();
+    Integer userid = null;
+    String username = null;
+
+    if (userDetails instanceof UtilizadorModel) {
+
+      UtilizadorModel user = (UtilizadorModel) userDetails;
+      userid = user.getId();
+      username = user.getUsername();
+
+    } else if (userDetails instanceof DenuncianteModel) {
+
+      DenuncianteModel user = (DenuncianteModel) userDetails;
+      userid = user.getId();
+      username = user.getUsername();
+    }
+
+    if (userid != null && username != null) {
+
+      if (canal.equals("BackOffice")) {
+
+        var jwtToken = jwtService.generateToken(userDetails);
+        UserRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
+        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+
+      } else {
+
+        var jwtToken = jwtService.generateToken(userDetails);
+        DenunRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
+        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+
+      }
+    } else {
+      msg.add(message.getMessage14("envio de token"));
+      return gf.getResponseError(msg);
+    }
+  }
+
+  public ResponseModel logout(String canal) {
 
     try {
 
-      if (getUserLogado() != null) {
+      if (userAutenticado() != null) {
 
         Integer result = null;
 
         if (canal.equals("BackOffice")) {
-          result = UserRepository.logout(getUserLogado().getId());
+          result = UserRepository.logout(getUtiLogado().getId());
         } else {
           result = DenunRepository.logout(getDenunLogado().getId());
         }
@@ -92,7 +137,7 @@ public class AuthenticationService {
           return gf.getResponseError(msg);
         }
       } else {
-        msg.add(message.getMessage12());
+        msg.add(message.getMessage17());
         return gf.getResponseError(msg);
       }
     } catch (Exception e) {
@@ -101,34 +146,30 @@ public class AuthenticationService {
     }
   }
 
-  public UtilizadorModel getUserLogado() {
+  public UserDetails userAutenticado() {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication != null) {
+      return (UserDetails) authentication.getPrincipal();
+    }
+    return null;
+  }
 
-      UtilizadorModel user = UserRepository.findByUsername(authentication.getName()).orElse(null);
+  public UtilizadorModel getUtiLogado() {
 
-      if (user != null) {
-        return user;
-      }
-      return null;
+    UserDetails user = userAutenticado();
+    if (user != null) {
+      return (UtilizadorModel) user;
     }
     return null;
   }
 
   public DenuncianteModel getDenunLogado() {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication != null) {
-
-      DenuncianteModel denun = DenunRepository.findByUsername(authentication.getName()).orElse(null);
-
-      if (denun != null) {
-        return denun;
-      }
-      return null;
+    UserDetails user = userAutenticado();
+    if (user != null) {
+      return (DenuncianteModel) user;
     }
     return null;
   }

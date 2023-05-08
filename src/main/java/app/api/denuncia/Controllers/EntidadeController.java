@@ -59,4 +59,11 @@ public class EntidadeController {
     public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(entidadeService.get_by_id(Id));
     }
+
+    @Operation(summary = "Get Entidade By Tipo", description = "Lista todos os dados a partir do tipo de entidade.", parameters = {
+            @Parameter(name = "TipoEntidade", description = "O tipo de entidade que se quer obter os dados") })
+    @GetMapping(path = "/getEntidadeByTipo")
+    public ResponseEntity<ResponseModel> getEntidadeByTipo(@RequestParam(required = true) String TipoEntidade) {
+        return ResponseEntity.ok(entidadeService.getEntidadeByTipo(TipoEntidade));
+    }
 }

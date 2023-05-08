@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Services.DominioService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class DominioServiceImpl implements DominioService {
@@ -30,6 +30,10 @@ public class DominioServiceImpl implements DominioService {
     public DominioServiceImpl(DominioRepository domRepository, AuthenticationService auth) {
         this.domRepository = domRepository;
         this.auth = auth;
+    }
+
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -71,7 +75,7 @@ public class DominioServiceImpl implements DominioService {
                         }
                         dom.setEstado(status.getAtivo());
                         dom.setData_criacao(new Date());
-                        dom.setLast_user_change(auth.getUserLogado().getId());
+                        dom.setLast_user_change(IdUserLogado());
                     }
 
                     return saveAll(dominio, contUpdate, contInsert, insert, update, metodo);
@@ -103,7 +107,7 @@ public class DominioServiceImpl implements DominioService {
 
                     String metodo = "salvar";
 
-                    Integer result = domRepository.alterarEstado(estado,auth.getUserLogado().getId(), id);
+                    Integer result = domRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -227,5 +231,10 @@ public class DominioServiceImpl implements DominioService {
             msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
+    }
+
+    @Override
+    public DominioModel findByDominioAndValor(String dom, String tipo) {
+        return domRepository.findByDominioAndValor(dom, tipo);
     }
 }

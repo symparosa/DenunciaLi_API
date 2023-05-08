@@ -4,7 +4,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,23 +14,38 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.stereotype.Service;
+
+import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Enums.ResponseType;
+import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Utilities.GlobalFunctions;
+
 import org.springframework.beans.factory.annotation.Value;
 
-public class AES256 {
+@Service
+public class AES256ServiceImpl implements AES256Service {
 
-    private final SecretKey key = getKey();
-    private final IvParameterSpec iv = new IvParameterSpec(new byte[16]);
-
-    @Value("${spring.algorithm}")
-    private String algorithm;
-
-    @Value("${spring.b64}")
+    @Value("${aes56.b64}")
     private String b64;
 
-    public String encrypt(String input) {
+    @Value("${aes56.algorithm}")
+    private String algorithm;
+
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
+    private GlobalFunctions gf = new GlobalFunctions();
+
+    private IvParameterSpec iv = new IvParameterSpec(new byte[16]);
+
+    @Override
+    public ResponseModel encrypt(String input) {
 
         Cipher cipher;
         byte[] cipherText;
+        SecretKey key = getKey();
+        gf.clearList(msg);
+        String obj = "encrypt";
 
         try {
 
@@ -37,19 +53,25 @@ public class AES256 {
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
             cipherText = cipher.doFinal(input.getBytes());
 
-            return Base64.getEncoder().encodeToString(cipherText);
+            String encode =  Base64.getEncoder().encodeToString(cipherText);
+
+            msg.add(message.getMessage13(obj));
+            return gf.getResponse(1, ResponseType.Sucesso, msg, encode);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
-            return null;
+            msg.add(message.getMessage14(obj));
+            return gf.getResponseError(msg);
         }
     }
 
+    @Override
     public String decrypt(String cipherText) {
 
         Cipher cipher;
         byte[] plainText;
+        SecretKey key = getKey();
 
         try {
 

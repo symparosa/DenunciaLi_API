@@ -7,44 +7,47 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.ContatoModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
+import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.DominioService;
+import app.api.denuncia.Services.EntidadeService;
+import app.api.denuncia.Services.UtilizadorService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Repositories.ContatoRepository;
-import app.api.denuncia.Repositories.DenuncianteRepository;
-import app.api.denuncia.Repositories.EntidadeRepository;
-import app.api.denuncia.Repositories.UtilizadorRepository;
 
 @Service
 public class ContatoServiceImpl implements ContatoService {
 
     private ContatoRepository contatoRepository;
     private DominioService domService;
-    private EntidadeRepository entidadeRepository;
-    private DenuncianteRepository denuncianteRepository;
-    private UtilizadorRepository utilizadorBackofficeRepository;
+    private EntidadeService entidadeService;
+    private DenuncianteService denuncianteService;
+    private UtilizadorService utilizadorService;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
     public ContatoServiceImpl(ContatoRepository contatoRepository, DominioService domService,
-            EntidadeRepository entidadeRepository, DenuncianteRepository denuncianteRepository,
-            UtilizadorRepository utilizadorBackofficeRepository, AuthenticationService auth) {
+            EntidadeService entidadeService, DenuncianteService denuncianteService, UtilizadorService utilizadorService,
+            AuthenticationService auth) {
         this.contatoRepository = contatoRepository;
         this.domService = domService;
-        this.entidadeRepository = entidadeRepository;
-        this.denuncianteRepository = denuncianteRepository;
-        this.utilizadorBackofficeRepository = utilizadorBackofficeRepository;
+        this.entidadeService = entidadeService;
+        this.denuncianteService = denuncianteService;
+        this.utilizadorService = utilizadorService;
         this.auth = auth;
+    }
+
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -61,7 +64,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     for (ContatoModel contato : contatoModels) {
 
-                        if (domService.existsTipo(contato.getTipoContato(), dom.getTipoContato())) {
+                        if (domService.existsTipo(contato.getTipoContato(), Domain.TIPO_CONTATO.name())) {
 
                             obj = "Id Objeto";
 
@@ -85,7 +88,7 @@ public class ContatoServiceImpl implements ContatoService {
                                     }
                                     contato.setEstado(status.getAtivo());
                                     contato.setData_criacao(new Date());
-                                    contato.setLast_user_change(auth.getUserLogado().getId());
+                                    contato.setLast_user_change(IdUserLogado());
                                     contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                 } else {
                                     msg.add(message.getMessage09("valor"));
@@ -135,7 +138,7 @@ public class ContatoServiceImpl implements ContatoService {
 
                     String metodo = "salvar";
 
-                    Integer result = contatoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = contatoRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -208,17 +211,17 @@ public class ContatoServiceImpl implements ContatoService {
 
         switch (tipo_obj) {
             case "dn_t_entidade":
-                if (entidadeRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
+                if (entidadeService.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;
             case "dn_t_denunciante":
-                if (denuncianteRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
+                if (denuncianteService.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;
             case "dn_t_utilizador_backoffice":
-                if (utilizadorBackofficeRepository.existsByIdAndEstado(id_objeto, status.getAtivo())) {
+                if (utilizadorService.existsByIdAndEstado(id_objeto, status.getAtivo())) {
                     msg = true;
                 }
                 break;

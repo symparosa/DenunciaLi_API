@@ -8,10 +8,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.BotaoModel;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.ResponseModel;
@@ -20,6 +19,7 @@ import app.api.denuncia.Repositories.BotaoRepository;
 import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.TransacaoRepository;
 import app.api.denuncia.Services.TransacaoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class TransacaoServiceImpl implements TransacaoService {
@@ -29,11 +29,11 @@ public class TransacaoServiceImpl implements TransacaoService {
     private BotaoRepository botaoRepository;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
+    
 
     public TransacaoServiceImpl(TransacaoRepository transacaoRepository, DominioRepository dominioRepository,
             BotaoRepository botaoRepository, AuthenticationService auth) {
@@ -41,6 +41,10 @@ public class TransacaoServiceImpl implements TransacaoService {
         this.dominioRepository = dominioRepository;
         this.botaoRepository = botaoRepository;
         this.auth = auth;
+    }
+
+    public int IdUserLogado(){
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -54,7 +58,7 @@ public class TransacaoServiceImpl implements TransacaoService {
 
                 String metodo = "salvar", obj = "Tipo de utilizador";
 
-                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil, dom.getTipoUser());
+                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil, Domain.TIPO_UTILIZADOR.name());
 
                 Optional<BotaoModel> botao = botaoRepository.findById(id_botao);
 
@@ -66,7 +70,7 @@ public class TransacaoServiceImpl implements TransacaoService {
 
                         if (transacaoRepository.existsByBotaoAndTipoUtilizador(botao.get(), perfil)) {
 
-                            Integer result = transacaoRepository.alterarEstado(estado, auth.getUserLogado().getId(), id_botao,
+                            Integer result = transacaoRepository.alterarEstado(estado, IdUserLogado(), id_botao,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -77,7 +81,7 @@ public class TransacaoServiceImpl implements TransacaoService {
                             transacaoModel.setTipoUtilizador(perfil);
                             transacaoModel.setEstado(estado);
                             transacaoModel.setData_criacao(new Date());
-                            transacaoModel.setLast_user_change(auth.getUserLogado().getId());
+                            transacaoModel.setLast_user_change(IdUserLogado());
 
                             TransacaoModel t = transacaoRepository.save(transacaoModel);
                             return gf.validateGetSaveMsgWithObj(metodo, t);

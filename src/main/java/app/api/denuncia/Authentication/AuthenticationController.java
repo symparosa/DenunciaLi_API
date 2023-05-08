@@ -27,14 +27,16 @@ public class AuthenticationController {
 
   @Operation(summary = "Login", description = "Login")
   @PostMapping("/login")
-  public ResponseEntity<ResponseModel> authenticate(@RequestBody AuthenticationRequest request) {
+  public ResponseEntity<ResponseModel> authenticate(
+      @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(summary = "Logout", description = "Logout")
   @PostMapping("/logout")
-  public ResponseEntity<ResponseModel> logout(@RequestParam(required = true) String canal) {
+  public ResponseEntity<ResponseModel> logout(
+      @RequestParam(required = true) String canal) {
     return ResponseEntity.ok(service.logout(canal));
   }
 }

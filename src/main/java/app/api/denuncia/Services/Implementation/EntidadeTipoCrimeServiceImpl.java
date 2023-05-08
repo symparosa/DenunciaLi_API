@@ -8,10 +8,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Models.EntidadeTipoCrimeModel;
 import app.api.denuncia.Models.ResponseModel;
@@ -20,6 +19,7 @@ import app.api.denuncia.Repositories.EntidadeTipoCrimeRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.EntidadeTipoCrimeService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
@@ -30,19 +30,23 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     private DominioService domService;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
     public EntidadeTipoCrimeServiceImpl(EntidadeTipoCrimeRepository entidadeTipoCrimeRepository,
-            EntidadeService entService, EntidadeRepository entRepository, DominioService domService, AuthenticationService auth) {
+            EntidadeService entService, EntidadeRepository entRepository, DominioService domService,
+            AuthenticationService auth) {
         this.entTipoCrimeRepository = entidadeTipoCrimeRepository;
         this.entService = entService;
         this.entRepository = entRepository;
         this.domService = domService;
         this.auth = auth;
+    }
+
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
     }
 
     @Override
@@ -66,7 +70,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
                             obj = "Tipo de crime";
 
-                            if (domService.existsTipo(ent.getTipoCrime(), dom.getTipoCrime())) {
+                            if (domService.existsTipo(ent.getTipoCrime(), Domain.TIPO_CRIME.name())) {
 
                                 if (ent.getId() != null) { // update
 
@@ -95,7 +99,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                 }
                                 ent.setEstado(status.getAtivo());
                                 ent.setData_criacao(new Date());
-                                ent.setLast_user_change(auth.getUserLogado().getId());
+                                ent.setLast_user_change(IdUserLogado());
                             } else {
                                 msg.add(message.getMessage06(obj));
                                 return gf.getResponseError(msg);
@@ -137,7 +141,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
 
                     String metodo = "salvar";
 
-                    Integer result = entTipoCrimeRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = entTipoCrimeRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
                 } else {
                     msg.add(message.getMessage07());

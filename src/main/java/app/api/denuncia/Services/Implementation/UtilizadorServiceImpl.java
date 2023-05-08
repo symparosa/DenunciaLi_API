@@ -12,22 +12,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Models.DominioModel;
+import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.EmailDetailsModel;
 import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Models.UtilizadorModel;
-import app.api.denuncia.Repositories.ContatoRepository;
-import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.LocalizacaoService;
 import app.api.denuncia.Services.UtilizadorService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class UtilizadorServiceImpl implements UtilizadorService {
@@ -37,36 +34,33 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     private DominioService domService;
     private EntidadeService entService;
     private EmailService emailService;
-    private ContatoRepository contRepository;
-    private DominioRepository domRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationService auth;
 
-    @Value("${spring.recover}")
+    @Value("${template.recover}")
     private String PathRecover;
 
-    @Value("${spring.registration}")
+    @Value("${template.registration}")
     private String pathRegistration;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
+    
+    public int IdUserLogado(){
+        return auth.getUtiLogado().getId();
+    }
 
     public UtilizadorServiceImpl(UtilizadorRepository userRepository, LocalizacaoService localService,
-            DominioService domService, EntidadeService entService, EmailService emailService,
-            ContatoRepository contRepository, DominioRepository domRepository, AuthenticationService auth,
-            PasswordEncoder passwordEncoder) {
+            DominioService domService, EntidadeService entService, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationService auth) {
         this.userRepository = userRepository;
         this.localService = localService;
         this.domService = domService;
         this.entService = entService;
         this.emailService = emailService;
-        this.contRepository = contRepository;
-        this.domRepository = domRepository;
-        this.auth = auth;
         this.passwordEncoder = passwordEncoder;
+        this.auth = auth;
     }
 
     @Override
@@ -82,7 +76,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                 obj = "Tipo de utilizador";
 
-                if (domService.existsTipo(user.getTipoUtilizador(), dom.getTipoUser())) {
+                if (domService.existsTipo(user.getTipoUtilizador(), Domain.TIPO_UTILIZADOR.name())) {
 
                     obj = "Entidade";
 
@@ -90,7 +84,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                         user.setEstado(status.getAtivo());
                         user.setData_criacao(new Date());
-                        user.setLast_user_change(auth.getUserLogado().getId());
+                        user.setLast_user_change(IdUserLogado());
                         user.setContaConfirmada(false);
 
                         if (user.getId() != null) {
@@ -119,6 +113,68 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
+    public ResponseModel insertUser(UtilizadorModel uti, String metodo) {
+
+        String hash = gf.generateHash();
+        String Subject = "Registo de Utilizador";
+        String ptxt = "Ol&aacute; " + uti.getNome() + ". Voc&ecirc; foi convidado a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
+        String titulo = "REGISTO DE UTILIZADOR";
+
+        if (!userRepository.existsByUsername(uti.getUsername()) && !userRepository.existsByHash(hash)) {
+
+            uti.setData_atualizacao(null);
+            uti.setHash(hash);
+            UtilizadorModel user = userRepository.save(uti);
+
+            ResponseModel val = gf.validateGetSaveMsgWithObj(metodo, user);
+
+            if (val.getResponseCode() == 1) {
+
+                String html = gf.getTemplate(pathRegistration);
+
+                Document doc = Jsoup.parse(html);
+                Element div = doc.getElementById("div_titulo");
+                Element p = doc.getElementById("p_corpo");
+                Element link = doc.getElementById("a_link");
+                link.attr("href", "https://exemplo.com/nova-url");
+                div.html(titulo);
+                p.html(ptxt);
+
+                EmailDetailsModel emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
+                msg.add(val.getMessage().get(0));
+
+                return emailService.sendEmail(emailDetail, msg);
+            } else {
+                return val;
+            }
+        } else {
+            msg.add(message.getMessage03());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    public ResponseModel updateUser(UtilizadorModel uti, String metodo) {
+
+        String obj = "Utilizador";
+
+        if (userRepository.existsById(uti.getId())) {
+
+            if (!userRepository.existsByUsernameAndIdNot(uti.getUsername(), uti.getId())) {
+
+                uti.setData_atualizacao(new Date());
+                UtilizadorModel user = userRepository.save(uti);
+                return gf.validateGetSaveMsgWithObj(metodo, user);
+
+            } else {
+                msg.add(message.getMessage03());
+                return gf.getResponseError(msg);
+            }
+        } else {
+            msg.add(message.getMessage06(obj));
+            return gf.getResponseError(msg);
+        }
+    }
+
     @Override
     public ResponseModel alterarEstado(int id, int estado) {
 
@@ -134,7 +190,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                     String metodo = "salvar";
 
-                    Integer result = userRepository.alterarEstado(estado, auth.getUserLogado().getId(), id);
+                    Integer result = userRepository.alterarEstado(estado, IdUserLogado(), id);
                     return gf.validateGetUpdateMsg(metodo, result);
 
                 } else {
@@ -175,62 +231,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
-    public ResponseModel insertUser(UtilizadorModel uti, String metodo) {
-
-        String hash = gf.generateHash(), Subject = "Registo de Utilizador", ptxt = "Ol&aacute; " + uti.getNome()
-                + ". Voc&ecirc; foi convidado a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi.</strong>.";
-
-        if (!userRepository.existsByUsername(uti.getUsername()) && !userRepository.existsByHash(hash)) {
-
-            uti.setData_atualizacao(null);
-            uti.setHash(hash);
-            UtilizadorModel user = userRepository.save(uti);
-
-            ResponseModel val = gf.validateGetSaveMsgWithObj(metodo, user);
-
-            if (val.getResponseCode() == 1) {
-
-                String html = gf.getTemplate(pathRegistration);
-
-                Document doc = Jsoup.parse(html);
-                Element p = doc.select("p").first();
-                p.html(ptxt);
-
-                EmailDetailsModel emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
-                msg.add(val.getMessage().get(0));
-
-                return emailService.sendEmail(emailDetail, msg);
-            } else {
-                return val;
-            }
-        } else {
-            msg.add(message.getMessage03());
-            return gf.getResponseError(msg);
-        }
-    }
-
-    public ResponseModel updateUser(UtilizadorModel uti, String metodo) {
-
-        String obj = "Utilizador";
-
-        if (userRepository.existsById(uti.getId())) {
-
-            if (!userRepository.existsByUsernameAndIdNot(uti.getUsername(), uti.getId())) {
-
-                uti.setData_atualizacao(new Date());
-                UtilizadorModel user = userRepository.save(uti);
-                return gf.validateGetSaveMsgWithObj(metodo, user);
-
-            } else {
-                msg.add(message.getMessage03());
-                return gf.getResponseError(msg);
-            }
-        } else {
-            msg.add(message.getMessage06(obj));
-            return gf.getResponseError(msg);
-        }
-    }
-
+    
     @Override
     public ResponseModel alterarPassword(String username, String hash, String password) {
 
@@ -265,9 +266,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
         try {
 
-            DominioModel tipoCont = domRepository.findByDominioAndValor(dom.getTipoContato(), "EMAIL");
-
-            if (userRepository.existsByUsername(email) || contRepository.existsByTipoContatoAndValor(tipoCont, email)) {
+            if (userRepository.existsByUsername(email)) {
 
                 var user = userRepository.findByUsername(email).orElse(null);
 
@@ -314,6 +313,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             return gf.getResponseError(msg);
         }
     }
+
     @Override
     public ResponseModel get_by_id(int id) {
 
@@ -336,5 +336,10 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
+    }
+
+    @Override
+    public Boolean existsByIdAndEstado(int id, int estado) {
+        return userRepository.existsByIdAndEstado(id,estado);
     }
 }

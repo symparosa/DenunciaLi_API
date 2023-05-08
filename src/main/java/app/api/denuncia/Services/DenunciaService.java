@@ -1,13 +1,15 @@
-// package app.api.denuncia.Services;
+package app.api.denuncia.Services;
 
-// import app.api.denuncia.Dto.Response.ResponseDto;
-// import app.api.denuncia.Models.DenunciaModel;
+import java.util.List;
 
-// public interface DenunciaService {
+import app.api.denuncia.Dto.DenunciaOutputDto;
+import app.api.denuncia.Models.ResponseModel;
 
-//     ResponseDto adicionarDenuncia(DenunciaModel denuncia);
+public interface DenunciaService {
 
-//     ResponseDto listarDenunciasByUserId(int id);
+    ResponseModel adicionarDenuncia(String denuncia);
 
-//     ResponseDto getDenunciaById(int id);
-// }
+    List<DenunciaOutputDto> listarDenunciasByUserId(int id);
+
+    // ResponseModel getDenunciaById(int id);
+}

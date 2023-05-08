@@ -14,11 +14,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "dn_t_entidade")
 public class EntidadeModel implements Serializable {
@@ -59,7 +61,7 @@ public class EntidadeModel implements Serializable {
     @Schema(description = "O tipo de entidade")
     @ManyToOne
     @JoinColumn(name = "tipo_entidade_fk")
-    private DominioModel tipo_entidade;
+    private DominioModel tipoEntidade;
 
     @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
     private Integer last_user_change;

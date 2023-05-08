@@ -20,23 +20,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 				@Server(url = "http://localhost:8080"),
 				@Server(url = "http://denunciaLi.com.cv")
 		}, tags = {
-				@Tag(name = "Autenticação", description = "Onde serão gerenciados os endpoits de autenticação."),
-				// @Tag(name = "Denúncia", description = "Onde serão gerenciados os endpoits de
-				// denúncia."),
-				// @Tag(name = "Denunciante", description = "Onde serão gerenciados os endpoits
-				// do denunciante."),
-				@Tag(name = "Utilizador Back-Office", description = "Onde serão gerenciados os endpoits do utilizador back-office."),
-				@Tag(name = "Localização", description = "Onde serão gerenciados os endpoits da localização."),
-				@Tag(name = "Domínio", description = "Onde serão gerenciados os endpoits do domínio."),
-				@Tag(name = "Menu", description = "Onde serão gerenciados os endpoits do menu."),
-				@Tag(name = "Menu Perfil", description = "Onde serão gerenciados os endpoits do menu perfil."),
-				@Tag(name = "Botão", description = "Onde serão gerenciados os endpoits do botão."),
-				@Tag(name = "Transação", description = "Onde serão gerenciados os endpoits de transação."),
-				@Tag(name = "Banner", description = "Onde serão gerenciados os endpoits de banner."),
-				@Tag(name = "Entidade", description = "Onde serão gerenciados os endpoits de entidade."),
-				@Tag(name = "Entidade Tipo Crime", description = "Onde serão gerenciados os endpoits de entidade tipo crime."),
-				@Tag(name = "Contato", description = "Onde serão gerenciados os endpoits do contato."),
-				@Tag(name = "Informação Legal", description = "Onde serão gerenciados os endpoits de informação legal.")
+				@Tag(name = "Autenticação", description = "Operações relacionadas à autenticação e autorização na API."),
+				@Tag(name = "Denúncia", description = "Onde serão gerenciados os endpoits de denúncia."),
+				@Tag(name = "Denunciante", description = "Operações relacionadas à gestão de denunciantes na API."),
+				@Tag(name = "Utilizador Back-Office", description = "Operações relacionadas à gestão de utilizadores backoffice na API."),
+				@Tag(name = "Localização", description = "Operações relacionadas à gestão de localizações na API."),
+				@Tag(name = "Domínio", description = "Operações relacionadas à gestão de dominios na API."),
+				@Tag(name = "Menu", description = "Operações relacionadas à gestão de menus na API."),
+				@Tag(name = "Menu Perfil", description = "Operações relacionadas à gestão de menus e perfis na API."),
+				@Tag(name = "Botão", description = "Operações relacionadas à gestão de botões na API."),
+				@Tag(name = "Transação", description = "Operações relacionadas à gestão de transações na API."),
+				@Tag(name = "Banner", description = "Operações relacionadas à gestão de banners na API."),
+				@Tag(name = "Entidade", description = "Operações relacionadas à gestão de entidades na API."),
+				@Tag(name = "Entidade Tipo Crime", description = "Operações relacionadas à gestão de entidades e tipos de crime na API."),
+				@Tag(name = "Contato", description = "Operações relacionadas à gestão de contatos na API."),
+				@Tag(name = "Informação Legal", description = "Operações relacionadas à gestão de informações legais na API."),
+				@Tag(name = "AES256", description = "Operações relacionadas à gestão de AES256 na API.")
 		// @Tag(name = "Estatística Por Ano", description = "Onde serão gerenciados os
 		// endpoits de estatística por ano."),
 		// @Tag(name = "Estatística Por Ilha", description = "Onde serão gerenciados os
@@ -54,7 +53,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 		})
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer", description = "A JWT token is required to access this API...")
 public class DenunciaApplication {
-	
 	public static void main(String[] args) {
 		SpringApplication.run(DenunciaApplication.class, args);
 	}

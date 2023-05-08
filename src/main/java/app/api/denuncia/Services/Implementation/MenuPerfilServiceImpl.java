@@ -8,10 +8,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
-import app.api.denuncia.Constants.Domain;
-import app.api.denuncia.Constants.GlobalFunctions;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.MenuModel;
 import app.api.denuncia.Models.MenuPerfilModel;
@@ -20,6 +19,7 @@ import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Repositories.MenuPerfilRepository;
 import app.api.denuncia.Repositories.MenuRepository;
 import app.api.denuncia.Services.MenuPerfilService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class MenuPerfilServiceImpl implements MenuPerfilService {
@@ -29,7 +29,6 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
     private MenuRepository menuRepository;
     private AuthenticationService auth;
 
-    private Domain dom = new Domain();
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
@@ -43,6 +42,10 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
         this.auth = auth;
     }
 
+    public int IdUserLogado() {
+        return auth.getUtiLogado().getId();
+    }
+
     @Override
     public ResponseModel alterarPermissao(int id_menu, int id_perfil, int estado) {
 
@@ -54,7 +57,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
 
                 String metodo = "salvar", obj = "tipo_utilizador";
 
-                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil, dom.getTipoUser());
+                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil,Domain.TIPO_UTILIZADOR.name());
 
                 Optional<MenuModel> menu = menuRepository.findById(id_menu);
 
@@ -66,7 +69,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
 
                         if (menuPerfilRepository.existsByMenuAndTipoUtilizador(menu.get(), perfil)) {
 
-                            Integer result = menuPerfilRepository.alterarEstado(estado, auth.getUserLogado().getId(), id_menu,
+                            Integer result = menuPerfilRepository.alterarEstado(estado, IdUserLogado(), id_menu,
                                     id_perfil);
                             return gf.validateGetUpdateMsg(metodo, result);
 
@@ -77,7 +80,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
                             menuPerfilModel.setTipoUtilizador(perfil);
                             menuPerfilModel.setEstado(estado);
                             menuPerfilModel.setData_criacao(new Date());
-                            menuPerfilModel.setLast_user_change(auth.getUserLogado().getId());
+                            menuPerfilModel.setLast_user_change(IdUserLogado());
 
                             MenuPerfilModel mp = menuPerfilRepository.save(menuPerfilModel);
                             return gf.validateGetSaveMsgWithObj(metodo, mp);
