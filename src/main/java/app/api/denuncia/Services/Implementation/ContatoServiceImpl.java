@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.ContatoModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
 import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.DominioService;
@@ -51,7 +51,7 @@ public class ContatoServiceImpl implements ContatoService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(List<ContatoModel> contatoModels) {
+    public Response adicionar_atualizar(List<ContatoModel> contatoModels) {
 
         gf.clearList(msg);
 
@@ -124,7 +124,7 @@ public class ContatoServiceImpl implements ContatoService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -156,7 +156,7 @@ public class ContatoServiceImpl implements ContatoService {
     }
 
     @Override
-    public ResponseModel getInfoByIdObjeto(int id_obj, String tipo_obj) {
+    public Response getInfoByIdObjeto(int id_obj, String tipo_obj) {
 
         gf.clearList(msg);
 

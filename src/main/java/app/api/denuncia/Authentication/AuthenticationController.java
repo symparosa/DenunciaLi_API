@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,7 +27,7 @@ public class AuthenticationController {
 
   @Operation(summary = "Login", description = "Login")
   @PostMapping("/login")
-  public ResponseEntity<ResponseModel> authenticate(
+  public ResponseEntity<Response> authenticate(
       @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
@@ -35,7 +35,7 @@ public class AuthenticationController {
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(summary = "Logout", description = "Logout")
   @PostMapping("/logout")
-  public ResponseEntity<ResponseModel> logout(
+  public ResponseEntity<Response> logout(
       @RequestParam(required = true) String canal) {
     return ResponseEntity.ok(service.logout(canal));
   }

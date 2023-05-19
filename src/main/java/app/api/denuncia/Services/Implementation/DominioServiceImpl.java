@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.DominioModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DominioRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Utilities.GlobalFunctions;
@@ -37,7 +37,7 @@ public class DominioServiceImpl implements DominioService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(List<DominioModel> dominio) {
+    public Response adicionar_atualizar(List<DominioModel> dominio) {
 
         gf.clearList(msg);
 
@@ -95,7 +95,7 @@ public class DominioServiceImpl implements DominioService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -125,7 +125,7 @@ public class DominioServiceImpl implements DominioService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -149,7 +149,7 @@ public class DominioServiceImpl implements DominioService {
     }
 
     @Override
-    public ResponseModel getDominio(String dominio) {
+    public Response getDominio(String dominio) {
 
         gf.clearList(msg);
 
@@ -187,7 +187,7 @@ public class DominioServiceImpl implements DominioService {
         return msg;
     }
 
-    public ResponseModel saveAll(List<DominioModel> dominio, int contUpdate, int contInsert, boolean insert,
+    public Response saveAll(List<DominioModel> dominio, int contUpdate, int contInsert, boolean insert,
             boolean update, String metodo) {
 
         if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {
@@ -210,7 +210,7 @@ public class DominioServiceImpl implements DominioService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

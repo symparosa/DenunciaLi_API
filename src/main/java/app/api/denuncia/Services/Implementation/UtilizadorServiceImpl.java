@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
-import app.api.denuncia.Models.EmailDetailsModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Services.DominioService;
@@ -64,7 +64,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(UtilizadorModel user) {
+    public Response adicionar_atualizar(UtilizadorModel user) {
 
         gf.clearList(msg);
 
@@ -113,7 +113,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
-    public ResponseModel insertUser(UtilizadorModel uti, String metodo) {
+    public Response insertUser(UtilizadorModel uti, String metodo) {
 
         String hash = gf.generateHash();
         String Subject = "Registo de Utilizador";
@@ -126,7 +126,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             uti.setHash(hash);
             UtilizadorModel user = userRepository.save(uti);
 
-            ResponseModel val = gf.validateGetSaveMsgWithObj(metodo, user);
+            Response val = gf.validateGetSaveMsgWithObj(metodo, user);
 
             if (val.getResponseCode() == 1) {
 
@@ -140,7 +140,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 div.html(titulo);
                 p.html(ptxt);
 
-                EmailDetailsModel emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
+                EmailDetails emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
                 return emailService.sendEmail(emailDetail, msg);
@@ -153,7 +153,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
-    public ResponseModel updateUser(UtilizadorModel uti, String metodo) {
+    public Response updateUser(UtilizadorModel uti, String metodo) {
 
         String obj = "Utilizador";
 
@@ -176,7 +176,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -208,7 +208,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -233,7 +233,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     
     @Override
-    public ResponseModel alterarPassword(String username, String hash, String password) {
+    public Response alterarPassword(String username, String hash, String password) {
 
         gf.clearList(msg);
 
@@ -259,7 +259,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public ResponseModel recuperarConta(String email) {
+    public Response recuperarConta(String email) {
 
         String obj = "Email";
         gf.clearList(msg);
@@ -282,7 +282,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                     Integer result = userRepository.updateHash(hash, user.getId());
 
-                    ResponseModel val = gf.validateGetUpdateMsg(metodo, result);
+                    Response val = gf.validateGetUpdateMsg(metodo, result);
 
                     if (val.getResponseCode() == 1) {
 
@@ -294,7 +294,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                         Element p = doc.select("p").first();
                         p.html(ptxt);
 
-                        EmailDetailsModel emailDetail = gf.createEmail(email, doc.html(), Subject);
+                        EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
                         return emailService.sendEmail(emailDetail, msg);
                     } else {
@@ -315,7 +315,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

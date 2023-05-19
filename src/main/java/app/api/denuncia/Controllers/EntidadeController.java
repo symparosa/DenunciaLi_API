@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.EntidadeModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EntidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class EntidadeController {
 
     @Operation(summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody EntidadeModel entidade) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody EntidadeModel entidade) {
         return ResponseEntity.ok(entidadeService.adicionar_atualizar(entidade));
     }
 
@@ -42,28 +42,28 @@ public class EntidadeController {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
             @Parameter(name = "Estado", description = "O estado da entidade") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(entidadeService.alterarEstado(Id, Estado));
     }
 
     @Operation(summary = "Listar Entidades", description = "Lista todas as entidades que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(entidadeService.listar());
     }
 
     @Operation(summary = "Get Detalhes Entidade", description = "Lista todos os detalhes da entidade.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade") })
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(entidadeService.get_by_id(Id));
     }
 
     @Operation(summary = "Get Entidade By Tipo", description = "Lista todos os dados a partir do tipo de entidade.", parameters = {
             @Parameter(name = "TipoEntidade", description = "O tipo de entidade que se quer obter os dados") })
     @GetMapping(path = "/getEntidadeByTipo")
-    public ResponseEntity<ResponseModel> getEntidadeByTipo(@RequestParam(required = true) String TipoEntidade) {
+    public ResponseEntity<Response> getEntidadeByTipo(@RequestParam(required = true) String TipoEntidade) {
         return ResponseEntity.ok(entidadeService.getEntidadeByTipo(TipoEntidade));
     }
 }

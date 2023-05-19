@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Services.UtilizadorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class UtilizadorController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody UtilizadorModel utilizador) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody UtilizadorModel utilizador) {
         return ResponseEntity.ok(user.adicionar_atualizar(utilizador));
     }
 
@@ -46,7 +46,7 @@ public class UtilizadorController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(user.alterarEstado(Id, Estado));
     }
@@ -55,7 +55,7 @@ public class UtilizadorController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(user.listar());
     }
 
@@ -64,7 +64,7 @@ public class UtilizadorController {
             @Parameter(name = "Password", description = "O novo password do utilizador"),
             @Parameter(name = "Username", description = "O username do utilizador") })
     @PutMapping(path = "/alterarPassword")
-    public ResponseEntity<ResponseModel> alterarPassword(
+    public ResponseEntity<Response> alterarPassword(
             @RequestParam(required = true) String Hash,
             @RequestParam(required = true) String Password,
             @RequestParam(required = true) String Username) {
@@ -74,7 +74,7 @@ public class UtilizadorController {
     @Operation(summary = "Recuperar Conta", description = "Envia hash para o email.", parameters = {
             @Parameter(name = "Email", description = "O email para onde o hash será enviado") })
     @PostMapping(path = "/recuperarConta")
-    public ResponseEntity<ResponseModel> recuperarConta(@RequestParam(required = true) String Email) {
+    public ResponseEntity<Response> recuperarConta(@RequestParam(required = true) String Email) {
         return ResponseEntity.ok(user.recuperarConta(Email));
     }
 
@@ -82,7 +82,7 @@ public class UtilizadorController {
             @Parameter(name = "Id", description = "O identificador (ID) do utilizador") })
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(user.get_by_id(Id));
     }
 }

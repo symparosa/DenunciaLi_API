@@ -1,9 +1,9 @@
 package app.api.denuncia.Services.Implementation;
 
 import java.util.List;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
@@ -13,11 +13,11 @@ import com.google.gson.GsonBuilder;
 import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.DenunciaOutputDto;
+import app.api.denuncia.Dto.Denuncia;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.ArquivoModel;
 import app.api.denuncia.Models.DenunciaModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DenunciaRepository;
 import app.api.denuncia.Services.DenunciaService;
 import app.api.denuncia.Services.LocalizacaoService;
@@ -44,7 +44,7 @@ public class DenunciaServiceImpl implements DenunciaService {
     }
 
     @Override
-    public ResponseModel adicionarDenuncia(String denu) {
+    public Response adicionarDenuncia(String denu) {
 
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
 
@@ -59,7 +59,7 @@ public class DenunciaServiceImpl implements DenunciaService {
 
                 String metodo = "salvar", obj = "Localização";
 
-                ResponseModel validar = validarCampos(denuncia);
+                Response validar = validarCampos(denuncia);
 
                 if (validar.getResponseCode() == 1) {
 
@@ -67,7 +67,7 @@ public class DenunciaServiceImpl implements DenunciaService {
                             && localService.existsLocalizacao(denuncia.getQueixa().getLocalizacao()))
                             || denuncia.getQueixa().getLocalizacao_mapa() != null) {
 
-                        Date now = new Date();
+                        LocalDateTime now = LocalDateTime.now();
 
                         denuncia.setData_criacao(now);
                         denuncia.setEstado(status.getAtivo());
@@ -83,14 +83,14 @@ public class DenunciaServiceImpl implements DenunciaService {
 
                         List<ArquivoModel> arquivos = denuncia.getQueixa().getArquivos();
 
-                        if(arquivos != null && arquivos.size()!=0){
+                        if (arquivos != null && arquivos.size() != 0) {
                             arquivos.forEach(arquivo -> {
                                 arquivo.setLast_user_change(denuncia.getDenunciante().getId());
                                 arquivo.setData_criacao(now);
                                 arquivo.setEstado(status.getAtivo());
-                             });
+                            });
                         }
-                        
+
                         DenunciaModel denunciaSave = denunciaRepository.save(denuncia);
 
                         if (denunciaSave != null) {
@@ -101,7 +101,7 @@ public class DenunciaServiceImpl implements DenunciaService {
 
                                 for (int i = 0; i < arquivo.size(); i++) {
                                     denunciaRepository.atualizarArquivo(denuncia.getDenunciante().getId(),
-                                            denunciaSave.getQueixa().getId(),arquivo.get(i).getId());
+                                            denunciaSave.getQueixa().getId(), arquivo.get(i).getId());
                                 }
                             }
                             return gf.validateGetSaveMsgWithObj(metodo, denunciaSave);
@@ -126,7 +126,7 @@ public class DenunciaServiceImpl implements DenunciaService {
         }
     }
 
-    public ResponseModel validarCampos(DenunciaModel denuncia) {
+    public Response validarCampos(DenunciaModel denuncia) {
 
         String obj = "";
 
@@ -176,36 +176,28 @@ public class DenunciaServiceImpl implements DenunciaService {
     }
 
     @Override
-    public List<DenunciaOutputDto> listarDenunciasByUserId(int id) {
-        return denunciaRepository.listarDenunciasByUserId(id);
+    public List<Denuncia> listarDenunciasByUserId(int denu) {
+        List<Object[]> results = denunciaRepository.listarDenunciasByUserId(denu);
+        List<Denuncia> denuncias = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Denuncia denuncia = new Denuncia();
+            denuncia.setData_criacao(((Timestamp) result[0]).toLocalDateTime());
+            denuncia.setEstado((int) result[1]);
+            denuncia.setCodigo_postal((String) result[2]);
+            denuncia.setData_ocorrencia(((Timestamp) result[3]).toLocalDateTime());
+            denuncia.setDescricao((String) result[4]);
+            denuncia.setLocalizacao_mapa((String) result[5]);
+            denuncia.setReferencia_morada((String) result[6]);
+            denuncia.setLocalizacao_nome((String) result[7]);
+            denuncia.setLocalizacao_nome_norm((String) result[8]);
+            denuncia.setGrau_parentesco((String) result[9]);
+            denuncia.setTipo_crime((String) result[10]);
+            denuncia.setTipo_queixa((String) result[11]);
+
+            denuncias.add(denuncia);
+        }
+
+        return denuncias;
     }
-
-    // @Override
-    // public ResponseModel getDenunciaById(int id) {
-    // ResponseDto response = new ResponseDto();
-
-    // try {
-    // DenunciaOutputDto denuncia = denunciaRepository.findById(id);
-
-    // if (denuncia != null) {
-    // response.setResponseCode(1);
-    // response.setResponseType(ResponseType.Sucesso);
-    // response.setObject(denuncia);
-    // response.setMessage(" Denúncia encontrada com sucesso.");
-    // return response;
-    // } else {
-    // response.setResponseCode(0);
-    // response.setResponseType(ResponseType.Erro);
-    // response.setObject(null);
-    // response.setMessage(" Denúncia não existe.");
-    // return response;
-    // }
-    // } catch (Exception e) {
-    // response.setResponseCode(0);
-    // response.setResponseType(ResponseType.Erro);
-    // response.setObject(null);
-    // response.setMessage(" Falha no sistema.");
-    // return response;
-    // }
-    // }
 }

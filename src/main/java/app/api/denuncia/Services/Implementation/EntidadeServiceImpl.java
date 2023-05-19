@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Enums.DomainValue;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.EntidadeModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EntidadeService;
@@ -47,7 +47,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     }
     
     @Override
-    public ResponseModel adicionar_atualizar(EntidadeModel entidade) {
+    public Response adicionar_atualizar(EntidadeModel entidade) {
 
         gf.clearList(msg);
 
@@ -91,7 +91,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -123,7 +123,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -146,7 +146,7 @@ public class EntidadeServiceImpl implements EntidadeService {
         }
     }
 
-    public ResponseModel insert(EntidadeModel entidade, String metodo) {
+    public Response insert(EntidadeModel entidade, String metodo) {
 
         if (!entRepository.existsBySigla(entidade.getSigla())) {
 
@@ -160,7 +160,7 @@ public class EntidadeServiceImpl implements EntidadeService {
         }
     }
 
-    public ResponseModel update(EntidadeModel entidade, String metodo, String obj) {
+    public Response update(EntidadeModel entidade, String metodo, String obj) {
 
         if (entRepository.existsById(entidade.getId())) {
 
@@ -189,7 +189,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 
@@ -214,7 +214,7 @@ public class EntidadeServiceImpl implements EntidadeService {
     }
 
     @Override
-    public ResponseModel getEntidadeByTipo(String tipo) {
+    public Response getEntidadeByTipo(String tipo) {
         
         gf.clearList(msg);
 

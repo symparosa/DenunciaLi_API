@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Parameter;
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Services.LocalizacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +29,7 @@ public class LocalizacaoController {
     @Operation(summary = "Listar localizações ", description = "Lista todas as localizações.", parameters = {
             @Parameter(name = "Concelho", description = "O identificador (ID) do concelho") })
     @GetMapping(path = "/listarLocalizacoes")
-    public ResponseModel listarLocalizacoes(@RequestParam(required = true) String Concelho) {
+    public Response listarLocalizacoes(@RequestParam(required = true) String Concelho) {
         return LocalizacaoService.listarLocalizacoes(Concelho);
     }
 
@@ -43,7 +43,7 @@ public class LocalizacaoController {
 
     @Operation(summary = "Get Concelhos", description = "Lista todos os concelhos de Cabo Verde.")
     @GetMapping(path = "/getConcelhos")
-    public ResponseModel getConcelhos() {
+    public Response getConcelhos() {
         return LocalizacaoService.getConcelhos();
     }
 }

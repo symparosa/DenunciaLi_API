@@ -1,25 +1,25 @@
 package app.api.denuncia.Services;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.DenuncianteModel;
-import app.api.denuncia.Models.ResponseModel;
 
 public interface DenuncianteService {
 
-    ResponseModel listar_ocorrencias();
+    Response listar_ocorrencias();
 
-    ResponseModel eliminarConta(int estado);
+    Response eliminarConta(int estado);
 
-    ResponseModel recuperarConta(String email);
+    Response recuperarConta(String email);
 
-    ResponseModel validarSenhaAtual(String senha);
+    Response validarSenhaAtual(String senha);
 
-    ResponseModel get_by_username(String username);
+    Response get_by_username(String username);
 
     Boolean existsByIdAndEstado(int id, int estado);
 
-    ResponseModel adicionar(String username, String nome);
+    Response adicionar(String username, String nome);
 
-    ResponseModel atualizar(DenuncianteModel Denunciante);
+    Response atualizar(DenuncianteModel Denunciante);
 
-    ResponseModel alterarPassword(String username, String hash, String password, Boolean logado);
+    Response alterarPassword(String username, String hash, String password, Boolean logado);
 }

@@ -1,8 +1,8 @@
 package app.api.denuncia.Services;
 
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 
 public interface TransacaoService {
     
-    ResponseModel alterarPermissao(int id_botao, int id_perfil, int estado);
+    Response alterarPermissao(int id_botao, int id_perfil, int estado);
 }

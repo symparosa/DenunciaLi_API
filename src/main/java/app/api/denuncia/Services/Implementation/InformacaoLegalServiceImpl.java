@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Enums.DomainValue;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.InformacaoLegalModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.InformacaoLegalRepository;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.InformacaoLegalService;
@@ -43,7 +43,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(InformacaoLegalModel infoLegal) {
+    public Response adicionar_atualizar(InformacaoLegalModel infoLegal) {
 
         gf.clearList(msg);
 
@@ -79,7 +79,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -111,7 +111,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -134,7 +134,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
         }
     }
 
-    public ResponseModel insert(InformacaoLegalModel info, String metodo) {
+    public Response insert(InformacaoLegalModel info, String metodo) {
 
         info.setData_atualizacao(null);
         InformacaoLegalModel inf = infoRepository.save(info);
@@ -142,7 +142,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
     }
 
-    public ResponseModel update(InformacaoLegalModel info, String metodo) {
+    public Response update(InformacaoLegalModel info, String metodo) {
 
         String obj = "Informação Legal";
 
@@ -159,7 +159,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     }
 
     @Override
-    public ResponseModel getInfoByTipo(String tipo) {
+    public Response getInfoByTipo(String tipo) {
 
         gf.clearList(msg);
 
@@ -203,7 +203,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

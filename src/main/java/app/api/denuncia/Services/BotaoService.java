@@ -1,15 +1,15 @@
 package app.api.denuncia.Services;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BotaoModel;
-import app.api.denuncia.Models.ResponseModel;
 
 public interface BotaoService {
     
-    ResponseModel adicionar_atualizar(BotaoModel botao);
+    Response adicionar_atualizar(BotaoModel botao);
 
-    ResponseModel alterarEstado(int id, int estado);
+    Response alterarEstado(int id, int estado);
 
-    ResponseModel listar();
+    Response listar();
 
-    ResponseModel get_by_id(int id);
+    Response get_by_id(int id);
 }

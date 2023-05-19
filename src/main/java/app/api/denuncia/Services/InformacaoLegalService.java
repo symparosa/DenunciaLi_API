@@ -1,17 +1,17 @@
 package app.api.denuncia.Services;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.InformacaoLegalModel;
-import app.api.denuncia.Models.ResponseModel;
 
 public interface InformacaoLegalService {
     
-    ResponseModel adicionar_atualizar(InformacaoLegalModel informacaoLegal);
+    Response adicionar_atualizar(InformacaoLegalModel informacaoLegal);
 
-    ResponseModel alterarEstado(int id, int estado);
+    Response alterarEstado(int id, int estado);
 
-    ResponseModel listar();
+    Response listar();
 
-    ResponseModel getInfoByTipo(String tipo);
+    Response getInfoByTipo(String tipo);
 
-    ResponseModel get_by_id(int id);
+    Response get_by_id(int id);
 }

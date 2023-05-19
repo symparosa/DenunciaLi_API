@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.MenuModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class MenuController {
 
     @Operation(summary = "Adicionar / Atualizar Menu", description = "Adiciona / Atualiza menu no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody MenuModel menu) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody MenuModel menu) {
         return ResponseEntity.ok(menuService.adicionar_atualizar(menu));
     }
 
@@ -42,21 +42,21 @@ public class MenuController {
             @Parameter(name = "Id", description = "O identificador (ID) do menu"),
             @Parameter(name = "Estado", description = "O estado do menu") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(menuService.alterarEstado(Id, Estado));
     }
 
     @Operation(summary = "Listar Menus", description = "Lista todos os menus e os perfis associados ao mesmo.")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(menuService.listar());
     }
 
     @Operation(summary = "Get Detalhes Menu", description = "Lista todos os detalhes do menu.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do menu") })
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(menuService.get_by_id(Id));
     }
 }

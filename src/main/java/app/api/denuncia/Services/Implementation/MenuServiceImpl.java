@@ -10,8 +10,8 @@ import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.MenuDto;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.MenuModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.MenuRepository;
 import app.api.denuncia.Services.MenuService;
 import app.api.denuncia.Utilities.GlobalFunctions;
@@ -38,7 +38,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(MenuModel menu) {
+    public Response adicionar_atualizar(MenuModel menu) {
 
         gf.clearList(msg);
 
@@ -65,7 +65,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -94,7 +94,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -117,7 +117,7 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
-    public ResponseModel insert(MenuModel menu, String metodo) {
+    public Response insert(MenuModel menu, String metodo) {
 
         if (!menuRepository.existsByCodigo(menu.getCodigo())) {
 
@@ -132,7 +132,7 @@ public class MenuServiceImpl implements MenuService {
 
     }
 
-    public ResponseModel update(MenuModel menu, String metodo) {
+    public Response update(MenuModel menu, String metodo) {
 
         if (menuRepository.existsById(menu.getId())) {
 
@@ -153,7 +153,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

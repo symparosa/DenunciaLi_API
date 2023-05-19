@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Models.EntidadeTipoCrimeModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
 import app.api.denuncia.Repositories.EntidadeTipoCrimeRepository;
 import app.api.denuncia.Services.DominioService;
@@ -50,7 +50,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
+    public Response adicionar_atualizar(List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
 
         gf.clearList(msg);
 
@@ -127,7 +127,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -158,7 +158,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
     }
 
     @Override
-    public ResponseModel getInfoByEntidade(int id) {
+    public Response getInfoByEntidade(int id) {
 
         gf.clearList(msg);
 
@@ -214,7 +214,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
         return msg;
     }
 
-    public ResponseModel saveAll(List<EntidadeTipoCrimeModel> entidadeTipoCrime, int contUpdate, int contInsert,
+    public Response saveAll(List<EntidadeTipoCrimeModel> entidadeTipoCrime, int contUpdate, int contInsert,
             boolean insert, boolean update, String metodo) {
 
         if ((contUpdate == 0 && insert == false) || (contInsert == 0 && update == false)) {

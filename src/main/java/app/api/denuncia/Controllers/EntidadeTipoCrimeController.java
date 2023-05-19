@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.EntidadeTipoCrimeModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EntidadeTipoCrimeService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +37,7 @@ public class EntidadeTipoCrimeController {
 
     @Operation(summary = "Adicionar / Atualizar Entidade Tipo Crime", description = "Adiciona / Atualiza entidade tipo de crime no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(
+    public ResponseEntity<Response> adicionar_atualizar(
             @RequestBody List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
         return ResponseEntity.ok(entidadeTipoCrimeService.adicionar_atualizar(entidadeTipoCrime));
     }
@@ -46,7 +46,7 @@ public class EntidadeTipoCrimeController {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade tipo de crime"),
             @Parameter(name = "Estado", description = "O estado da entidade tipo de crime") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(entidadeTipoCrimeService.alterarEstado(Id, Estado));
     }
@@ -54,7 +54,7 @@ public class EntidadeTipoCrimeController {
     @Operation(summary = "Get Info By Entidade", description = "Lista todos os dados a partir da entidade.", parameters = {
             @Parameter(name = "IdEntidade", description = "O identificador (ID) da entidade") })
     @GetMapping(path = "/getInfoByEntidade")
-    public ResponseEntity<ResponseModel> getInfoByEntidade(@RequestParam(required = true) int IdEntidade) {
+    public ResponseEntity<Response> getInfoByEntidade(@RequestParam(required = true) int IdEntidade) {
         return ResponseEntity.ok(entidadeTipoCrimeService.getInfoByEntidade(IdEntidade));
     }
 }

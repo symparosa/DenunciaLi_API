@@ -1,5 +1,6 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,21 +13,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.DenunciaOutputDto;
+import app.api.denuncia.Dto.Denuncia;
+import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.DenuncianteModel;
-import app.api.denuncia.Models.EmailDetailsModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Services.DenunciaService;
 import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Services.LocalizacaoService;
 import app.api.denuncia.Utilities.GlobalFunctions;
+import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 
 @Service
 public class DenuncianteServiceImpl implements DenuncianteService {
@@ -65,22 +70,29 @@ public class DenuncianteServiceImpl implements DenuncianteService {
         this.emailService = emailService;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getDenunLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getDenunLogado().getId();
+        return 1;
     }
 
     @Override
-    public ResponseModel listar_ocorrencias() {
+    public Response listar_ocorrencias() {
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
 
         gf.clearList(msg);
-        
+
         try {
 
             String metodo = "listar";
 
-            List<DenunciaOutputDto> listadenuncia = denunciaService.listarDenunciasByUserId(IdUserLogado());
-
-            return gf.validateGetListMsg(metodo, listadenuncia);
+            List<Denuncia> listadenuncia = denunciaService.listarDenunciasByUserId(IdUserLogado());
+            String json = gson.toJson(listadenuncia);
+            String encript = aes256Service.encrypt(json);
+            return gf.validateMsgEncript(metodo, encript);
 
         } catch (Exception e) {
             msg.add(message.getMessage04());
@@ -89,7 +101,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel recuperarConta(String email) {
+    public Response recuperarConta(String email) {
 
         String obj = "Email";
         gf.clearList(msg);
@@ -114,7 +126,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
                         Integer result = denRepository.updateHash(hash, denun.getId());
 
-                        ResponseModel val = gf.validateGetUpdateMsg(metodo, result);
+                        Response val = gf.validateGetUpdateMsg(metodo, result);
 
                         if (val.getResponseCode() == 1) {
 
@@ -128,7 +140,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                             link.attr("href", "https://exemplo.com/nova-url");
                             p.html(ptxt);
 
-                            EmailDetailsModel emailDetail = gf.createEmail(email, doc.html(), Subject);
+                            EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
                             return emailService.sendEmail(emailDetail, msg);
                         } else {
@@ -153,7 +165,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel eliminarConta(int estado) {
+    public Response eliminarConta(int estado) {
 
         gf.clearList(msg);
 
@@ -169,7 +181,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
                     Integer result = denRepository.alterarEstado(estado, IdUserLogado());
 
-                    ResponseModel saida = gf.validateGetUpdateMsg(metodo, result);
+                    Response saida = gf.validateGetUpdateMsg(metodo, result);
 
                     if (saida.getResponseCode() == 1) {
                         msg.add(saida.getMessage().get(0));
@@ -203,7 +215,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel alterarPassword(String username, String hash, String password, Boolean logado) {
+    public Response alterarPassword(String username, String hash, String password, Boolean logado) {
 
         gf.clearList(msg);
 
@@ -263,7 +275,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel adicionar(String username, String nome) {
+    public Response adicionar(String username, String nome) {
 
         gf.clearList(msg);
 
@@ -286,7 +298,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
             DenuncianteModel denu = denRepository.save(den);
 
-            ResponseModel val = gf.validateGetSaveMsgWithObj(metodo, denu);
+            Response val = gf.validateGetSaveMsgWithObj(metodo, denu);
 
             if (val.getResponseCode() == 1) {
 
@@ -300,7 +312,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                 div.html(titulo);
                 p.html(ptxt);
 
-                EmailDetailsModel emailDetail = gf.createEmail(denu.getUsername(), doc.html(), Subject);
+                EmailDetails emailDetail = gf.createEmail(denu.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
                 return emailService.sendEmail(emailDetail, msg);
@@ -314,7 +326,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel atualizar(DenuncianteModel denu) {
+    public Response atualizar(DenuncianteModel denu) {
 
         gf.clearList(msg);
 
@@ -322,7 +334,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
             String obj = "Denunciante";
 
-            ResponseModel validar = validarCampos(denu);
+            Response validar = validarCampos(denu);
 
             if (validar.getResponseCode() == 1) {
 
@@ -378,7 +390,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
         }
     }
 
-    public ResponseModel validarCampos(DenuncianteModel pessoa) {
+    public Response validarCampos(DenuncianteModel pessoa) {
 
         String obj = "";
 
@@ -420,7 +432,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel get_by_username(String username) {
+    public Response get_by_username(String username) {
 
         gf.clearList(msg);
 
@@ -450,7 +462,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     }
 
     @Override
-    public ResponseModel validarSenhaAtual(String senha) {
+    public Response validarSenhaAtual(String senha) {
 
         gf.clearList(msg);
         try {

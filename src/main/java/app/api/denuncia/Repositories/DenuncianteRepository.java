@@ -1,7 +1,6 @@
 package app.api.denuncia.Repositories;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +63,7 @@ public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, I
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET apelido =:apelido, codigo_postal =:codigo, data_atualizacao = GETDATE(), data_nascimento =:data, doc_identificacao =:doc, foto_perfil =:foto, genero =:genero, localizacao_mapa =:localizacao_mapa, nome =:nome, referencia_morada =:referencia, localizacao_fk =:localizacao_fk, last_user_change =:id WHERE username =:username", nativeQuery = true)
         Integer updateInfo(@Param("apelido") String apelido, @Param("codigo") String codigo,
-                        @Param("data") Date data, @Param("doc") String doc, @Param("foto") String foto,
+                        @Param("data") LocalDateTime data, @Param("doc") String doc, @Param("foto") String foto,
                         @Param("genero") String genero, @Param("localizacao_mapa") String localizacao_mapa,
                         @Param("nome") String nome, @Param("referencia") String referencia,
                         @Param("localizacao_fk") String localizacao_fk, @Param("id") int id,

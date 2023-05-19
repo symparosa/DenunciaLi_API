@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import app.api.denuncia.Dto.DenunciaOutputDto;
 import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAnoDto;
 import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_ConcelhoDto;
 import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_GeneroDto;
@@ -60,12 +59,21 @@ import app.api.denuncia.Models.DenunciaModel;
 @Transactional
 public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer> {
 
-
-        @Query(value = "SELECT id,data_criacao,data_ocorrencia,descricao,grau_parentesco,tipo_queixa_fk,tipoQueixa,tipo_crime_fk,tipoCrime,"
-                        + "descricao_endereco,porta,rua,localizacao_fk,ilha,concelho,zona,lugar,utilizador_fk,username, localizacao_gps_map"
-                        + " FROM view_denuncia_info"
-                        + " WHERE utilizadorId=:id", nativeQuery = true)
-        List<DenunciaOutputDto> listarDenunciasByUserId(@Param("id") int id);
+        @Query(value = "SELECT data_criacao"
+        + " ,estado"
+        + " ,queixa_codigo_postal AS codigo_postal"
+        + " ,data_ocorrencia"
+        + " ,descricao"
+        + " ,queixa_localizacao_mapa AS localizacao_mapa"
+        + " ,queixa_referencia_morada AS referencia_morada"
+        + " ,local_queixa_nome AS localizacao_nome"
+        + " ,local_queixa_nome_norm AS localizacao_nome_norm"
+        + " ,dominio_grau_parentesco_valor AS grau_parentesco"
+        + " ,dominio_tipo_crime_valor AS tipo_crime"
+        + " ,dominio_tipo_queixa_valor AS tipo_queixa"
+        + " FROM dbo.view_denuncia_info"
+        + " where denunciante_id=:id", nativeQuery = true)
+        List<Object[]> listarDenunciasByUserId(@Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dn_t_arquivo SET  data_criacao=GETDATE(), data_atualizacao=GETDATE(), last_user_change=:user, queixa_fk=:queixa_fk WHERE id=:id", nativeQuery = true)

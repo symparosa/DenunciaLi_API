@@ -1,15 +1,15 @@
 package app.api.denuncia.Services;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.LocalizacaoModel;
-import app.api.denuncia.Models.ResponseModel;
 
 public interface LocalizacaoService {
 
-    ResponseModel listarLocalizacoes(String concelho);
+    Response listarLocalizacoes(String concelho);
 
-    ResponseModel getIlhas();
+    Response getIlhas();
 
-    ResponseModel getConcelhos();
+    Response getConcelhos();
 
     Boolean existsLocalizacao(LocalizacaoModel local);
 }

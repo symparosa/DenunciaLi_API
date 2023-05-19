@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.ContatoModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.ContatoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +36,7 @@ public class ContatoController {
 
     @Operation(summary = "Adicionar / Atualizar Contato", description = "Adiciona / Atualiza contato no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody List<ContatoModel> contato) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody List<ContatoModel> contato) {
         return ResponseEntity.ok(ContatoService.adicionar_atualizar(contato));
     }
 
@@ -44,7 +44,7 @@ public class ContatoController {
             @Parameter(name = "Id", description = "O identificador (ID) do contato"),
             @Parameter(name = "Estado", description = "O estado do contato") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(ContatoService.alterarEstado(Id, Estado));
     }
@@ -53,7 +53,7 @@ public class ContatoController {
             @Parameter(name = "IdObjeto", description = "O id objeto que se quer obter dados"),
             @Parameter(name = "TipoObjeto", description = "O tipo objeto que se quer obter dados") })
     @GetMapping(path = "/getInfoByIdObjeto")
-    public ResponseEntity<ResponseModel> getInfoByIdObjeto(
+    public ResponseEntity<Response> getInfoByIdObjeto(
             @RequestParam(required = true) int IdObjeto,
             @RequestParam(required = true) String TipoObjeto) {
         return ResponseEntity.ok(ContatoService.getInfoByIdObjeto(IdObjeto, TipoObjeto));

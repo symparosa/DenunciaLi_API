@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BotaoModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.BotaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class BotaoController {
 
     @Operation(summary = "Adicionar / Atualizar Botão", description = "Adiciona / Atualiza botão no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody BotaoModel botao) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody BotaoModel botao) {
         return ResponseEntity.ok(botaoService.adicionar_atualizar(botao));
     }
 
@@ -42,21 +42,21 @@ public class BotaoController {
             @Parameter(name = "Id", description = "O identificador (ID) do botão"),
             @Parameter(name = "Estado", description = "O estado do botão") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(botaoService.alterarEstado(Id, Estado));
     }
 
     @Operation(summary = "Listar Botões", description = "Lista todos os botões que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(botaoService.listar());
     }
 
     @Operation(summary = "Get Detalhes Botão", description = "Lista todos os detalhes do botão.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do botão") })
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(botaoService.get_by_id(Id));
     }
 }

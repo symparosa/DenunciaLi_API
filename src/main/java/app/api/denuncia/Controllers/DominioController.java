@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.DominioModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.DominioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +36,7 @@ public class DominioController {
 
     @Operation(summary = "Adicionar / Atualizar Domínio", description = "Adiciona / Atualiza domínios no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody List<DominioModel> dominios) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody List<DominioModel> dominios) {
         return ResponseEntity.ok(dominioservice.adicionar_atualizar(dominios));
     }
 
@@ -44,28 +44,28 @@ public class DominioController {
             @Parameter(name = "Id", description = "O identificador (ID) do domínio"),
             @Parameter(name = "Estado", description = "O estado do domínio") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(dominioservice.alterarEstado(Id, Estado));
     }
 
     @Operation(summary = "Listar Domínios", description = "Lista todos os domínios que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(dominioservice.listar());
     }
 
     @Operation(summary = "Get Domínio", description = "Lista todos os dados a partir do domínio.", parameters = {
             @Parameter(name = "Dominio", description = "O domínio que se quer obter os dados") })
     @GetMapping(path = "/getDominio")
-    public ResponseEntity<ResponseModel> getDominio(@RequestParam(required = true) String Dominio) {
+    public ResponseEntity<Response> getDominio(@RequestParam(required = true) String Dominio) {
         return ResponseEntity.ok(dominioservice.getDominio(Dominio));
     }
 
     @Operation(summary = "Get Detalhes Domínio", description = "Lista todos os detalhes do domínio.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do domínio") })
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(dominioservice.get_by_id(Id));
     }
 }

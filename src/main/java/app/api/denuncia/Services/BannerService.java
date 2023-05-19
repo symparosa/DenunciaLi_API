@@ -1,15 +1,15 @@
 package app.api.denuncia.Services;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BannerModel;
-import app.api.denuncia.Models.ResponseModel;
 
 public interface BannerService {
     
-    ResponseModel adicionar_atualizar(BannerModel banner);
+    Response adicionar_atualizar(BannerModel banner);
 
-    ResponseModel alterarEstado(int id, int estado);
+    Response alterarEstado(int id, int estado);
 
-    ResponseModel listar();
+    Response listar();
 
-    ResponseModel get_by_id(int id);
+    Response get_by_id(int id);
 }

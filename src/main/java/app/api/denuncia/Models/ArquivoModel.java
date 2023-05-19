@@ -1,7 +1,7 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -48,8 +48,8 @@ public class ArquivoModel implements Serializable {
     private Integer estado;
 
     @Schema(description = "A data de criação do arquivo", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização do arquivo", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 }

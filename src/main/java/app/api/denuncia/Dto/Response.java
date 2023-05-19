@@ -1,4 +1,4 @@
-package app.api.denuncia.Models;
+package app.api.denuncia.Dto;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseModel {
+public class Response {
 
     @Schema(description = "Mensagem de saída")
     private List<String> message;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Models.ResponseModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +25,7 @@ public class AES256Controller {
 
     @Operation(summary = "Encrypt String", description = "Encripta uma string")
     @PostMapping(path = "/encryptString")
-    public ResponseEntity<ResponseModel> encryptString(
+    public ResponseEntity<String> encryptString(
             @RequestBody String Valor) {
         return ResponseEntity.ok(aes256Service.encrypt(Valor));
     }

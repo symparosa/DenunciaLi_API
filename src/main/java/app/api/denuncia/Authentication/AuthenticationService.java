@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Configuration.JwtService;
 import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.DenuncianteModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
@@ -40,7 +40,7 @@ public class AuthenticationService {
   private List<String> msg = new ArrayList<>();
   private GlobalFunctions gf = new GlobalFunctions();
 
-  public ResponseModel authenticate(AuthenticationRequest request) {
+  public Response authenticate(AuthenticationRequest request) {
 
     gf.clearList(msg);
 
@@ -73,7 +73,7 @@ public class AuthenticationService {
     }
   }
 
-  public ResponseModel sendToken(String canal, UserDetails userDetails) {
+  public Response sendToken(String canal, UserDetails userDetails) {
 
     LocalDateTime now = LocalDateTime.now();
     Integer userid = null;
@@ -98,13 +98,13 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(userDetails);
         UserRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+        return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
 
       } else {
 
         var jwtToken = jwtService.generateToken(userDetails);
         DenunRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, "token: " + jwtToken);
+        return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
 
       }
     } else {
@@ -113,7 +113,7 @@ public class AuthenticationService {
     }
   }
 
-  public ResponseModel logout(String canal) {
+  public Response logout(String canal) {
 
     try {
 

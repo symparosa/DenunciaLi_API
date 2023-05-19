@@ -65,7 +65,7 @@ public class DenuncianteModel implements UserDetails {
     private String foto_perfil;
 
     @Schema(description = "A data de nascimento do denunciante")
-    private Date data_nascimento;
+    private LocalDateTime data_nascimento;
 
     @Schema(description = "A referencia de morada do denunciante")
     private String referencia_morada;

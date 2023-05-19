@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BannerModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.BannerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class BannerController {
 
     @Operation(summary = "Adicionar / Atualizar Banner", description = "Adiciona / Atualiza banner no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
-    public ResponseEntity<ResponseModel> adicionar_atualizar(@RequestBody BannerModel banner) {
+    public ResponseEntity<Response> adicionar_atualizar(@RequestBody BannerModel banner) {
         return ResponseEntity.ok(bannerService.adicionar_atualizar(banner));
     }
 
@@ -42,7 +42,7 @@ public class BannerController {
             @Parameter(name = "Id", description = "O identificador (ID) do banner"),
             @Parameter(name = "Estado", description = "O estado do banner") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<ResponseModel> alterarEstado(
+    public ResponseEntity<Response> alterarEstado(
             @RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(bannerService.alterarEstado(Id, Estado));
@@ -50,14 +50,14 @@ public class BannerController {
 
     @Operation(summary = "Listar Banners", description = "Lista todos os banners que estão no banco de dados.")
     @GetMapping(path = "/listar")
-    public ResponseEntity<ResponseModel> listar() {
+    public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(bannerService.listar());
     }
 
     @Operation(summary = "Get Detalhes Banner", description = "Lista todos os detalhes do banner.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do banner") })
     @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<ResponseModel> get_detalhes_by_id(@RequestParam(required = true) int Id) {
+    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(bannerService.get_by_id(Id));
     }
 }

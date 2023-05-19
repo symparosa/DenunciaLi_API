@@ -8,9 +8,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
+import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
-import app.api.denuncia.Models.EmailDetailsModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Utilities.GlobalFunctions;
 import jakarta.mail.internet.MimeMessage;
@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     @Override
-    public ResponseModel sendEmail(EmailDetailsModel details, List<String> msg) {
+    public Response sendEmail(EmailDetails details, List<String> msg) {
 
         try {
 

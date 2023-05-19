@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Services.TransacaoService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +36,7 @@ public class TransacaoController {
             @Parameter(name = "Estado", description = "O estado de permissão") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(path = "/alterarPermissaoBotao")
-    public ResponseEntity<ResponseModel> alterarPermissaoBotao(
+    public ResponseEntity<Response> alterarPermissaoBotao(
             @RequestParam(required = true) int IdBotao,
             @RequestParam(required = true) int IdPerfil,
             @RequestParam(required = true) int Estado) {

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BannerModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.BannerRepository;
 import app.api.denuncia.Services.BannerService;
 import app.api.denuncia.Utilities.GlobalFunctions;
@@ -37,7 +37,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(BannerModel banner) {
+    public Response adicionar_atualizar(BannerModel banner) {
 
         gf.clearList(msg);
 
@@ -64,7 +64,7 @@ public class BannerServiceImpl implements BannerService {
         }
     }
 
-    public ResponseModel insert(BannerModel banner, String metodo) {
+    public Response insert(BannerModel banner, String metodo) {
 
         banner.setData_atualizacao(null);
         BannerModel ba = bannerRepository.save(banner);
@@ -72,7 +72,7 @@ public class BannerServiceImpl implements BannerService {
 
     }
 
-    public ResponseModel update(BannerModel banner, String metodo) {
+    public Response update(BannerModel banner, String metodo) {
 
         gf.clearList(msg);
 
@@ -89,7 +89,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -119,7 +119,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -143,7 +143,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

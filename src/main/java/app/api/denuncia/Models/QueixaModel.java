@@ -3,7 +3,6 @@ package app.api.denuncia.Models;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -70,8 +69,8 @@ public class QueixaModel implements Serializable {
     private Integer estado;
 
     @Schema(description = "A data de criação da queixa", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização da queixa", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 }

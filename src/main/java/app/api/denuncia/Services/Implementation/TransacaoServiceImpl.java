@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.BotaoModel;
 import app.api.denuncia.Models.DominioModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Models.TransacaoModel;
 import app.api.denuncia.Repositories.BotaoRepository;
 import app.api.denuncia.Repositories.DominioRepository;
@@ -48,7 +48,7 @@ public class TransacaoServiceImpl implements TransacaoService {
     }
 
     @Override
-    public ResponseModel alterarPermissao(int id_botao, int id_perfil, int estado) {
+    public Response alterarPermissao(int id_botao, int id_perfil, int estado) {
 
         gf.clearList(msg);
 

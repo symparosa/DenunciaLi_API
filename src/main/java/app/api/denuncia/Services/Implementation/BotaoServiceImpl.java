@@ -10,8 +10,8 @@ import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.BotaoDto;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BotaoModel;
-import app.api.denuncia.Models.ResponseModel;
 import app.api.denuncia.Repositories.BotaoRepository;
 import app.api.denuncia.Services.BotaoService;
 import app.api.denuncia.Utilities.GlobalFunctions;
@@ -38,7 +38,7 @@ public class BotaoServiceImpl implements BotaoService {
     }
 
     @Override
-    public ResponseModel adicionar_atualizar(BotaoModel botao) {
+    public Response adicionar_atualizar(BotaoModel botao) {
 
         gf.clearList(msg);
 
@@ -66,7 +66,7 @@ public class BotaoServiceImpl implements BotaoService {
     }
 
     @Override
-    public ResponseModel alterarEstado(int id, int estado) {
+    public Response alterarEstado(int id, int estado) {
 
         gf.clearList(msg);
 
@@ -96,7 +96,7 @@ public class BotaoServiceImpl implements BotaoService {
     }
 
     @Override
-    public ResponseModel listar() {
+    public Response listar() {
 
         gf.clearList(msg);
 
@@ -118,7 +118,7 @@ public class BotaoServiceImpl implements BotaoService {
         }
     }
 
-    public ResponseModel insert(BotaoModel botao, String metodo) {
+    public Response insert(BotaoModel botao, String metodo) {
 
         if (!botaoRepository.existsByCodigo(botao.getCodigo())) {
 
@@ -132,7 +132,7 @@ public class BotaoServiceImpl implements BotaoService {
         }
     }
 
-    public ResponseModel update(BotaoModel botao, String metodo) {
+    public Response update(BotaoModel botao, String metodo) {
 
         if (botaoRepository.existsById(botao.getId())) {
 
@@ -153,7 +153,7 @@ public class BotaoServiceImpl implements BotaoService {
     }
 
     @Override
-    public ResponseModel get_by_id(int id) {
+    public Response get_by_id(int id) {
 
         gf.clearList(msg);
 

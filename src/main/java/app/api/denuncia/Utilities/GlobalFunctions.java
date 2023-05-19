@@ -10,18 +10,18 @@ import java.util.List;
 
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
-import app.api.denuncia.Models.EmailDetailsModel;
-import app.api.denuncia.Models.ResponseModel;
 public class GlobalFunctions {
 
     private Message message = new Message();
     private Status status = new Status();
     private List<String> msg = new ArrayList<>();
 
-    public ResponseModel getResponse(int code, ResponseType type, List<String> msg, Object obj) {
+    public Response getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
-        ResponseModel response = new ResponseModel();
+        Response response = new Response();
 
         response.setResponseCode(code);
         response.setResponseType(type);
@@ -31,11 +31,11 @@ public class GlobalFunctions {
         return response;
     }
 
-    public ResponseModel getResponseError(List<String> listMsg) {
+    public Response getResponseError(List<String> listMsg) {
         return getResponse(0, ResponseType.Erro, listMsg, null);
     }
 
-    public ResponseModel validateGetUpdateMsg(String metodo, Integer result) {
+    public Response validateGetUpdateMsg(String metodo, Integer result) {
 
         clearList(msg);
 
@@ -51,7 +51,7 @@ public class GlobalFunctions {
         }
     }
 
-    public ResponseModel validateGetSaveMsgWithList(String metodo, List<?> lista) {
+    public Response validateGetSaveMsgWithList(String metodo, List<?> lista) {
 
         clearList(msg);
 
@@ -67,14 +67,14 @@ public class GlobalFunctions {
         }
     }
 
-    public ResponseModel validateGetSaveMsgWithObj(String metodo, Object obj) {
+    public Response validateGetSaveMsgWithObj(String metodo, Object obj) {
 
         clearList(msg);
 
         if (obj != null) {
 
             msg.add(message.getMessage01(metodo));
-            return getResponse(1, ResponseType.Sucesso, msg, obj);
+            return getResponse(1, ResponseType.Sucesso, msg, null);
 
         } else {
             msg.add(message.getMessage02(metodo));
@@ -82,7 +82,7 @@ public class GlobalFunctions {
         }
     }
 
-    public ResponseModel validateGetMsgWithObj(String metodo, Object obj, String entities) {
+    public Response validateGetMsgWithObj(String metodo, Object obj, String entities) {
 
         clearList(msg);
 
@@ -97,7 +97,7 @@ public class GlobalFunctions {
         }
     }
 
-    public ResponseModel validateGetListMsg(String metodo, List<?> lista) {
+    public Response validateGetListMsg(String metodo, List<?> lista) {
 
         clearList(msg);
 
@@ -114,6 +114,21 @@ public class GlobalFunctions {
         } else {
 
             msg.add(message.getMessage05());
+            return getResponseError(msg);
+        }
+    }
+
+    public Response validateMsgEncript(String metodo, String encript) {
+
+        clearList(msg);
+
+        if (encript != null) {
+
+            msg.add(message.getMessage01(metodo));
+            return getResponse(1, ResponseType.Sucesso, msg, encript);
+
+        } else{
+            msg.add(message.getMessage02(metodo));
             return getResponseError(msg);
         }
     }
@@ -178,9 +193,9 @@ public class GlobalFunctions {
         return bytes;
     }
 
-    public EmailDetailsModel createEmail(String to, String Body, String Subject) {
+    public EmailDetails createEmail(String to, String Body, String Subject) {
 
-        EmailDetailsModel emailDetail = new EmailDetailsModel();
+        EmailDetails emailDetail = new EmailDetails();
 
         emailDetail.setRecipient(to);
         emailDetail.setMsgBody(Body);

@@ -29,7 +29,7 @@ public class SecurityConfiguration {
         .requestMatchers(
             "/api/auth/login", "/api/utilizadorBackoffice/alterarPassword", "/api/utilizadorBackoffice/recuperarConta",
             "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
-            "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia","/api/aes256/**")
+            "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia","/api/aes256/**","/api/**")
         .permitAll()
         .anyRequest()
         .authenticated()

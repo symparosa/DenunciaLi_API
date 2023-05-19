@@ -1,21 +1,21 @@
 package app.api.denuncia.Services;
 
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.UtilizadorModel;
 
 public interface UtilizadorService {
 
-    ResponseModel listar();
+    Response listar();
 
-    ResponseModel get_by_id(int id);
+    Response get_by_id(int id);
 
-    ResponseModel recuperarConta(String email);
+    Response recuperarConta(String email);
 
-    ResponseModel alterarEstado(int id, int estado);
+    Response alterarEstado(int id, int estado);
 
     Boolean existsByIdAndEstado(int id, int estado);
 
-    ResponseModel adicionar_atualizar(UtilizadorModel utilizador);
+    Response adicionar_atualizar(UtilizadorModel utilizador);
 
-    ResponseModel alterarPassword(String username, String hash, String password);
+    Response alterarPassword(String username, String hash, String password);
 }

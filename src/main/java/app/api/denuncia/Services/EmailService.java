@@ -2,10 +2,10 @@ package app.api.denuncia.Services;
 
 import java.util.List;
 
-import app.api.denuncia.Models.EmailDetailsModel;
-import app.api.denuncia.Models.ResponseModel;
+import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.Response;
 
 public interface EmailService {
     
-    ResponseModel sendEmail(EmailDetailsModel details, List<String> msg);
+    Response sendEmail(EmailDetails details, List<String> msg);
 }
