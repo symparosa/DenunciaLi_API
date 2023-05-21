@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
-import app.api.denuncia.Enums.DomainValue;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.EntidadeModel;
 import app.api.denuncia.Repositories.EntidadeRepository;
@@ -32,7 +31,6 @@ public class EntidadeServiceImpl implements EntidadeService {
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    
 
     public EntidadeServiceImpl(EntidadeRepository entRepository, LocalizacaoService localService,
             DominioService domService, AuthenticationService auth) {
@@ -42,10 +40,14 @@ public class EntidadeServiceImpl implements EntidadeService {
         this.auth = auth;
     }
 
-    public int IdUserLogado(){
-        return auth.getUtiLogado().getId();
+    // public int IdUserLogado(){
+    // return auth.getUtiLogado().getId();
+    // }
+
+    public int IdUserLogado() {
+        return 1;
     }
-    
+
     @Override
     public Response adicionar_atualizar(EntidadeModel entidade) {
 
@@ -56,7 +58,7 @@ public class EntidadeServiceImpl implements EntidadeService {
             String metodo = "salvar", obj = "Localização";
 
             entidade.setEstado(status.getAtivo());
-            entidade.setData_criacao(new Date());
+            entidade.setData_criacao(LocalDateTime.now());
             entidade.setLast_user_change(IdUserLogado());
 
             if (localService.existsLocalizacao(entidade.getLocalizacao())) {
@@ -166,7 +168,7 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             if (!entRepository.existsBySiglaAndIdNot(entidade.getSigla(), entidade.getId())) {
 
-                entidade.setData_atualizacao(new Date());
+                entidade.setData_atualizacao(LocalDateTime.now());
                 EntidadeModel e = entRepository.save(entidade);
                 return gf.validateGetSaveMsgWithObj(metodo, e);
 
@@ -215,28 +217,23 @@ public class EntidadeServiceImpl implements EntidadeService {
 
     @Override
     public Response getEntidadeByTipo(String tipo) {
-        
+
         gf.clearList(msg);
 
         try {
 
-            if (tipo.equals(DomainValue.INSTITUICAO_APOIO.name()) || tipo.equals(DomainValue.CONTATO_IMPORTANTE.name())) {
+            DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_ENTIDADE.name(), tipo);
 
-                DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_ENTIDADE.name(), tipo);
+            if (dominioModel != null) {
 
-                if (dominioModel != null) {
+                String metodo = "listar";
 
-                    String metodo = "listar";
+                List<EntidadeModel> lista = entRepository.findByTipoEntidadeAndEstado(dominioModel,
+                        status.getAtivo());
+                return gf.validateGetListMsg(metodo, lista);
 
-                    List<EntidadeModel> lista = entRepository.findByTipoEntidadeAndEstado(dominioModel,status.getAtivo());
-                    return gf.validateGetListMsg(metodo, lista);
-
-                } else {
-                    msg.add(message.getMessage06(tipo));
-                    return gf.getResponseError(msg);
-                }
             } else {
-                msg.add(message.getMessage12());
+                msg.add(message.getMessage06(tipo));
                 return gf.getResponseError(msg);
             }
         } catch (Exception e) {
@@ -247,6 +244,6 @@ public class EntidadeServiceImpl implements EntidadeService {
 
     @Override
     public Boolean existsByIdAndEstado(int id, int estado) {
-        return entRepository.existsByIdAndEstado(id,estado);
+        return entRepository.existsByIdAndEstado(id, estado);
     }
 }

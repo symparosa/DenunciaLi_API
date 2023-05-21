@@ -16,10 +16,15 @@ import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Denuncia;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
+import app.api.denuncia.Integration.Integrate.IntegrateService;
 import app.api.denuncia.Models.ArquivoModel;
 import app.api.denuncia.Models.DenunciaModel;
+import app.api.denuncia.Models.DenuncianteModel;
+import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Repositories.DenunciaRepository;
 import app.api.denuncia.Services.DenunciaService;
+import app.api.denuncia.Services.DenuncianteService;
+import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.LocalizacaoService;
 import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
@@ -30,6 +35,9 @@ public class DenunciaServiceImpl implements DenunciaService {
     private DenunciaRepository denunciaRepository;
     private LocalizacaoService localService;
     private AES256Service aes256Service;
+    private IntegrateService integrateService;
+    private DenuncianteService denuncianteService;
+    private DominioService dominioService;
 
     private Status status = new Status();
     private Message message = new Message();
@@ -37,10 +45,22 @@ public class DenunciaServiceImpl implements DenunciaService {
     private GlobalFunctions gf = new GlobalFunctions();
 
     public DenunciaServiceImpl(DenunciaRepository denunciaRepository, LocalizacaoService localService,
-            AES256Service aes256Service) {
+            AES256Service aes256Service, IntegrateService integrateService, DenuncianteService denuncianteService,
+            DominioService dominioService) {
         this.denunciaRepository = denunciaRepository;
         this.localService = localService;
         this.aes256Service = aes256Service;
+        this.integrateService = integrateService;
+        this.denuncianteService = denuncianteService;
+        this.dominioService = dominioService;
+    }
+
+    // public int IdUserLogado() {
+    // return auth.getDenunLogado().getId();
+    // }
+
+    public int IdUserLogado() {
+        return 1;
     }
 
     @Override
@@ -51,7 +71,6 @@ public class DenunciaServiceImpl implements DenunciaService {
         gf.clearList(msg);
 
         try {
-
             String decrypt = aes256Service.decrypt(denu);
             DenunciaModel denuncia = gson.fromJson(decrypt, DenunciaModel.class);
 
@@ -104,7 +123,13 @@ public class DenunciaServiceImpl implements DenunciaService {
                                             denunciaSave.getQueixa().getId(), arquivo.get(i).getId());
                                 }
                             }
-                            return gf.validateGetSaveMsgWithObj(metodo, denunciaSave);
+                            Response rps = gf.validateGetSaveMsgWithObj(metodo, denunciaSave);
+
+                            if (rps.getResponseCode() == 1) {
+
+                                integrar(denunciaSave);
+                            }
+                            return rps;
                         } else {
                             msg.add(message.getMessage02(metodo));
                             return gf.getResponseError(msg);
@@ -175,7 +200,74 @@ public class DenunciaServiceImpl implements DenunciaService {
         }
     }
 
+    public void integrar(DenunciaModel denuncia) {
+
+        DenuncianteModel denu = null;
+        DominioModel grau_parentesco = null, tipo_queixa = null, tipo_crime = null, tipo_arquivo = null;
+
+        if (denuncia.getDenunciante() != null) {
+            denu = denuncianteService.findbyid(denuncia.getDenunciante().getId());
+        }
+
+        if (denuncia.getQueixa().getGrau_parentesco() != null) {
+            grau_parentesco = dominioService.findbyid(denuncia.getQueixa().getGrau_parentesco().getId());
+        }
+
+        if (denuncia.getQueixa().getTipo_queixa() != null) {
+            tipo_queixa = dominioService.findbyid(denuncia.getQueixa().getTipo_queixa().getId());
+        }
+
+        if (denuncia.getQueixa().getTipo_crime() != null) {
+            tipo_crime = dominioService.findbyid(denuncia.getQueixa().getTipo_crime().getId());
+        }
+
+        if (denuncia != null) {
+
+            denuncia.setDenunciante(denu);
+            denuncia.getQueixa().setGrau_parentesco(grau_parentesco);
+            denuncia.getQueixa().setTipo_queixa(tipo_queixa);
+            denuncia.getQueixa().setTipo_crime(tipo_crime);
+
+            if (denuncia.getQueixa().getArquivos() != null && !denuncia.getQueixa().getArquivos().isEmpty()) {
+
+                for (int i = 0; i < denuncia.getQueixa().getArquivos().size(); i++) {
+
+                    ArquivoModel arquivo = denuncia.getQueixa().getArquivos().get(i);
+
+                    if (arquivo.getTipo_arquivo() != null) {
+                        tipo_arquivo = dominioService.findbyid(arquivo.getTipo_arquivo().getId());
+                    }
+
+                    denuncia.getQueixa().getArquivos().get(i).setTipo_arquivo(tipo_arquivo);
+                }
+            }
+            integrateService.Integracao(denuncia);
+        }
+    }
+
     @Override
+    public Response listar_ocorrencias() {
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .serializeNulls().create();
+
+        gf.clearList(msg);
+
+        try {
+
+            String metodo = "listar";
+
+            List<Denuncia> listadenuncia = listarDenunciasByUserId(IdUserLogado());
+            String json = gson.toJson(listadenuncia);
+            String encript = aes256Service.encrypt(json);
+            return gf.validateMsgEncript(metodo, encript);
+
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
     public List<Denuncia> listarDenunciasByUserId(int denu) {
         List<Object[]> results = denunciaRepository.listarDenunciasByUserId(denu);
         List<Denuncia> denuncias = new ArrayList<>();

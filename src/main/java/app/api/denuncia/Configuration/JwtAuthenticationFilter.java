@@ -22,7 +22,6 @@ import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -36,12 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       @Nonnull HttpServletRequest request,
       @Nonnull HttpServletResponse response,
-      @Nonnull FilterChain filterChain
-  ) throws ServletException, IOException {
+      @Nonnull FilterChain filterChain) throws ServletException, IOException {
     final String authHeader = request.getHeader("Authorization");
     final String jwt;
     final String username;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -54,21 +52,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
             userDetails,
             null,
-            userDetails.getAuthorities()
-        );
+            userDetails.getAuthorities());
         authToken.setDetails(
-            new WebAuthenticationDetailsSource().buildDetails(request)
-        );
+            new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
       }
     }
     filterChain.doFilter(request, response);
   }
 
-  public void updateDateToken(UserDetails userDetails){
+  public void updateDateToken(UserDetails userDetails) {
 
     final LocalDateTime now = LocalDateTime.now();
-    
+
     if (userDetails instanceof UtilizadorModel) {
       UtilizadorModel user = (UtilizadorModel) userDetails;
       utiRepository.updateDateToken(now, user.getId(), user.getUsername()).orElseThrow();

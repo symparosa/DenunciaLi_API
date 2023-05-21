@@ -28,36 +28,47 @@ import lombok.NoArgsConstructor;
 @Table(name = "dn_t_queixa")
 public class QueixaModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) da queixa")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Schema(description = "A descrição da queixa")
     @Lob
     private String descricao;
 
+    @Schema(description = "A data de ocorrência da queixa")
     private LocalDateTime data_ocorrencia;
 
+    @Schema(description = "A descrição de endereço da queixa")
     private String referencia_morada;
 
+    @Schema(description = "O codigo postal da queixa")
     private String codigo_postal;
 
+    @Schema(description = "A localização no mapa da queixa")
     private String localizacao_mapa;
 
+    @Schema(description = "O identificador (ID) da localização")
     @ManyToOne
     @JoinColumn(name = "localizacao_fk")
     private LocalizacaoModel localizacao;
 
+    @Schema(description = "O identificador (ID) do grau de parentesco")
     @ManyToOne
     @JoinColumn(name = "grau_parentesco_fk")
     private DominioModel grau_parentesco;
 
+    @Schema(description = "O identificador (ID) do tipo de queixa")
     @ManyToOne
     @JoinColumn(name = "tipo_queixa_fk")
     private DominioModel tipo_queixa;
 
+    @Schema(description = "A lista de arquivos")
     @OneToMany(targetEntity = ArquivoModel.class, mappedBy = "queixa", cascade = CascadeType.ALL)
     private List<ArquivoModel> arquivos = new ArrayList<>();
 
+    @Schema(description = "O identificador (ID) do tipo de crime")
     @ManyToOne
     @JoinColumn(name = "tipo_crime_fk")
     private DominioModel tipo_crime;

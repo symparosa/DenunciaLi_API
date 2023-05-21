@@ -34,31 +34,31 @@ public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, I
         Optional<DenuncianteModel> findByUsernameAndEstado(String username, int estado);
 
         @Modifying
-        @Query(value = "UPDATE dbo.dn_t_denunciante SET token=:token, token_iat=:token_iat, data_atualizacao = GETDATE(),last_user_change=:id WHERE username =:username", nativeQuery = true)
-        Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
-                        @Param("id") int id,
-                        @Param("username") String username);
-
-        @Modifying
-        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
-        Integer logout(@Param("id") int id);
-
-        @Modifying
-        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE() ,password =:password, hash = null, conta_confirmada=1, last_user_change=:id WHERE id =:id", nativeQuery = true)
-        Integer changePassword(@Param("password") String password, @Param("id") int id);
+        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer updateHash(@Param("hash") String hash, @Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:id WHERE id =:id", nativeQuery = true)
         Integer alterarEstado(@Param("estado") int estado, @Param("id") int id);
 
         @Modifying
-        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
-        Integer updateHash(@Param("hash") String hash, @Param("id") int id);
+        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer logout(@Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
         Optional<Integer> updateDateToken(@Param("token_iat") LocalDateTime token_iat, @Param("id") int id,
                         @Param("username") String username);
+
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_denunciante SET token=:token, token_iat=:token_iat, data_atualizacao = GETDATE(),last_user_change=:id WHERE username =:username", nativeQuery = true)
+        Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
+                        @Param("id") int id,
+                        @Param("username") String username);
+
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE() ,password =:password, hash = null, conta_confirmada=1, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer changePassword(@Param("password") String password, @Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET apelido =:apelido, codigo_postal =:codigo, data_atualizacao = GETDATE(), data_nascimento =:data, doc_identificacao =:doc, foto_perfil =:foto, genero =:genero, localizacao_mapa =:localizacao_mapa, nome =:nome, referencia_morada =:referencia, localizacao_fk =:localizacao_fk, last_user_change =:id WHERE username =:username", nativeQuery = true)

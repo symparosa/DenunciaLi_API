@@ -5,11 +5,11 @@ import app.api.denuncia.Models.LocalizacaoModel;
 
 public interface LocalizacaoService {
 
-    Response listarLocalizacoes(String concelho);
-
     Response getIlhas();
 
     Response getConcelhos();
+
+    Response listarLocalizacoes(String concelho);
 
     Boolean existsLocalizacao(LocalizacaoModel local);
 }

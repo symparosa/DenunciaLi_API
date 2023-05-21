@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -11,12 +11,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.EmailDetails;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
+import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Services.DominioService;
@@ -25,6 +30,7 @@ import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.LocalizacaoService;
 import app.api.denuncia.Services.UtilizadorService;
 import app.api.denuncia.Utilities.GlobalFunctions;
+import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 
 @Service
 public class UtilizadorServiceImpl implements UtilizadorService {
@@ -36,6 +42,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     private EmailService emailService;
     private PasswordEncoder passwordEncoder;
     private AuthenticationService auth;
+    private AES256Service aes256Service;
 
     @Value("${template.recover}")
     private String PathRecover;
@@ -47,13 +54,18 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    
-    public int IdUserLogado(){
-        return auth.getUtiLogado().getId();
+
+    // public int IdUserLogado(){
+    // return auth.getUtiLogado().getId();
+    // }
+
+    public int IdUserLogado() {
+        return 1;
     }
 
     public UtilizadorServiceImpl(UtilizadorRepository userRepository, LocalizacaoService localService,
-            DominioService domService, EntidadeService entService, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationService auth) {
+            DominioService domService, EntidadeService entService, EmailService emailService,
+            PasswordEncoder passwordEncoder, AuthenticationService auth, AES256Service aes256Service) {
         this.userRepository = userRepository;
         this.localService = localService;
         this.domService = domService;
@@ -61,6 +73,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.auth = auth;
+        this.aes256Service = aes256Service;
     }
 
     @Override
@@ -83,7 +96,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                     if (entService.existsEntidade(user.getEntidade())) {
 
                         user.setEstado(status.getAtivo());
-                        user.setData_criacao(new Date());
+                        user.setData_criacao(LocalDateTime.now());
                         user.setLast_user_change(IdUserLogado());
                         user.setContaConfirmada(false);
 
@@ -117,7 +130,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
         String hash = gf.generateHash();
         String Subject = "Registo de Utilizador";
-        String ptxt = "Ol&aacute; " + uti.getNome() + ". Voc&ecirc; foi convidado a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
+        String ptxt = "Ol&aacute;, " + uti.getNome()
+                + ". Voc&ecirc; foi convidado a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
         String titulo = "REGISTO DE UTILIZADOR";
 
         if (!userRepository.existsByUsername(uti.getUsername()) && !userRepository.existsByHash(hash)) {
@@ -136,7 +150,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 Element div = doc.getElementById("div_titulo");
                 Element p = doc.getElementById("p_corpo");
                 Element link = doc.getElementById("a_link");
-                link.attr("href", "https://exemplo.com/nova-url");
+                link.attr("href", "https://exemplo.com/nova_url");
                 div.html(titulo);
                 p.html(ptxt);
 
@@ -161,7 +175,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
             if (!userRepository.existsByUsernameAndIdNot(uti.getUsername(), uti.getId())) {
 
-                uti.setData_atualizacao(new Date());
+                uti.setData_atualizacao(LocalDateTime.now());
                 UtilizadorModel user = userRepository.save(uti);
                 return gf.validateGetSaveMsgWithObj(metodo, user);
 
@@ -210,6 +224,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     @Override
     public Response listar() {
 
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .serializeNulls().create();
         gf.clearList(msg);
 
         try {
@@ -219,7 +235,9 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 String metodo = "listar";
 
                 List<UtilizadorModel> lista = userRepository.findByEstadoIn(gf.getStatusAtivoInativo());
-                return gf.validateGetListMsg(metodo, lista);
+                String json = gson.toJson(lista);
+                String encript = aes256Service.encrypt(json);
+                return gf.validateMsgEncript(metodo, encript);
 
             } else {
                 msg.add(message.getMessage05());
@@ -231,25 +249,53 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         }
     }
 
-    
     @Override
-    public Response alterarPassword(String username, String hash, String password) {
+    public Response alterarPassword(String username, String hash, String password, Boolean logado) {
 
         gf.clearList(msg);
 
         try {
 
-            if (userRepository.existsByUsernameAndHash(username, hash)) {
+            String metodo = "salvar";
+            String pass = aes256Service.decrypt(password);
 
-                String metodo = "salvar";
+            if (pass != null) {
 
-                var user = userRepository.findByUsername(username).orElse(null);
+                if (logado) {
+                    // auth.getUtiLogado().getUsername()
+                    if (username.equals("symparosa@gmail.com")) {
 
-                Integer result = userRepository.changePassword(passwordEncoder.encode(password), user.getId());
+                        if (userRepository.existsByUsername(username)) {
 
-                return gf.validateGetUpdateMsg(metodo, result);
+                            var user = userRepository.findByUsername(username).orElse(null);
+
+                            Integer result = userRepository.changePassword(passwordEncoder.encode(pass), user.getId());
+
+                            return gf.validateGetUpdateMsg(metodo, result);
+                        } else {
+                            msg.add(message.getMessage12());
+                            return gf.getResponseError(msg);
+                        }
+                    } else {
+                        msg.add(message.getMessage16());
+                        return gf.getResponseError(msg);
+                    }
+                } else {
+
+                    if (userRepository.existsByUsernameAndHash(username, hash)) {
+
+                        var user = userRepository.findByUsername(username).orElse(null);
+
+                        Integer result = userRepository.changePassword(passwordEncoder.encode(pass), user.getId());
+
+                        return gf.validateGetUpdateMsg(metodo, result);
+                    } else {
+                        msg.add(message.getMessage12());
+                        return gf.getResponseError(msg);
+                    }
+                }
             } else {
-                msg.add(message.getMessage12());
+                msg.add(message.getMessage14("decrypt"));
                 return gf.getResponseError(msg);
             }
         } catch (Exception e) {
@@ -271,7 +317,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 var user = userRepository.findByUsername(email).orElse(null);
 
                 String Subject = "Recuperação da Conta",
-                        ptxt = "Ol&aacute;  " + user.getNome()
+                        ptxt = "Ol&aacute;,  " + user.getNome()
                                 + ". Foi solicitada a recupera&ccedil;&atilde;o de conta no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
 
                 String hash = gf.generateHash();
@@ -291,7 +337,9 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                         String html = gf.getTemplate(PathRecover);
 
                         Document doc = Jsoup.parse(html);
-                        Element p = doc.select("p").first();
+                        Element link = doc.getElementById("a_link");
+                        Element p = doc.getElementById("p_corpo");
+                        link.attr("href", "https://exemplo.com/nova-url");
                         p.html(ptxt);
 
                         EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
@@ -317,6 +365,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     @Override
     public Response get_by_id(int id) {
 
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .serializeNulls().create();
         gf.clearList(msg);
 
         try {
@@ -325,8 +375,10 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                 String metodo = "listar", obj = "Utilizador";
 
-                UtilizadorModel Banner = userRepository.findById(id).orElse(null);
-                return gf.validateGetMsgWithObj(metodo, Banner, obj);
+                UtilizadorModel user = userRepository.findById(id).orElse(null);
+                String json = gson.toJson(user);
+                String encript = aes256Service.encrypt(json);
+                return gf.validateGetMsgWithObj(metodo, encript, obj);
 
             } else {
                 msg.add(message.getMessage05());
@@ -340,6 +392,42 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     @Override
     public Boolean existsByIdAndEstado(int id, int estado) {
-        return userRepository.existsByIdAndEstado(id,estado);
+        return userRepository.existsByIdAndEstado(id, estado);
+    }
+
+    @Override
+    public Response validarSenhaAtual(String senha) {
+
+        gf.clearList(msg);
+
+        try {
+
+            String pass = aes256Service.decrypt(senha);
+
+            if (pass != null) {
+                // auth.getUtiLogado().getUsername()
+                UtilizadorModel user = userRepository.findByUsername("symparosa@gmail.com").orElse(null);
+
+                if (user != null) {
+
+                    if (passwordEncoder.matches(pass, user.getPassword())) {
+                        msg.add(message.getMessage18());
+                        return gf.getResponse(1, ResponseType.Sucesso, msg, null);
+                    } else {
+                        msg.add(message.getMessage12());
+                        return gf.getResponseError(msg);
+                    }
+                } else {
+                    msg.add(message.getMessage16());
+                    return gf.getResponseError(msg);
+                }
+            } else {
+                msg.add(message.getMessage14("decrypt"));
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 }

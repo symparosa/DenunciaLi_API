@@ -15,7 +15,7 @@ public class Denuncia {
     private LocalDateTime data_denuncia;
     private LocalDateTime data_ocorrencia;
     private String descricao_denuncia;
-    private String local_mapa;
+    private LocalizacaoMapa local_mapa;
     private String referencia_local;
     private String grau_parentesco;
     private String tipo_crime;

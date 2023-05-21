@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +33,6 @@ public class TransacaoServiceImpl implements TransacaoService {
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
-    
 
     public TransacaoServiceImpl(TransacaoRepository transacaoRepository, DominioRepository dominioRepository,
             BotaoRepository botaoRepository, AuthenticationService auth) {
@@ -43,8 +42,12 @@ public class TransacaoServiceImpl implements TransacaoService {
         this.auth = auth;
     }
 
-    public int IdUserLogado(){
-        return auth.getUtiLogado().getId();
+    // public int IdUserLogado(){
+    // return auth.getUtiLogado().getId();
+    // }
+
+    public int IdUserLogado() {
+        return 1;
     }
 
     @Override
@@ -80,7 +83,7 @@ public class TransacaoServiceImpl implements TransacaoService {
                             transacaoModel.setBotao(botao.get());
                             transacaoModel.setTipoUtilizador(perfil);
                             transacaoModel.setEstado(estado);
-                            transacaoModel.setData_criacao(new Date());
+                            transacaoModel.setData_criacao(LocalDateTime.now());
                             transacaoModel.setLast_user_change(IdUserLogado());
 
                             TransacaoModel t = transacaoRepository.save(transacaoModel);

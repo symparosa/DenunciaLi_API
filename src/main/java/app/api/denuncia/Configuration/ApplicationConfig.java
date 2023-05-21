@@ -37,14 +37,14 @@ public class ApplicationConfig {
     UserDetailsService userDetailsService = new UserDetailsService() {
 
       @Override
-      public UserDetails loadUserByUsername(String username){
-        
-          UtilizadorModel user1 = utiRepository.findByUsernameAndEstado(username,status.getAtivo()).orElse(null);
+      public UserDetails loadUserByUsername(String username) {
+
+        UtilizadorModel user1 = utiRepository.findByUsernameAndEstado(username, status.getAtivo()).orElse(null);
 
         if (user1 != null) {
-            return user1;
+          return user1;
         } else {
-          DenuncianteModel user2 = denuRepository.findByUsernameAndEstado(username,status.getAtivo()).orElseThrow();
+          DenuncianteModel user2 = denuRepository.findByUsernameAndEstado(username, status.getAtivo()).orElseThrow();
           return user2;
         }
       }

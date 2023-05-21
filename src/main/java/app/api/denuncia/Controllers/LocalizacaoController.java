@@ -10,13 +10,12 @@ import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Services.LocalizacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Localização")
 @RestController
 @ApiResponse(responseCode = "200", description = "Success response.")
-@SecurityRequirement(name = "Bearer Authentication")
+// @SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/localizacao", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LocalizacaoController {
 
@@ -26,24 +25,16 @@ public class LocalizacaoController {
         LocalizacaoService = localizacaoService;
     }
 
+    @Operation(summary = "Get Concelhos", description = "Lista todos os concelhos de Cabo Verde.")
+    @GetMapping(path = "/getConcelhos")
+    public Response getConcelhos() {
+        return LocalizacaoService.getConcelhos();
+    }
+
     @Operation(summary = "Listar localizações ", description = "Lista todas as localizações.", parameters = {
             @Parameter(name = "Concelho", description = "O identificador (ID) do concelho") })
     @GetMapping(path = "/listarLocalizacoes")
     public Response listarLocalizacoes(@RequestParam(required = true) String Concelho) {
         return LocalizacaoService.listarLocalizacoes(Concelho);
-    }
-
-    // @Operation(tags = {
-    // "Localização" }, summary = "Get Ilhas", description = "Lista todas as ilhas
-    // de Cabo Verde.")
-    // @GetMapping(path = "/getIlhas")
-    // public ResponseDto getIlhas() {
-    // return LocalizacaoService.getIlhas();
-    // }
-
-    @Operation(summary = "Get Concelhos", description = "Lista todos os concelhos de Cabo Verde.")
-    @GetMapping(path = "/getConcelhos")
-    public Response getConcelhos() {
-        return LocalizacaoService.getConcelhos();
     }
 }

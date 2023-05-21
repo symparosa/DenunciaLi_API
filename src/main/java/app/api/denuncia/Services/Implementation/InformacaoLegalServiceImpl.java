@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
-import app.api.denuncia.Enums.DomainValue;
 import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.InformacaoLegalModel;
 import app.api.denuncia.Repositories.InformacaoLegalRepository;
@@ -38,8 +37,12 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
             String metodo = "salvar";
 
             infoLegal.setEstado(status.getAtivo());
-            infoLegal.setData_criacao(new Date());
+            infoLegal.setData_criacao(LocalDateTime.now());
             infoLegal.setLast_user_change(IdUserLogado());
 
             String obj = "Tipo de informação legal";
@@ -148,7 +151,7 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         if (infoRepository.existsById(info.getId())) {
 
-            info.setData_atualizacao(new Date());
+            info.setData_atualizacao(LocalDateTime.now());
             InformacaoLegalModel inf = infoRepository.save(info);
             return gf.validateGetSaveMsgWithObj(metodo, inf);
 
@@ -165,25 +168,18 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
         try {
 
-            if (tipo.equals(DomainValue.FAQ.name()) || tipo.equals(DomainValue.POLITICA.name())
-                    || tipo.equals(DomainValue.TERMO.name())) {
+            DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_INFO_LEGAL.name(), tipo);
 
-                DominioModel dominioModel = domService.findByDominioAndValor(Domain.TIPO_INFO_LEGAL.name(), tipo);
+            if (dominioModel != null) {
 
-                if (dominioModel != null) {
+                String metodo = "listar";
 
-                    String metodo = "listar";
+                List<InformacaoLegalModel> lista = infoRepository.findByTipoInformacaoLegalAndEstado(dominioModel,
+                        status.getAtivo());
+                return gf.validateGetListMsg(metodo, lista);
 
-                    List<InformacaoLegalModel> lista = infoRepository.findByTipoInformacaoLegalAndEstado(dominioModel,
-                            status.getAtivo());
-                    return gf.validateGetListMsg(metodo, lista);
-
-                } else {
-                    msg.add(message.getMessage06(tipo));
-                    return gf.getResponseError(msg);
-                }
             } else {
-                msg.add(message.getMessage12());
+                msg.add(message.getMessage06(tipo));
                 return gf.getResponseError(msg);
             }
         } catch (Exception e) {

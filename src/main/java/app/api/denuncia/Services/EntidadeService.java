@@ -9,13 +9,13 @@ public interface EntidadeService {
 
     Response get_by_id(int id);
 
-    Boolean existsEntidade(EntidadeModel ent);
-
     Response getEntidadeByTipo(String tipo);
 
-    Boolean existsByIdAndEstado(int id, int estado);
+    Boolean existsEntidade(EntidadeModel ent);
 
     Response alterarEstado(int id, int estado);
+
+    Boolean existsByIdAndEstado(int id, int estado);
 
     Response adicionar_atualizar(EntidadeModel entidade);
 }

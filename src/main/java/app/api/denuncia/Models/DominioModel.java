@@ -1,7 +1,7 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,10 +44,10 @@ public class DominioModel implements Serializable {
     private Integer estado;
 
     @Schema(description = "A data de criação do domínio", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização do domínio", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 
     @Schema(description = "Id do último utilizador a alterar os dados", hidden = true)
     private Integer last_user_change;

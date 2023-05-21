@@ -11,11 +11,13 @@ public interface UtilizadorService {
 
     Response recuperarConta(String email);
 
+    Response validarSenhaAtual(String senha);
+
     Response alterarEstado(int id, int estado);
 
     Boolean existsByIdAndEstado(int id, int estado);
 
     Response adicionar_atualizar(UtilizadorModel utilizador);
 
-    Response alterarPassword(String username, String hash, String password);
+    Response alterarPassword(String username, String hash, String password, Boolean logado);
 }

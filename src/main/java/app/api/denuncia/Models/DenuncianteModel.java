@@ -2,7 +2,6 @@ package app.api.denuncia.Models;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -85,10 +84,10 @@ public class DenuncianteModel implements UserDetails {
     private Integer estado;
 
     @Schema(description = "A data de criação do denunciante", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização do denunciante", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 
     @Schema(description = "O token de acesso do denunciante", hidden = true)
     private String token;

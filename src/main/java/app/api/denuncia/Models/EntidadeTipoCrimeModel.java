@@ -1,7 +1,7 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,8 +45,8 @@ public class EntidadeTipoCrimeModel implements Serializable {
     private Integer estado;
 
     @Schema(description = "A data de criação da entidade e tipo de crime", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização da entidade e tipo de crime", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 }

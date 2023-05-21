@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.MenuDto;
+import app.api.denuncia.Dto.Menu;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.MenuModel;
 import app.api.denuncia.Repositories.MenuRepository;
@@ -33,8 +33,12 @@ public class MenuServiceImpl implements MenuService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
             String metodo = "salvar";
 
             menu.setEstado(status.getAtivo());
-            menu.setData_criacao(new Date());
+            menu.setData_criacao(LocalDateTime.now());
             menu.setLast_user_change(IdUserLogado());
 
             if (menu.getId() != null) {
@@ -104,8 +108,25 @@ public class MenuServiceImpl implements MenuService {
 
                 String metodo = "listar";
 
-                List<MenuDto> lista = menuRepository.listarMenuEPerfilAssociado(gf.getStatusAtivoInativo());
-                return gf.validateGetListMsg(metodo, lista);
+                List<Object[]> results = menuRepository.listarMenuEPerfilAssociado(gf.getStatusAtivoInativo());
+                List<Menu> menus = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    Menu menu = new Menu();
+                    menu.setId_menu((Integer) result[0]);
+                    menu.setCodigo((String) result[1]);
+                    menu.setEstado_menu((Integer) result[2]);
+                    menu.setId_menu_pai((Integer) result[3]);
+                    menu.setMenu_icon((String) result[4]);
+                    menu.setVisibilidade((Integer) result[5]);
+                    menu.setTitulo((String) result[6]);
+                    menu.setEstado_menu_perfil((Integer) result[7]);
+                    menu.setPerfil((Integer) result[8]);
+
+                    menus.add(menu);
+                }
+
+                return gf.validateGetListMsg(metodo, menus);
 
             } else {
                 msg.add(message.getMessage05());
@@ -138,7 +159,7 @@ public class MenuServiceImpl implements MenuService {
 
             if (!menuRepository.existsByCodigoAndIdNot(menu.getCodigo(), menu.getId())) {
 
-                menu.setData_atualizacao(new Date());
+                menu.setData_atualizacao(LocalDateTime.now());
                 MenuModel men = menuRepository.save(menu);
                 return gf.validateGetSaveMsgWithObj(metodo, men);
 

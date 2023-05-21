@@ -1,7 +1,7 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,8 +48,8 @@ public class InformacaoLegalModel implements Serializable {
     private Integer estado;
 
     @Schema(description = "A data de criação da informação legal", hidden = true)
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 
     @Schema(description = "A data de atualização da informação legal", hidden = true)
-    private Date data_atualizacao;
+    private LocalDateTime data_atualizacao;
 }

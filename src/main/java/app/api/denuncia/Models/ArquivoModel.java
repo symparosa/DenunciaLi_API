@@ -25,17 +25,21 @@ import lombok.NoArgsConstructor;
 @Table(name = "dn_t_arquivo")
 public class ArquivoModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) do arquivo")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Schema(description = "O arquivo")
     @Lob
     private String arquivo;
 
+    @Schema(description = "O tipo de arquivo")
     @ManyToOne
     @JoinColumn(name = "tipo_arquivo_fk")
     private DominioModel tipo_arquivo;
 
+    @Schema(description = "O identificador (ID) da queixa")
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "queixa_fk")

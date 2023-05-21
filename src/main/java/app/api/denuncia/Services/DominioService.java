@@ -11,13 +11,15 @@ public interface DominioService {
 
     Response get_by_id(int id);
 
+    DominioModel findbyid(Integer id);
+
     Response getDominio(String dominio);
 
     Response alterarEstado(int id, int estado);
 
     Boolean existsTipo(DominioModel tipo, String dom);
 
-    DominioModel findByDominioAndValor(String dom, String tipo);
-
     Response adicionar_atualizar(List<DominioModel> dominio);
+
+    DominioModel findByDominioAndValor(String dom, String tipo);
 }

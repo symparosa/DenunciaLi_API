@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
-import app.api.denuncia.Dto.LocalizacaoDto;
+import app.api.denuncia.Dto.Localizacao;
 import app.api.denuncia.Dto.Response;
-import app.api.denuncia.Dto.ConcelhoDto;
+import app.api.denuncia.Dto.Concelho;
 import app.api.denuncia.Models.LocalizacaoModel;
 import app.api.denuncia.Repositories.LocalizacaoRepository;
 import app.api.denuncia.Services.LocalizacaoService;
@@ -17,7 +17,7 @@ import app.api.denuncia.Utilities.GlobalFunctions;
 public class LocalizacaoServiceImpl implements LocalizacaoService {
 
     private LocalizacaoRepository localRepository;
-    
+
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
@@ -28,7 +28,7 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
     @Override
     public Response listarLocalizacoes(String concelho) {
-        
+
         gf.clearList(msg);
 
         try {
@@ -37,8 +37,19 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
                 String metodo = "listar";
 
-                List<LocalizacaoDto> lista = localRepository.getLocalizacao(concelho);
-                return gf.validateGetListMsg(metodo, lista);
+                List<Object[]> results = localRepository.getLocalizacao(concelho);
+                List<Localizacao> listas = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    Localizacao local = new Localizacao();
+                    local.setId_localidade((String) result[0]);
+                    local.setNome_localidade((String) result[1]);
+                    local.setNome_norm_localidade((String) result[2]);
+
+                    listas.add(local);
+                }
+
+                return gf.validateGetListMsg(metodo, listas);
 
             } else {
                 msg.add(message.getMessage05());
@@ -67,8 +78,18 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
                 String metodo = "listar";
 
-                List<ConcelhoDto> lista = localRepository.getConcelhos();
-                return gf.validateGetListMsg(metodo, lista);
+                List<Object[]> results = localRepository.getConcelhos();
+                List<Concelho> listas = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    Concelho local = new Concelho();
+                    local.setId_concelho((String) result[0]);
+                    local.setNome_concelho((String) result[1]);
+                    local.setNome_norm_concelho((String) result[2]);
+
+                    listas.add(local);
+                }
+                return gf.validateGetListMsg(metodo, listas);
 
             } else {
                 msg.add(message.getMessage05());

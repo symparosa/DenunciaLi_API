@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -46,8 +46,12 @@ public class ContatoServiceImpl implements ContatoService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ContatoServiceImpl implements ContatoService {
                                         obj = "Contato";
 
                                         if (contatoRepository.existsById(contato.getId())) {
-                                            contato.setData_atualizacao(new Date());
+                                            contato.setData_atualizacao(LocalDateTime.now());
                                         } else {
                                             msg.add(message.getMessage06(obj));
                                             return gf.getResponseError(msg);
@@ -87,7 +91,7 @@ public class ContatoServiceImpl implements ContatoService {
                                         contato.setData_atualizacao(null);
                                     }
                                     contato.setEstado(status.getAtivo());
-                                    contato.setData_criacao(new Date());
+                                    contato.setData_criacao(LocalDateTime.now());
                                     contato.setLast_user_change(IdUserLogado());
                                     contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                 } else {

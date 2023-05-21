@@ -13,6 +13,7 @@ import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.EmailDetails;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
+
 public class GlobalFunctions {
 
     private Message message = new Message();
@@ -58,7 +59,7 @@ public class GlobalFunctions {
         if (lista != null) {
 
             msg.add(message.getMessage01(metodo));
-            return getResponse(1, ResponseType.Sucesso, msg, lista);
+            return getResponse(1, ResponseType.Sucesso, msg, null);
 
         } else {
 
@@ -127,7 +128,7 @@ public class GlobalFunctions {
             msg.add(message.getMessage01(metodo));
             return getResponse(1, ResponseType.Sucesso, msg, encript);
 
-        } else{
+        } else {
             msg.add(message.getMessage02(metodo));
             return getResponseError(msg);
         }

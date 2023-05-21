@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +42,12 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -57,7 +61,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
 
                 String metodo = "salvar", obj = "tipo_utilizador";
 
-                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil,Domain.TIPO_UTILIZADOR.name());
+                DominioModel perfil = dominioRepository.findByIdAndDominio(id_perfil, Domain.TIPO_UTILIZADOR.name());
 
                 Optional<MenuModel> menu = menuRepository.findById(id_menu);
 
@@ -79,7 +83,7 @@ public class MenuPerfilServiceImpl implements MenuPerfilService {
                             menuPerfilModel.setMenu(menu.get());
                             menuPerfilModel.setTipoUtilizador(perfil);
                             menuPerfilModel.setEstado(estado);
-                            menuPerfilModel.setData_criacao(new Date());
+                            menuPerfilModel.setData_criacao(LocalDateTime.now());
                             menuPerfilModel.setLast_user_change(IdUserLogado());
 
                             MenuPerfilModel mp = menuPerfilRepository.save(menuPerfilModel);

@@ -14,14 +14,13 @@ import app.api.denuncia.Models.InformacaoLegalModel;
 
 @Repository
 @Transactional
-public interface InformacaoLegalRepository extends JpaRepository<InformacaoLegalModel, Integer>{
-
+public interface InformacaoLegalRepository extends JpaRepository<InformacaoLegalModel, Integer> {
 
     List<InformacaoLegalModel> findByEstadoIn(List<Integer> estados);
-    
+
     List<InformacaoLegalModel> findByTipoInformacaoLegalAndEstado(DominioModel dominioModel, int estado);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_informacao_legal SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 }

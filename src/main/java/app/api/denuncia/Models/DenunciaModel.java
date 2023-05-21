@@ -24,14 +24,17 @@ import lombok.NoArgsConstructor;
 @Table(name = "dn_t_denuncia")
 public class DenunciaModel implements Serializable {
 
+    @Schema(description = "O identificador (ID) da denuncia")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Schema(description = "O identificador (ID) da queixa")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "queixa_fk")
     private QueixaModel queixa;
 
+    @Schema(description = "O identificador (ID) do denunciante")
     @ManyToOne
     @JoinColumn(name = "denunciante_fk")
     private DenuncianteModel denunciante;

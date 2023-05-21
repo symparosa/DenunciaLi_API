@@ -18,7 +18,7 @@ public interface DominioRepository extends JpaRepository<DominioModel, Integer> 
     Boolean existsByDominio(String dominio);
 
     DominioModel findByDominio(String dominio);
-    
+
     Boolean existsByIdAndDominio(int id, String dominio);
 
     DominioModel findByIdAndDominio(int id, String dominio);
@@ -29,11 +29,11 @@ public interface DominioRepository extends JpaRepository<DominioModel, Integer> 
 
     DominioModel findByDominioAndValor(String dominio, String valor);
 
-    Boolean existsByDominioAndValorAndIdNot(String dominio, String valor, int id);
-
     List<DominioModel> findByDominioAndEstado(String dominio, int estados);
+
+    Boolean existsByDominioAndValorAndIdNot(String dominio, String valor, int id);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_dominio SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 }

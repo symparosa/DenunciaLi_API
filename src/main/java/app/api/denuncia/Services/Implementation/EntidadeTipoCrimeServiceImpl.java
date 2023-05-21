@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,8 +45,12 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -84,7 +88,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                                 ent.getId())) {
                                             contUpdate++;
                                         }
-                                        ent.setData_atualizacao(new Date());
+                                        ent.setData_atualizacao(LocalDateTime.now());
                                     } else {
                                         msg.add(message.getMessage06(obj));
                                         return gf.getResponseError(msg);
@@ -98,7 +102,7 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                     ent.setData_atualizacao(null);
                                 }
                                 ent.setEstado(status.getAtivo());
-                                ent.setData_criacao(new Date());
+                                ent.setData_criacao(LocalDateTime.now());
                                 ent.setLast_user_change(IdUserLogado());
                             } else {
                                 msg.add(message.getMessage06(obj));

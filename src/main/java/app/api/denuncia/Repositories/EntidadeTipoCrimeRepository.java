@@ -15,8 +15,8 @@ import app.api.denuncia.Models.EntidadeTipoCrimeModel;
 
 @Repository
 @Transactional
-public interface EntidadeTipoCrimeRepository extends JpaRepository<EntidadeTipoCrimeModel, Integer>{
-    
+public interface EntidadeTipoCrimeRepository extends JpaRepository<EntidadeTipoCrimeModel, Integer> {
+
     Boolean existsByEntidade(EntidadeModel ent);
 
     Boolean existsByEntidadeAndTipoCrime(EntidadeModel ent, DominioModel tipo_crime);
@@ -27,5 +27,5 @@ public interface EntidadeTipoCrimeRepository extends JpaRepository<EntidadeTipoC
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_entidade_tipo_crime SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id=:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 }

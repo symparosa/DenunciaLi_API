@@ -17,46 +17,46 @@ import app.api.denuncia.Models.UtilizadorModel;
 @Transactional
 public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Integer> {
 
-    Boolean existsByHash(String hash);
+        Boolean existsByHash(String hash);
 
-    Boolean existsByUsername(String username);
+        Boolean existsByUsername(String username);
 
-    Boolean existsByIdAndEstado(int id, int estado);
+        Boolean existsByIdAndEstado(int id, int estado);
 
-    Boolean existsByUsernameAndIdNot(String username, int id);
+        Boolean existsByUsernameAndIdNot(String username, int id);
 
-    Optional<UtilizadorModel> findByUsername(String username);
+        Optional<UtilizadorModel> findByUsername(String username);
 
-    List<UtilizadorModel> findByEstadoIn(List<Integer> estados);
+        List<UtilizadorModel> findByEstadoIn(List<Integer> estados);
 
-    Boolean existsByUsernameAndHash(String username, String hash);
+        Boolean existsByUsernameAndHash(String username, String hash);
 
-    Optional<UtilizadorModel> findByUsernameAndEstado(String username, int estado);
+        Optional<UtilizadorModel> findByUsernameAndEstado(String username, int estado);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(),token=:token, token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
-    Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
-            @Param("id") int id,
-            @Param("username") String username);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(),token=:token, token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
+        Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
+                        @Param("id") int id,
+                        @Param("username") String username);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
-    Optional<Integer> updateDateToken(@Param("token_iat") LocalDateTime token_iat, @Param("id") int id,
-            @Param("username") String username);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
+        Optional<Integer> updateDateToken(@Param("token_iat") LocalDateTime token_iat, @Param("id") int id,
+                        @Param("username") String username);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
+        Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE() ,password =:password, hash = null, conta_confirmada=1, last_user_change=:id WHERE id =:id", nativeQuery = true)
-    Integer changePassword(@Param("password") String password, @Param("id") int id);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE() ,password =:password, hash = null, conta_confirmada=1, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer changePassword(@Param("password") String password, @Param("id") int id);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
-    Integer updateHash(@Param("hash") String hash, @Param("id") int id);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer updateHash(@Param("hash") String hash, @Param("id") int id);
 
-    @Modifying
-    @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
-    Integer logout(@Param("id") int id);
+        @Modifying
+        @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
+        Integer logout(@Param("id") int id);
 }

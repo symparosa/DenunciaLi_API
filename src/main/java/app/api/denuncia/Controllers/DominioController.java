@@ -18,13 +18,12 @@ import app.api.denuncia.Services.DominioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Tag(name = "Domínio")
 @ApiResponse(responseCode = "200", description = "Success response.")
-@SecurityRequirement(name = "Bearer Authentication")
+// @SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/dominio", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DominioController {
 
@@ -44,7 +43,8 @@ public class DominioController {
             @Parameter(name = "Id", description = "O identificador (ID) do domínio"),
             @Parameter(name = "Estado", description = "O estado do domínio") })
     @PutMapping(path = "/alterarEstado")
-    public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
+    public ResponseEntity<Response> alterarEstado(
+            @RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
         return ResponseEntity.ok(dominioservice.alterarEstado(Id, Estado));
     }

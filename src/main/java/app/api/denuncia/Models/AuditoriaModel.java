@@ -1,7 +1,7 @@
 package app.api.denuncia.Models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,10 +23,10 @@ public class AuditoriaModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
-    private int id_objeto;
+    private Integer id_objeto;
 
     @Column(nullable = false)
     private String tipo_objeto;
@@ -38,12 +38,12 @@ public class AuditoriaModel implements Serializable {
     private String valor_novo;
 
     @Column(nullable = false)
-    private int id_utilizador;
+    private Integer id_utilizador;
 
     @Column(nullable = false)
     private String accao;
 
-    private int estado;
+    private Integer estado;
 
-    private Date data_criacao;
+    private LocalDateTime data_criacao;
 }

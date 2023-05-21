@@ -13,7 +13,7 @@ public class Denunciante {
     private String nome;
     private String zona_lugar;
     private String referencia_morada;
-    private String local_mapa;
+    private LocalizacaoMapa local_mapa;
     private String apelido;
     private String codigo_postal;
     private LocalDateTime data_nascimento;

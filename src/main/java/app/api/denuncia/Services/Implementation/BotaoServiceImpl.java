@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.BotaoDto;
+import app.api.denuncia.Dto.Botao;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.BotaoModel;
 import app.api.denuncia.Repositories.BotaoRepository;
@@ -33,8 +33,12 @@ public class BotaoServiceImpl implements BotaoService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class BotaoServiceImpl implements BotaoService {
             String metodo = "salvar";
 
             botao.setEstado(status.getAtivo());
-            botao.setData_criacao(new Date());
+            botao.setData_criacao(LocalDateTime.now());
             botao.setLast_user_change(IdUserLogado());
 
             if (botao.getId() != null) {
@@ -105,8 +109,23 @@ public class BotaoServiceImpl implements BotaoService {
 
                 String metodo = "listar";
 
-                List<BotaoDto> lista = botaoRepository.listarBotaoEPerfilAssociado(gf.getStatusAtivoInativo());
-                return gf.validateGetListMsg(metodo, lista);
+                List<Object[]> results = botaoRepository.listarBotaoEPerfilAssociado(gf.getStatusAtivoInativo());
+                List<Botao> botoes = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    Botao botao = new Botao();
+                    botao.setId_botao((Integer) result[0]);
+                    botao.setCodigo((String) result[1]);
+                    botao.setEstado_botao((Integer) result[2]);
+                    botao.setBotao_icon((String) result[3]);
+                    botao.setDescricao((String) result[4]);
+                    botao.setEstado_transacao((Integer) result[5]);
+                    botao.setPerfil((Integer) result[6]);
+
+                    botoes.add(botao);
+                }
+
+                return gf.validateGetListMsg(metodo, botoes);
 
             } else {
                 msg.add(message.getMessage05());
@@ -138,7 +157,7 @@ public class BotaoServiceImpl implements BotaoService {
 
             if (!botaoRepository.existsByCodigoAndIdNot(botao.getCodigo(), botao.getId())) {
 
-                botao.setData_atualizacao(new Date());
+                botao.setData_atualizacao(LocalDateTime.now());
                 BotaoModel bo = botaoRepository.save(botao);
                 return gf.validateGetSaveMsgWithObj(metodo, bo);
 
@@ -175,6 +194,4 @@ public class BotaoServiceImpl implements BotaoService {
             return gf.getResponseError(msg);
         }
     }
-
-    
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.DenuncianteModel;
+import app.api.denuncia.Services.DenunciaService;
 import app.api.denuncia.Services.DenuncianteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,9 +26,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 public class DenuncianteController {
 
     private DenuncianteService denuncianteService;
+    private DenunciaService denunciaService;
 
-    public DenuncianteController(DenuncianteService denuncianteService) {
+    public DenuncianteController(DenuncianteService denuncianteService, DenunciaService denunciaService) {
         this.denuncianteService = denuncianteService;
+        this.denunciaService = denunciaService;
     }
 
     @Operation(summary = "Adicionar Denunciante", description = "Adiciona denunciante no banco de dados.", parameters = {
@@ -108,6 +111,6 @@ public class DenuncianteController {
     // @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping(path = "/listarOcorrencias")
     public ResponseEntity<Response> listar_ocorrencias() {
-        return ResponseEntity.ok(denuncianteService.listar_ocorrencias());
+        return ResponseEntity.ok(denunciaService.listar_ocorrencias());
     }
 }

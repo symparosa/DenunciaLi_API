@@ -5,11 +5,11 @@ import app.api.denuncia.Models.DenuncianteModel;
 
 public interface DenuncianteService {
 
-    Response listar_ocorrencias();
-
     Response eliminarConta(int estado);
 
     Response recuperarConta(String email);
+
+    DenuncianteModel findbyid(Integer id);
 
     Response validarSenhaAtual(String senha);
 

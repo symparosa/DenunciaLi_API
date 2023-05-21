@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -32,8 +32,12 @@ public class BannerServiceImpl implements BannerService {
         this.auth = auth;
     }
 
-    public int IdUserLogado(){
-        return auth.getUtiLogado().getId();
+    // public int IdUserLogado(){
+    // return auth.getUtiLogado().getId();
+    // }
+
+    public int IdUserLogado() {
+        return 1;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class BannerServiceImpl implements BannerService {
             String metodo = "salvar";
 
             banner.setEstado(status.getAtivo());
-            banner.setData_criacao(new Date());
+            banner.setData_criacao(LocalDateTime.now());
             banner.setLast_user_change(IdUserLogado());
 
             if (banner.getId() != null) {
@@ -78,7 +82,7 @@ public class BannerServiceImpl implements BannerService {
 
         if (bannerRepository.existsById(banner.getId())) {
 
-            banner.setData_atualizacao(new Date());
+            banner.setData_atualizacao(LocalDateTime.now());
             BannerModel ba = bannerRepository.save(banner);
             return gf.validateGetSaveMsgWithObj(metodo, ba);
 

@@ -16,17 +16,17 @@ import app.api.denuncia.Models.DominioModel;
 @Transactional
 public interface ContatoRepository extends JpaRepository<ContatoModel, Integer> {
 
-    Boolean existsByIdObjetoAndTipoObjeto(int id_obj, String tipo_obj);
-
     Boolean existsByValor(String valor);
 
-    Boolean existsByTipoContatoAndValor(DominioModel tipoCont, String valor);
-
     Boolean existsByValorAndIdNot(String valor, int id);
+
+    Boolean existsByIdObjetoAndTipoObjeto(int id_obj, String tipo_obj);
+
+    Boolean existsByTipoContatoAndValor(DominioModel tipoCont, String valor);
 
     List<ContatoModel> findByIdObjetoAndTipoObjetoAndEstadoIn(int id_obj, String tipo_obj, List<Integer> estados);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_contato SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id=:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 }

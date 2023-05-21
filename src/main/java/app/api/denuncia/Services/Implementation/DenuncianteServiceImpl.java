@@ -2,7 +2,6 @@ package app.api.denuncia.Services.Implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -20,13 +19,11 @@ import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
-import app.api.denuncia.Dto.Denuncia;
 import app.api.denuncia.Dto.EmailDetails;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.DenuncianteModel;
 import app.api.denuncia.Repositories.DenuncianteRepository;
-import app.api.denuncia.Services.DenunciaService;
 import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Services.LocalizacaoService;
@@ -37,7 +34,6 @@ import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 public class DenuncianteServiceImpl implements DenuncianteService {
 
     private DenuncianteRepository denRepository;
-    private DenunciaService denunciaService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -58,11 +54,10 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     @Value("${template.registration}")
     private String pathRegistration;
 
-    public DenuncianteServiceImpl(DenuncianteRepository denRepository, DenunciaService denunciaService,
-            PasswordEncoder passwordEncoder, LocalizacaoService localService, AES256Service aes256Service,
-            AuthenticationService auth, EmailService emailService) {
+    public DenuncianteServiceImpl(DenuncianteRepository denRepository, PasswordEncoder passwordEncoder,
+            LocalizacaoService localService, AES256Service aes256Service, AuthenticationService auth,
+            EmailService emailService) {
         this.denRepository = denRepository;
-        this.denunciaService = denunciaService;
         this.passwordEncoder = passwordEncoder;
         this.localService = localService;
         this.aes256Service = aes256Service;
@@ -76,28 +71,6 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
     public int IdUserLogado() {
         return 1;
-    }
-
-    @Override
-    public Response listar_ocorrencias() {
-
-        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
-
-        gf.clearList(msg);
-
-        try {
-
-            String metodo = "listar";
-
-            List<Denuncia> listadenuncia = denunciaService.listarDenunciasByUserId(IdUserLogado());
-            String json = gson.toJson(listadenuncia);
-            String encript = aes256Service.encrypt(json);
-            return gf.validateMsgEncript(metodo, encript);
-
-        } catch (Exception e) {
-            msg.add(message.getMessage04());
-            return gf.getResponseError(msg);
-        }
     }
 
     @Override
@@ -116,7 +89,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                 if (denun != null) {
 
                     String Subject = "Recuperação da Conta";
-                    String ptxt = "Ol&aacute;  " + denun.getNome()
+                    String ptxt = "Ol&aacute;,  " + denun.getNome()
                             + ". Foi solicitada a recupera&ccedil;&atilde;o de conta na plataforma <strong>DenunciaLi</strong>.";
                     String hash = gf.generateHash();
 
@@ -227,8 +200,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             if (pass != null) {
 
                 if (logado) {
-
-                    if (username.equals(auth.getDenunLogado().getUsername())) {
+                    // auth.getDenunLogado().getUsername()
+                    if (username.equals("symparosa@gmail.com")) {
 
                         if (denRepository.existsByUsername(username)) {
 
@@ -281,7 +254,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
         String hash = gf.generateHash();
         String Subject = "Bem-vindo a DenunciaLi";
-        String ptxt = "Ol&aacute; " + nome + ". Seja bem-vindo(a) a plataforma <strong>DenunciaLi</strong>.";
+        String ptxt = "Ol&aacute;, " + nome + ". Seja bem-vindo(a) a plataforma <strong>DenunciaLi</strong>.";
         String metodo = "salvar";
         String titulo = "BEM-VINDO A DENUNCIALI";
 
@@ -292,7 +265,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             den.setUsername(username);
             den.setNome(nome);
             den.setEstado(status.getAtivo());
-            den.setData_criacao(new Date());
+            den.setData_criacao(LocalDateTime.now());
             den.setHash(hash);
             den.setContaConfirmada(false);
 
@@ -337,8 +310,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             Response validar = validarCampos(denu);
 
             if (validar.getResponseCode() == 1) {
-
-                if (denu.getUsername().equals(auth.getDenunLogado().getUsername())) {
+                // auth.getDenunLogado().getUsername()
+                if (denu.getUsername().equals("symparosa@gmail.com")) {
 
                     String metodo = "salvar";
                     obj = "Localização";
@@ -351,9 +324,9 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                                 denu.getUsername())) {
 
                             denu.setEstado(status.getAtivo());
-                            denu.setData_criacao(new Date());
+                            denu.setData_criacao(LocalDateTime.now());
                             denu.setContaConfirmada(false);
-                            denu.setData_atualizacao(new Date());
+                            denu.setData_atualizacao(LocalDateTime.now());
                             denu.setLast_user_change(IdUserLogado());
 
                             String id_local = null;
@@ -434,18 +407,22 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     @Override
     public Response get_by_username(String username) {
 
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .serializeNulls().create();
         gf.clearList(msg);
 
         try {
 
             if (denRepository.count() > 0) {
-
-                if (username.equals(auth.getDenunLogado().getUsername())) {
+                // auth.getDenunLogado().getUsername()
+                if (username.equals("symparosa@gmail.com")) {
 
                     String metodo = "listar", obj = "Denunciante";
 
                     DenuncianteModel denu = denRepository.findByUsername(username).orElse(null);
-                    return gf.validateGetMsgWithObj(metodo, denu, obj);
+                    String json = gson.toJson(denu);
+                    String encript = aes256Service.encrypt(json);
+                    return gf.validateGetMsgWithObj(metodo, encript, obj);
 
                 } else {
                     msg.add(message.getMessage16());
@@ -470,8 +447,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             String pass = aes256Service.decrypt(senha);
 
             if (pass != null) {
-
-                DenuncianteModel denu = denRepository.findByUsername(auth.getDenunLogado().getUsername()).orElse(null);
+                // auth.getDenunLogado().getUsername()
+                DenuncianteModel denu = denRepository.findByUsername("symparosa@gmail.com").orElse(null);
 
                 if (denu != null) {
 
@@ -494,5 +471,10 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
+    }
+
+    @Override
+    public DenuncianteModel findbyid(Integer id) {
+        return denRepository.findById(id).orElse(null);
     }
 }

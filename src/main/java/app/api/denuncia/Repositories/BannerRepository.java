@@ -13,15 +13,15 @@ import app.api.denuncia.Models.BannerModel;
 
 @Repository
 @Transactional
-public interface BannerRepository extends JpaRepository<BannerModel, Integer>{
-    
+public interface BannerRepository extends JpaRepository<BannerModel, Integer> {
+
     Boolean existsByTituloAndUrl(String titulo, String url);
 
     List<BannerModel> findByEstadoIn(List<Integer> estados);
 
-    Boolean  existsByTituloAndUrlAndIdNot(String titulo, String url, Integer id);
+    Boolean existsByTituloAndUrlAndIdNot(String titulo, String url, Integer id);
 
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_banner SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
-    Integer alterarEstado(@Param("estado") int estado,@Param("user") int user, @Param("id") int id);
+    Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
 }

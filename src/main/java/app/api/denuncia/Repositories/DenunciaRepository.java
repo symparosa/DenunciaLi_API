@@ -58,26 +58,25 @@ import app.api.denuncia.Models.DenunciaModel;
 @Repository
 @Transactional
 public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer> {
-
         @Query(value = "SELECT data_criacao"
-        + " ,estado"
-        + " ,queixa_codigo_postal AS codigo_postal"
-        + " ,data_ocorrencia"
-        + " ,descricao"
-        + " ,queixa_localizacao_mapa AS localizacao_mapa"
-        + " ,queixa_referencia_morada AS referencia_morada"
-        + " ,local_queixa_nome AS localizacao_nome"
-        + " ,local_queixa_nome_norm AS localizacao_nome_norm"
-        + " ,dominio_grau_parentesco_valor AS grau_parentesco"
-        + " ,dominio_tipo_crime_valor AS tipo_crime"
-        + " ,dominio_tipo_queixa_valor AS tipo_queixa"
-        + " FROM dbo.view_denuncia_info"
-        + " where denunciante_id=:id", nativeQuery = true)
+                        + " ,estado"
+                        + " ,queixa_codigo_postal AS codigo_postal"
+                        + " ,data_ocorrencia"
+                        + " ,descricao"
+                        + " ,queixa_localizacao_mapa AS localizacao_mapa"
+                        + " ,queixa_referencia_morada AS referencia_morada"
+                        + " ,local_queixa_nome AS localizacao_nome"
+                        + " ,local_queixa_nome_norm AS localizacao_nome_norm"
+                        + " ,dominio_grau_parentesco_valor AS grau_parentesco"
+                        + " ,dominio_tipo_crime_valor AS tipo_crime"
+                        + " ,dominio_tipo_queixa_valor AS tipo_queixa"
+                        + " FROM dbo.view_denuncia_info"
+                        + " where denunciante_id=:id", nativeQuery = true)
         List<Object[]> listarDenunciasByUserId(@Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dn_t_arquivo SET  data_criacao=GETDATE(), data_atualizacao=GETDATE(), last_user_change=:user, queixa_fk=:queixa_fk WHERE id=:id", nativeQuery = true)
-        int atualizarArquivo(@Param("user") int user,@Param("queixa_fk") int queixa_fk, @Param("id") int id);
+        int atualizarArquivo(@Param("user") int user, @Param("queixa_fk") int queixa_fk, @Param("id") int id);
 
         // -------------------------------------------------------------------------
         // ESTATÍSTICA POR ANO

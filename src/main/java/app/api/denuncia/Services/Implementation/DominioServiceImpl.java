@@ -1,7 +1,7 @@
 package app.api.denuncia.Services.Implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -32,8 +32,12 @@ public class DominioServiceImpl implements DominioService {
         this.auth = auth;
     }
 
+    // public int IdUserLogado() {
+    // return auth.getUtiLogado().getId();
+    // }
+
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+        return 1;
     }
 
     @Override
@@ -61,7 +65,7 @@ public class DominioServiceImpl implements DominioService {
                                         dom.getId())) {
                                     contUpdate++;
                                 }
-                                dom.setData_atualizacao(new Date());
+                                dom.setData_atualizacao(LocalDateTime.now());
                             } else {
                                 msg.add(message.getMessage06(obj));
                                 return gf.getResponseError(msg);
@@ -74,7 +78,7 @@ public class DominioServiceImpl implements DominioService {
                             dom.setData_atualizacao(null);
                         }
                         dom.setEstado(status.getAtivo());
-                        dom.setData_criacao(new Date());
+                        dom.setData_criacao(LocalDateTime.now());
                         dom.setLast_user_change(IdUserLogado());
                     }
 
@@ -236,5 +240,10 @@ public class DominioServiceImpl implements DominioService {
     @Override
     public DominioModel findByDominioAndValor(String dom, String tipo) {
         return domRepository.findByDominioAndValor(dom, tipo);
+    }
+
+    @Override
+    public DominioModel findbyid(Integer id) {
+        return domRepository.findById(id).orElse(null);
     }
 }
