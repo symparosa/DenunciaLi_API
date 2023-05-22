@@ -35,21 +35,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 				@Tag(name = "Entidade Tipo Crime", description = "Operações relacionadas à gestão de entidades e tipos de crime na API."),
 				@Tag(name = "Contato", description = "Operações relacionadas à gestão de contatos na API."),
 				@Tag(name = "Informação Legal", description = "Operações relacionadas à gestão de informações legais na API."),
-				@Tag(name = "AES256", description = "Operações relacionadas à gestão de AES256 na API.")
-		// @Tag(name = "Estatística Por Ano", description = "Onde serão gerenciados os
-		// endpoits de estatística por ano."),
-		// @Tag(name = "Estatística Por Ilha", description = "Onde serão gerenciados os
-		// endpoits de estatística por ilha."),
-		// @Tag(name = "Estatística Por Concelho", description = "Onde serão gerenciados
-		// os endpoits de estatística por concelho."),
-		// @Tag(name = "Estatística Por Genero", description = "Onde serão gerenciados
-		// os endpoits de estatística por genero."),
-		// @Tag(name = "Estatística Por Tipo De Crime", description = "Onde serão
-		// gerenciados os endpoits de estatística por tipo de crime."),
-		// @Tag(name = "Estatística Por Tipo De Queixa", description = "Onde serão
-		// gerenciados os endpoits de estatística por tipo de queixa."),
-		// @Tag(name = "Estatística Por Faixa Etária", description = "Onde serão
-		// gerenciados os endpoits de estatística por faixa etária.")
+				@Tag(name = "AES256", description = "Operações relacionadas à gestão de AES256 na API."),
+				@Tag(name = "Estatística Denúncia", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Utilizador", description = "Operações relacionadas à gestão de estatística de utilizadores na API.")
 		})
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer", description = "A JWT token is required to access this API...")
 public class DenunciaApplication {

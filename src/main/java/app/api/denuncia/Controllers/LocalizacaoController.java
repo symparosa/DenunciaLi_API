@@ -31,6 +31,12 @@ public class LocalizacaoController {
         return LocalizacaoService.getConcelhos();
     }
 
+    @Operation(summary = "Get Ilhas", description = "Lista todos as ilhas de Cabo Verde.")
+    @GetMapping(path = "/getIlhas")
+    public Response getIlhas() {
+        return LocalizacaoService.getIlhas();
+    }
+
     @Operation(summary = "Listar localizações ", description = "Lista todas as localizações.", parameters = {
             @Parameter(name = "Concelho", description = "O identificador (ID) do concelho") })
     @GetMapping(path = "/listarLocalizacoes")

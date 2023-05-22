@@ -10,50 +10,50 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAnoDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_ConcelhoDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_TipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_TipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Concelho_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_FaixaEtariaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_IlhaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Ilha_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_MesDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_Mes_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_TipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorAno_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelhoDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelho_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelho_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelho_TipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelho_TipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorConcelho_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorFaixaEtariaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorFaixaEtaria_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorFaixaEtaria_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorGeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlhaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlha_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlha_TipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlha_TipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlha_TipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorIlha_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorTipoCrimeDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorTipoCrime_GeneroDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorTipoCrime_TipoQueixaDto;
-import app.api.denuncia.Dto.Estatistica.EstatisticaDenunciaPorTipoQueixaDto;
 import app.api.denuncia.Models.DenunciaModel;
+import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_ConcelhoDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Concelho_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Concelho_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Concelho_TipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Concelho_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Concelho_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_FaixaEtariaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_FaixaEtaria_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_FaixaEtaria_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_IlhaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Ilha_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Ilha_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Ilha_TipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Ilha_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_MesDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_Mes_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_TipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorAno_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelhoDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelho_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelho_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelho_TipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelho_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorConcelho_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorFaixaEtariaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorFaixaEtaria_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorFaixaEtaria_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorGeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlhaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlha_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlha_TipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlha_TipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlha_TipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorIlha_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorTipoCrimeDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorTipoCrime_GeneroDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorTipoCrime_TipoQueixaDto;
+import app.api.denuncia.Statistic.Denuncia.EstatisticaDenunciaPorTipoQueixaDto;
 
 @Repository
 @Transactional
@@ -79,14 +79,17 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
         int atualizarArquivo(@Param("user") int user, @Param("queixa_fk") int queixa_fk, @Param("id") int id);
 
         // -------------------------------------------------------------------------
+        // ESTATÍSTICA DE DENÚNCIA
+        // -------------------------------------------------------------------------
+
+        // -------------------------------------------------------------------------
         // ESTATÍSTICA POR ANO
         // -------------------------------------------------------------------------
 
         @Query(value = "select Ano, Quantidade, Total, Percentagem from view_por_ano"
                         + " where Ano in :ano"
-                        + " group by Ano"
                         + " order by Quantidade desc;", nativeQuery = true)
-        List<EstatisticaDenunciaPorAnoDto> getEstatisticaDenunciaPorAno(@Param("ano") Collection<Integer> ano);
+        List<DenunciaPorAno> getEstatisticaDenunciaPorAno(@Param("ano") Collection<Integer> ano);
 
         @Query(value = "select Ano, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_tipoqueixa"
                         + " where Ano = :ano and TipoQueixa in :tipoQueixa"

@@ -8,6 +8,7 @@ import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Dto.Localizacao;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Dto.Concelho;
+import app.api.denuncia.Dto.Ilha;
 import app.api.denuncia.Models.LocalizacaoModel;
 import app.api.denuncia.Repositories.LocalizacaoRepository;
 import app.api.denuncia.Services.LocalizacaoService;
@@ -63,8 +64,36 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
     @Override
     public Response getIlhas() {
-        // TODO Auto-generated method stub
-        return null;
+
+        gf.clearList(msg);
+
+        try {
+
+            if (localRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                List<Object[]> results = localRepository.getIlhas();
+                List<Ilha> ilhas = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    Ilha ilha = new Ilha();
+                    ilha.setId_ilha((String) result[0]);
+                    ilha.setNome_ilha((String) result[1]);
+                    ilha.setNome_norm_ilha((String) result[2]);
+
+                    ilhas.add(ilha);
+                }
+                return gf.validateGetListMsg(metodo, ilhas);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 
     @Override
