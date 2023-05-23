@@ -93,14 +93,12 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_tipoqueixa"
                         + " where Ano = :ano and TipoQueixa in :tipoQueixa"
-                        + " group by TipoQueixa"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_TipoQueixa> getEstatisticaDenunciaPorAno_TipoQueixa(@Param("ano") Integer ano,
                         @Param("tipoQueixa") Collection<Integer> tipoQueixa);
 
         @Query(value = "select Ano, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_genero"
-                        + " where Ano = :ano"
-                        + " group by Ano;", nativeQuery = true)
+                        + " where Ano = :ano", nativeQuery = true)
         List<DenunciaPorAno_Genero> getEstatisticaDenunciaPorAno_Genero(@Param("ano") Integer ano);
 
         // -------------------------------------------------------------------------
@@ -109,14 +107,12 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Mes, Quantidade, Total, Percentagem from view_por_ano_mes"
                         + " where Ano = :ano and Mes in :mes"
-                        + " group by Mes"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_Mes> getEstatisticaDenunciaPorAno_Mes(@Param("ano") Integer ano,
                         @Param("mes") Collection<Integer> mes);
 
         @Query(value = "select Ano, Mes, TipoCrime, Quantidade, Total, Percentagem from view_por_ano_mes_tipoCrime"
                         + " where Ano = :ano and Mes in :mes and TipoCrime in :tipoCrime"
-                        + " group by Mes, TipoCrime"
                         + " order by Mes;", nativeQuery = true)
         List<DenunciaPorAno_Mes_TipoCrime> getEstatisticaDenunciaPorAno_Mes_TipoCrime(
                         @Param("ano") Integer ano, @Param("mes") Collection<Integer> mes,
@@ -128,20 +124,17 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, TipoCrime, Quantidade, Total, Percentagem from view_por_ano_tipoCrime"
                         + " where Ano = :ano and TipoCrime in :tipoCrime "
-                        + " group by TipoCrime"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_TipoCrime> getEstatisticaDenunciaPorAno_TipoCrime(@Param("ano") Integer ano,
                         @Param("tipoCrime") Collection<Integer> tipoCrime);
 
         @Query(value = "select Ano, TipoCrime, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_tipocrime_genero"
-                        + "  where Ano = :ano and TipoCrime in :tipoCrime "
-                        + " group by TipoCrime;", nativeQuery = true)
+                        + "  where Ano = :ano and TipoCrime in :tipoCrime ", nativeQuery = true)
         List<DenunciaPorAno_TipoCrime_Genero> getEstatisticaDenunciaPorAno_TipoCrime_Genero(
                         @Param("ano") Integer ano, @Param("tipoCrime") Collection<Integer> tipoCrime);
 
         @Query(value = "select Ano, TipoCrime, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_tipocrime_tipoqueixa"
                         + " where Ano = :ano and TipoCrime in :tipoCrime and TipoQueixa in :tipoQueixa "
-                        + " group by TipoQueixa, TipoCrime"
                         + " order by TipoCrime;", nativeQuery = true)
         List<DenunciaPorAno_TipoCrime_TipoQueixa> getEstatisticaDenunciaPorAno_TipoCrime_TipoQueixa(
                         @Param("ano") Integer ano, @Param("tipoCrime") Collection<Integer> tipoCrime,
@@ -153,20 +146,17 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Faixa_etaria, Quantidade, Total, Percentagem from view_por_ano_faixaetaria"
                         + " where Ano = :ano "
-                        + " group by Faixa_etaria"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_FaixaEtaria> getEstatisticaDenunciaPorAno_FaixaEtaria(
                         @Param("ano") Integer ano);
 
         @Query(value = "select Ano, Faixa_etaria, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_faixaetaria_genero"
-                        + " where Ano = :ano "
-                        + " group by Faixa_etaria;", nativeQuery = true)
+                        + " where Ano = :ano ", nativeQuery = true)
         List<DenunciaPorAno_FaixaEtaria_Genero> getEstatisticaDenunciaPorAno_FaixaEtaria_Genero(
                         @Param("ano") Integer ano);
 
         @Query(value = "select Ano, Faixa_etaria, TipoCrime, Quantidade, Total, Percentagem from view_por_ano_faixaetaria_tipocrime"
                         + " where Ano = :ano and TipoCrime in :tipoCrime "
-                        + " group by Faixa_etaria, TipoCrime"
                         + " order by Faixa_etaria;", nativeQuery = true)
         List<DenunciaPorAno_FaixaEtaria_TipoCrime> getEstatisticaDenunciaPorAno_FaixaEtaria_TipoCrime(
                         @Param("ano") Integer ano, @Param("tipoCrime") Collection<Integer> tipoCrime);
@@ -177,20 +167,17 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, IdIlha, Quantidade, Total, Percentagem from view_por_ano_ilha"
                         + " where Ano = :ano and IdIlha in :Ilha "
-                        + " group by IdIlha"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_Ilha> getEstatisticaDenunciaPorAno_Ilha(@Param("ano") Integer ano,
                         @Param("Ilha") Collection<Integer> Ilha);
 
         @Query(value = "select Ano, IdIlha, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_ilha_genero"
-                        + " where Ano = :ano and IdIlha in :Ilha "
-                        + " group by IdIlha;", nativeQuery = true)
+                        + " where Ano = :ano and IdIlha in :Ilha ", nativeQuery = true)
         List<DenunciaPorAno_Ilha_Genero> getEstatisticaDenunciaPorAno_Ilha_Genero(
                         @Param("ano") Integer ano, @Param("Ilha") Collection<Integer> Ilha);
 
         @Query(value = "select Ano, IdIlha, TipoCrime, Quantidade, Total, Percentagem from view_por_ano_ilha_tipocrime"
                         + " where Ano = :ano and IdIlha in :Ilha and TipoCrime in :tipoCrime  "
-                        + " group by IdIlha, TipoCrime"
                         + " order by IdIlha;", nativeQuery = true)
         List<DenunciaPorAno_Ilha_TipoCrime> getEstatisticaDenunciaPorAno_Ilha_TipoCrime(
                         @Param("ano") Integer ano, @Param("Ilha") Collection<Integer> Ilha,
@@ -198,7 +185,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, IdIlha, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_ilha_tipoqueixa"
                         + " where Ano = :ano and IdIlha in :Ilha and TipoQueixa in :tipoQueixa  "
-                        + " group by IdIlha, TipoQueixa"
                         + " order by IdIlha;", nativeQuery = true)
         List<DenunciaPorAno_Ilha_TipoQueixa> getEstatisticaDenunciaPorAno_Ilha_TipoQueixa(
                         @Param("ano") Integer ano, @Param("Ilha") Collection<Integer> Ilha,
@@ -206,7 +192,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, IdIlha, TipoCrime, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_ilha_tipocrime_genero"
                         + " where Ano = :ano and IdIlha =:Ilha and TipoCrime in :tipoCrime  "
-                        + " group by IdIlha, TipoCrime"
                         + " order by IdIlha;", nativeQuery = true)
         List<DenunciaPorAno_Ilha_TipoCrime_Genero> getEstatisticaDenunciaPorAno_Ilha_TipoCrime_Genero(
                         @Param("ano") Integer ano, @Param("Ilha") Integer Ilha,
@@ -214,7 +199,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, IdIlha, TipoCrime, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_ilha_tipocrime_tipoqueixa"
                         + " where Ano = :ano and IdIlha = :Ilha and TipoCrime in :tipoCrime and TipoQueixa in :tipoQueixa "
-                        + " group by IdIlha, TipoCrime, TipoQueixa"
                         + " order by IdIlha;", nativeQuery = true)
         List<DenunciaPorAno_Ilha_TipoCrime_TipoQueixa> getEstatisticaDenunciaPorAno_Ilha_TipoCrime_TipoQueixa(
                         @Param("ano") Integer ano, @Param("Ilha") Integer Ilha,
@@ -227,20 +211,17 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Concelho, Quantidade, Total, Percentagem from view_por_ano_concelho"
                         + " where Ano = :ano and Concelho in :Concelho "
-                        + " group by Concelho"
                         + " order by Quantidade desc;", nativeQuery = true)
         List<DenunciaPorAno_Concelho> getEstatisticaDenunciaPorAno_Concelho(@Param("ano") Integer ano,
                         @Param("Concelho") Collection<Integer> Concelho);
 
         @Query(value = "select Ano, Concelho, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_concelho_genero"
-                        + " where Ano = :ano and Concelho in :Concelho "
-                        + " group by Concelho;", nativeQuery = true)
+                        + " where Ano = :ano and Concelho in :Concelho ", nativeQuery = true)
         List<DenunciaPorAno_Concelho_Genero> getEstatisticaDenunciaPorAno_Concelho_Genero(
                         @Param("ano") Integer ano, @Param("Concelho") Collection<Integer> Concelho);
 
         @Query(value = "select Ano, Concelho, TipoCrime, Quantidade, Total, Percentagem from view_por_ano_concelho_tipocrime"
                         + " where Ano = :ano and Concelho in :Concelho and TipoCrime in :tipoCrime  "
-                        + " group by Concelho, TipoCrime"
                         + " order by Concelho;", nativeQuery = true)
         List<DenunciaPorAno_Concelho_TipoCrime> getEstatisticaDenunciaPorAno_Concelho_TipoCrime(
                         @Param("ano") Integer ano, @Param("Concelho") Collection<Integer> Concelho,
@@ -248,7 +229,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Concelho, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_concelho_tipoqueixa"
                         + " where Ano = :ano and Concelho in :Concelho and TipoQueixa in :tipoQueixa  "
-                        + " group by Concelho, TipoQueixa"
                         + " order by Concelho;", nativeQuery = true)
         List<DenunciaPorAno_Concelho_TipoQueixa> getEstatisticaDenunciaPorAno_Concelho_TipoQueixa(
                         @Param("ano") Integer ano, @Param("Concelho") Collection<Integer> Concelho,
@@ -256,7 +236,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Concelho, TipoCrime, QuantidadeFeminino, QuantidadeMasculino, QuantidadeAnonimo, Total, PercentagemFeminino, PercentagemMasculino, PercentagemAnonimo from view_por_ano_concelho_tipocrime_genero"
                         + " where Ano = :ano and Concelho = :Concelho and TipoCrime in :tipoCrime  "
-                        + " group by Concelho, TipoCrime"
                         + " order by Concelho;", nativeQuery = true)
         List<DenunciaPorAno_Concelho_TipoCrime_Genero> getEstatisticaDenunciaPorAno_Concelho_TipoCrime_Genero(
                         @Param("ano") Integer ano, @Param("Concelho") Integer Concelho,
@@ -264,7 +243,6 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
 
         @Query(value = "select Ano, Concelho, TipoCrime, TipoQueixa, Quantidade, Total, Percentagem from view_por_ano_concelho_tipocrime_tipoqueixa"
                         + " where Ano = :ano and Concelho = :Concelho and TipoCrime in :tipoCrime and TipoQueixa in :tipoQueixa "
-                        + " group by Concelho, TipoCrime, TipoQueixa"
                         + " order by Concelho;", nativeQuery = true)
         List<DenunciaPorAno_Concelho_TipoCrime_TipoQueixa> getEstatisticaDenunciaPorAno_Concelho_TipoCrime_TipoQueixa(
                         @Param("ano") Integer ano, @Param("Concelho") Integer Concelho,

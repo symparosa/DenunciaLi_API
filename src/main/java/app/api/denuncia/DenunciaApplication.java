@@ -37,6 +37,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 				@Tag(name = "Informação Legal", description = "Operações relacionadas à gestão de informações legais na API."),
 				@Tag(name = "AES256", description = "Operações relacionadas à gestão de AES256 na API."),
 				@Tag(name = "Estatística Denúncia", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano e Mês", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano e Tipo de Crime", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano e Faixa Etária", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano e Ilha", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ano e Concelho", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
+				@Tag(name = "Estatística Denúncia - Por Ilha", description = "Operações relacionadas à gestão de estatística de denúncias na API."),
 				@Tag(name = "Estatística Utilizador", description = "Operações relacionadas à gestão de estatística de utilizadores na API.")
 		})
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer", description = "A JWT token is required to access this API...")

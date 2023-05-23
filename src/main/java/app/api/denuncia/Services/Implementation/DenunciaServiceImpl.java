@@ -82,9 +82,7 @@ public class DenunciaServiceImpl implements DenunciaService {
 
                 if (validar.getResponseCode() == 1) {
 
-                    if ((denuncia.getQueixa().getLocalizacao() != null
-                            && localService.existsLocalizacao(denuncia.getQueixa().getLocalizacao()))
-                            || denuncia.getQueixa().getLocalizacao_mapa() != null) {
+                    if (localService.existsLocalizacao(denuncia.getQueixa().getLocalizacao())) {
 
                         LocalDateTime now = LocalDateTime.now();
 
@@ -95,10 +93,6 @@ public class DenunciaServiceImpl implements DenunciaService {
                         denuncia.getQueixa().setData_criacao(now);
                         denuncia.getQueixa().setEstado(status.getAtivo());
                         denuncia.getQueixa().setLast_user_change(denuncia.getDenunciante().getId());
-
-                        if (denuncia.getQueixa().getLocalizacao_mapa() != null) {
-                            denuncia.getQueixa().setLocalizacao(null);
-                        }
 
                         List<ArquivoModel> arquivos = denuncia.getQueixa().getArquivos();
 
@@ -173,9 +167,7 @@ public class DenunciaServiceImpl implements DenunciaService {
             obj = "Código postal";
             msg.add(message.getMessage09(obj));
             return gf.getResponseError(msg);
-        } else if ((denuncia.getQueixa().getLocalizacao_mapa() == null
-                || denuncia.getQueixa().getLocalizacao_mapa().isEmpty())
-                && denuncia.getQueixa().getLocalizacao() == null) {
+        } else if (denuncia.getQueixa().getLocalizacao() == null) {
             obj = "Localização";
             msg.add(message.getMessage09(obj));
             return gf.getResponseError(msg);

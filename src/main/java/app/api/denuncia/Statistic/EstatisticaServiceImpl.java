@@ -58,7 +58,7 @@ import app.api.denuncia.Utilities.GlobalFunctions;
 public class EstatisticaServiceImpl implements EstatisticaService {
 
     private DenunciaRepository denunciaRepository;
-    private String metodo = "estatística";
+    private String metodo = "Listar";
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
