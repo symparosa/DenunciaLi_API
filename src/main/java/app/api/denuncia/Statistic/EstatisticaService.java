@@ -159,4 +159,9 @@ public interface EstatisticaService {
     // ESTATÍSTICA DE UTILIZADOR
     // -------------------------------------------------------------------------
 
+    Response getEstatisticaUtilizadorTotal();
+
+    Response getEstatisticaUtilizadorPorEntidade();
+
+    Response getEstatisticaUtilizadorPorTipoUtilizador();
 }

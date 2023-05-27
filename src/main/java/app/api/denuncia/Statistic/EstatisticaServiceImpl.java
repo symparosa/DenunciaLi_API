@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Repositories.DenunciaRepository;
+import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno_Concelho;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno_Concelho_Genero;
@@ -52,19 +53,24 @@ import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime_Genero;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime_TipoQueixa;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoQueixa;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorPorEntidade;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorPorTipoUtilizador;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorTotal;
 import app.api.denuncia.Utilities.GlobalFunctions;
 
 @Service
 public class EstatisticaServiceImpl implements EstatisticaService {
 
     private DenunciaRepository denunciaRepository;
+    private UtilizadorRepository utiRepository;
     private String metodo = "Listar";
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public EstatisticaServiceImpl(DenunciaRepository denunciaRepository) {
+    public EstatisticaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository utiRepository) {
         this.denunciaRepository = denunciaRepository;
+        this.utiRepository = utiRepository;
     }
 
     // -------------------------------------------------------------------------
@@ -3052,4 +3058,55 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     // -------------------------------------------------------------------------
     // ESTATÍSTICA DE UTILIZADOR
     // -------------------------------------------------------------------------
+
+    @Override
+    public Response getEstatisticaUtilizadorTotal() {
+
+        gf.clearList(msg);
+
+        try {
+
+            List<UtilizadorTotal> estatistica = utiRepository.getEstatisticaUtilizadorTotal();
+
+            return gf.validateGetListMsg(metodo, estatistica);
+
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    @Override
+    public Response getEstatisticaUtilizadorPorEntidade() {
+
+        gf.clearList(msg);
+
+        try {
+
+            List<UtilizadorPorEntidade> estatistica = utiRepository.getEstatisticaUtilizadorPorEntidade();
+
+            return gf.validateGetListMsg(metodo, estatistica);
+
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
+
+    @Override
+    public Response getEstatisticaUtilizadorPorTipoUtilizador() {
+
+        gf.clearList(msg);
+
+        try {
+
+            List<UtilizadorPorTipoUtilizador> estatistica = utiRepository.getEstatisticaUtilizadorPorTipoUtilizador();
+
+            return gf.validateGetListMsg(metodo, estatistica);
+
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
+    }
 }

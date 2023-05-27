@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import app.api.denuncia.Models.UtilizadorModel;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorPorEntidade;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorPorTipoUtilizador;
+import app.api.denuncia.Statistic.Utilizador.UtilizadorTotal;
 
 @Repository
 @Transactional
@@ -59,4 +62,17 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)
         Integer logout(@Param("id") int id);
+
+        // -------------------------------------------------------------------------
+        // ESTATÍSTICA
+        // -------------------------------------------------------------------------
+
+        @Query(value = "SELECT TotalUtilizadores,TotalAtivos,TotalInativos,TotalEliminados FROM dbo.view_por_utilizador", nativeQuery = true)
+        List<UtilizadorTotal> getEstatisticaUtilizadorTotal();
+
+        @Query(value = "SELECT Sigla,Nome,UtilizadorTotal FROM dbo.view_por_utilizador_entidade", nativeQuery = true)
+        List<UtilizadorPorEntidade> getEstatisticaUtilizadorPorEntidade();
+
+        @Query(value = "SELECT TipoUtilizador ,UtilizadoresTotal FROM view_por_utilizador_tipoUtilizador", nativeQuery = true)
+        List<UtilizadorPorTipoUtilizador> getEstatisticaUtilizadorPorTipoUtilizador();
 }

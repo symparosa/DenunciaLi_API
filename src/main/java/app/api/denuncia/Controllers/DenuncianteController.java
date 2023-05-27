@@ -109,7 +109,7 @@ public class DenuncianteController {
 
     @Operation(summary = "Listar Ocorrências", description = "Lista corrências de denunciante.")
     // @SecurityRequirement(name = "Bearer Authentication")
-    @PostMapping(path = "/listarOcorrencias")
+    @GetMapping(path = "/listarOcorrencias")
     public ResponseEntity<Response> listar_ocorrencias() {
         return ResponseEntity.ok(denunciaService.listar_ocorrencias());
     }

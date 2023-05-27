@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import app.api.denuncia.Dto.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
+@ApiResponse(responseCode = "200", description = "Success response.")
+// @SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/estatistica", produces = MediaType.APPLICATION_JSON_VALUE)
+
 public class EstatisticaController {
 
         private EstatisticaService estatisticaService;
@@ -389,7 +393,7 @@ public class EstatisticaController {
         // // -------------------------------------------------------------------------
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho", description = "Lista os dados estatísticos por concelho(s).", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho", description = "Lista os dados estatísticos por concelho(s).", parameters = {
                                         @Parameter(name = "Concelho", description = "A(s) Concelho(s) que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorConcelho")
         public Response getEstatisticaDenunciaPorConcelho(
@@ -398,7 +402,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho e Genero", description = "Lista os dados estatísticos por concelho e genero.", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho e Genero", description = "Lista os dados estatísticos por concelho e genero.", parameters = {
                                         @Parameter(name = "Concelho", description = "A Concelho que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorConcelho_Genero")
         public Response getEstatisticaDenunciaPorConcelho_Genero(@RequestParam(required = true) Integer Concelho) {
@@ -406,7 +410,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho e Tipo de Crime", description = "Lista os dados estatísticos por concelho e tipo de crime", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho e Tipo de Crime", description = "Lista os dados estatísticos por concelho e tipo de crime", parameters = {
                                         @Parameter(name = "Concelho", description = "A Concelho que se quer obter os dados"),
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorConcelho_TipoCrime")
@@ -417,7 +421,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho e Tipo de Queixa", description = "Lista os dados estatísticos por concelho e tipo de queixa.", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho e Tipo de Queixa", description = "Lista os dados estatísticos por concelho e tipo de queixa.", parameters = {
                                         @Parameter(name = "Concelho", description = "A Concelho que se quer obter os dados"),
                                         @Parameter(name = "TipoQueixa", description = "O(s) tipo(s) de queixa que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorConcelho_TipoQueixa")
@@ -428,7 +432,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho, Tipo de Crime e Genero", description = "Lista os dados estatísticos por concelho, tipo de crime e genero.", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho, Tipo de Crime e Genero", description = "Lista os dados estatísticos por concelho, tipo de crime e genero.", parameters = {
                                         @Parameter(name = "Concelho", description = "A Concelho que se quer obter os dados"),
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorConcelho_TipoCrime_Genero")
@@ -439,7 +443,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Concelho, Tipo de Crime e Tipo de Queixa", description = "Lista os dados estatísticos por concelho, tipo de crime e tipo de queixa.", parameters = {
+                        "Estatística Denúncia - Por Concelho" }, summary = "Get Estatística Denúncia Por Concelho, Tipo de Crime e Tipo de Queixa", description = "Lista os dados estatísticos por concelho, tipo de crime e tipo de queixa.", parameters = {
                                         @Parameter(name = "Concelho", description = "A Concelho que se quer obter os dados"),
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados"),
                                         @Parameter(name = "TipoQueixa", description = "O(s) tipo(s) de queixa que se quer obter os dados") })
@@ -457,7 +461,7 @@ public class EstatisticaController {
         // // -------------------------------------------------------------------------
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Genero", description = "Lista os dados estatísticos por genero.")
+                        "Estatística Denúncia - Por genero" }, summary = "Get Estatística Denúncia Por Genero", description = "Lista os dados estatísticos por genero.")
         @GetMapping(path = "/getEstatisticaDenunciaPorGenero")
         public Response getEstatisticaDenunciaPorGenero() {
                 return estatisticaService.getEstatisticaDenunciaPorGenero();
@@ -468,7 +472,7 @@ public class EstatisticaController {
         // -------------------------------------------------------------------------
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Tipo de Crime", description = "Lista os dados estatísticos por tipo de crime.", parameters = {
+                        "Estatística Denúncia - Por tipo de crime" }, summary = "Get Estatística Denúncia Por Tipo de Crime", description = "Lista os dados estatísticos por tipo de crime.", parameters = {
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorTipoCrime")
         public Response getEstatisticaDenunciaPorTipoCrime(
@@ -477,7 +481,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Tipo de Crime e Genero", description = "Lista os dados estatísticos por tipo de crime e genero.", parameters = {
+                        "Estatística Denúncia - Por tipo de crime" }, summary = "Get Estatística Denúncia Por Tipo de Crime e Genero", description = "Lista os dados estatísticos por tipo de crime e genero.", parameters = {
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorTipoCrime_Genero")
         public Response getEstatisticaDenunciaPorTipoCrime_Genero(
@@ -486,7 +490,7 @@ public class EstatisticaController {
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Tipo de Crime e Tipo de Queixa", description = "Lista os dados estatísticos por tipo de crime e tipo de queixa.", parameters = {
+                        "Estatística Denúncia - Por tipo de crime" }, summary = "Get Estatística Denúncia Por Tipo de Crime e Tipo de Queixa", description = "Lista os dados estatísticos por tipo de crime e tipo de queixa.", parameters = {
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados"),
                                         @Parameter(name = "TipoQueixa", description = "O(s) tipo(s) de queixa que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorTipoCrime_TipoQueixa")
@@ -501,7 +505,7 @@ public class EstatisticaController {
         // // -------------------------------------------------------------------------
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Tipo de Queixa", description = "Lista os dados estatísticos por tipo de queixa.", parameters = {
+                        "Estatística Denúncia - Por tipo de queixa" }, summary = "Get Estatística Denúncia Por Tipo de Queixa", description = "Lista os dados estatísticos por tipo de queixa.", parameters = {
                                         @Parameter(name = "TipoQueixa", description = "O(s) tipo(s) de queixa que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorTipoQueixa")
         public Response getEstatisticaDenunciaPorTipoQueixa(
@@ -514,25 +518,50 @@ public class EstatisticaController {
         // // -------------------------------------------------------------------------
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Faixa Etária", description = "Lista os dados estatísticos por faixa etária.")
+                        "Estatística Denúncia - Por faixa etária" }, summary = "Get Estatística Denúncia Por Faixa Etária", description = "Lista os dados estatísticos por faixa etária.")
         @GetMapping(path = "/getEstatisticaDenunciaPorFaixaEtaria")
         public Response getEstatisticaDenunciaPorFaixaEtaria() {
                 return estatisticaService.getEstatisticaDenunciaPorFaixaEtaria();
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Faixa Etária e Genero", description = "Lista os dados estatísticos por faixa etária e genero.")
+                        "Estatística Denúncia - Por faixa etária" }, summary = "Get Estatística Denúncia Por Faixa Etária e Genero", description = "Lista os dados estatísticos por faixa etária e genero.")
         @GetMapping(path = "/getEstatisticaDenunciaPorFaixaEtaria_Genero")
         public Response getEstatisticaDenunciaPorFaixaEtaria_Genero() {
                 return estatisticaService.getEstatisticaDenunciaPorFaixaEtaria_Genero();
         }
 
         @Operation(tags = {
-                        "Estatística Denúncia" }, summary = "Get Estatística Denúncia Por Faixa Etária e Tipo de Crime", description = "Lista os dados estatísticos por faixa etária e tipo de crime.", parameters = {
+                        "Estatística Denúncia - Por faixa etária" }, summary = "Get Estatística Denúncia Por Faixa Etária e Tipo de Crime", description = "Lista os dados estatísticos por faixa etária e tipo de crime.", parameters = {
                                         @Parameter(name = "TipoCrime", description = "O(s) tipo(s) de crime que se quer obter os dados") })
         @GetMapping(path = "/getEstatisticaDenunciaPorFaixaEtaria_TipoCrime")
         public Response getEstatisticaDenunciaPorFaixaEtaria_TipoCrime(
                         @RequestParam(required = true) Collection<Integer> TipoCrime) {
                 return estatisticaService.getEstatisticaDenunciaPorFaixaEtaria_TipoCrime(TipoCrime);
+        }
+
+        // -------------------------------------------------------------------------
+        // ESTATÍSTICA DE UTILIZADOR
+        // -------------------------------------------------------------------------
+
+        @Operation(tags = {
+                        "Estatística Utilizador" }, summary = "Get Estatística Utilizador Total", description = "Lista a quantidade de todos os utilizadores backoffice.")
+        @GetMapping(path = "/getEstatisticaUtilizadorTotal")
+        public Response getEstatisticaUtilizadorTotal() {
+                return estatisticaService.getEstatisticaUtilizadorTotal();
+        }
+
+        @Operation(tags = {
+                        "Estatística Utilizador" }, summary = "Get Estatística Utilizador Por Entidade", description = "Lista a quantidade de utilizadores backoffice por entidades.")
+        @GetMapping(path = "/getEstatisticaUtilizadorPorEntidade")
+        public Response getEstatisticaUtilizadorPorEntidade() {
+                return estatisticaService.getEstatisticaUtilizadorPorEntidade();
+        }
+
+        @Operation(tags = {
+                        "Estatística Utilizador" }, summary = "Get Estatística Utilizador Por Tipo Utilizador", description = "Lista a quantidade de utilizadores backoffice por tipo de utilizador.")
+        @GetMapping(path = "/getEstatisticaUtilizadorPorTipoUtilizador")
+        public Response getEstatisticaUtilizadorPorTipoUtilizador() {
+                return estatisticaService.getEstatisticaUtilizadorPorTipoUtilizador();
         }
 }
