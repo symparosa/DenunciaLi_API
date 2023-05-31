@@ -29,5 +29,4 @@ public interface BotaoRepository extends JpaRepository<BotaoModel, Integer> {
     @Modifying
     @Query(value = "UPDATE dbo.dn_t_botao SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:user WHERE id =:id", nativeQuery = true)
     Integer alterarEstado(@Param("estado") int estado, @Param("user") int user, @Param("id") int id);
-
 }

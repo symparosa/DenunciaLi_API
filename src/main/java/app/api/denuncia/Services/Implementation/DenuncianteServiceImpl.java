@@ -20,6 +20,7 @@ import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.EmailDetails;
+import app.api.denuncia.Dto.FaixaEtaria;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Models.DenuncianteModel;
@@ -27,6 +28,7 @@ import app.api.denuncia.Repositories.DenuncianteRepository;
 import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Services.LocalizacaoService;
+import app.api.denuncia.Services.ReprocessamentoService;
 import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 
@@ -42,6 +44,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     private AES256Service aes256Service;
     private AuthenticationService auth;
     private EmailService emailService;
+    private ReprocessamentoService reprocessamentoService;
 
     private Status status = new Status();
     private Message message = new Message();
@@ -56,13 +59,14 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
     public DenuncianteServiceImpl(DenuncianteRepository denRepository, PasswordEncoder passwordEncoder,
             LocalizacaoService localService, AES256Service aes256Service, AuthenticationService auth,
-            EmailService emailService) {
+            EmailService emailService, ReprocessamentoService reprocessamentoService) {
         this.denRepository = denRepository;
         this.passwordEncoder = passwordEncoder;
         this.localService = localService;
         this.aes256Service = aes256Service;
         this.auth = auth;
         this.emailService = emailService;
+        this.reprocessamentoService = reprocessamentoService;
     }
 
     // public int IdUserLogado() {
@@ -115,7 +119,15 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
                             EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
-                            return emailService.sendEmail(emailDetail, msg);
+                            Response em = emailService.sendEmail(emailDetail, msg);
+
+                            if (em.getResponseCode() == 1) {
+                                return em;
+                            } else {
+                                reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(),
+                                        emailDetail.getMsgBody(), emailDetail.getSubject(), denun.getId());
+                                return em;
+                            }
                         } else {
                             return val;
                         }
@@ -288,7 +300,15 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                 EmailDetails emailDetail = gf.createEmail(denu.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
-                return emailService.sendEmail(emailDetail, msg);
+                Response em = emailService.sendEmail(emailDetail, msg);
+
+                if (em.getResponseCode() == 1) {
+                    return em;
+                } else {
+                    reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(),
+                            emailDetail.getMsgBody(), emailDetail.getSubject(), denu.getId());
+                    return em;
+                }
             } else {
                 return val;
             }
@@ -476,5 +496,33 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     @Override
     public DenuncianteModel findbyid(Integer id) {
         return denRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Response getFaixaEtaria() {
+
+        gf.clearList(msg);
+
+        try {
+
+            String metodo = "listar";
+
+            List<Object[]> results = denRepository.getfaixaetaria();
+            List<FaixaEtaria> faixaEtarias = new ArrayList<>();
+
+            for (Object[] result : results) {
+                FaixaEtaria faixaEtaria = new FaixaEtaria();
+                faixaEtaria.setIdade_inicio((Integer) result[0]);
+                faixaEtaria.setIdade_fim((Integer) result[1]);
+                faixaEtaria.setFaixa_etaria((String) result[2]);
+
+                faixaEtarias.add(faixaEtaria);
+            }
+            return gf.validateGetListMsg(metodo, faixaEtarias);
+
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 }

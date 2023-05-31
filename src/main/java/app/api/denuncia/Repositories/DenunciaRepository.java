@@ -1,5 +1,6 @@
 package app.api.denuncia.Repositories;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,6 +59,7 @@ import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoQueixa;
 @Repository
 @Transactional
 public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer> {
+
         @Query(value = "SELECT data_criacao"
                         + " ,estado"
                         + " ,queixa_codigo_postal AS codigo_postal"
@@ -73,6 +75,33 @@ public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer
                         + " FROM dbo.view_denuncia_info"
                         + " where denunciante_id=:id", nativeQuery = true)
         List<Object[]> listarDenunciasByUserId(@Param("id") int id);
+
+        @Modifying
+        @Query(value = "select "
+                        + "Denunciante,"
+                        + "idade,"
+                        + "DenuncianteGenero,"
+                        + "TipoCrime,"
+                        + "TipoQueixa,"
+                        + "DescricaoDenuncia, "
+                        + "EstadoDenuncia, "
+                        + "LocalOcorrencia,"
+                        + "DataDenuncia,"
+                        + "QuantArquivoAnexado"
+                        + " from view_filtro_denuncia"
+                        + " where TipoQueixaId =:TipoQueixa and TipoCrimeId =:TipoCrime and DataDenuncia >=:data_inicio and DataDenuncia < DATEADD(DAY, 1,:data_fim)"
+                        + " and (:idade_inicio is null or :idade_inicio=''or :idade_fim is null or :idade_fim='' or idade BETWEEN :idade_inicio AND :idade_fim)"
+                        + " and (:genero is null or :genero='' or DenuncianteGenero=:genero)"
+                        + " and (:concelho is null or :concelho='' or Concelho=:concelho)", nativeQuery = true)
+        List<Object[]> filtroDenuncia(
+                        @Param("TipoQueixa") Integer TipoQueixa,
+                        @Param("TipoCrime") Integer TipoCrime,
+                        @Param("data_inicio") LocalDate data_inicio,
+                        @Param("data_fim") LocalDate data_fim,
+                        @Param("idade_inicio") Integer idade_inicio,
+                        @Param("idade_fim") Integer idade_fim,
+                        @Param("genero") String genero,
+                        @Param("concelho") Integer concelho);
 
         @Modifying
         @Query(value = "UPDATE dn_t_arquivo SET  data_criacao=GETDATE(), data_atualizacao=GETDATE(), last_user_change=:user, queixa_fk=:queixa_fk WHERE id=:id", nativeQuery = true)

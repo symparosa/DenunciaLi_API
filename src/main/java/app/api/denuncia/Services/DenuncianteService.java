@@ -5,6 +5,8 @@ import app.api.denuncia.Models.DenuncianteModel;
 
 public interface DenuncianteService {
 
+    Response getFaixaEtaria();
+
     Response eliminarConta(int estado);
 
     Response recuperarConta(String email);

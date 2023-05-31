@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Denuncia {
     private LocalDateTime data_criacao;
-    private int estado;
+    private Integer estado;
     private String codigo_postal;
     private LocalDateTime data_ocorrencia;
     private String descricao;

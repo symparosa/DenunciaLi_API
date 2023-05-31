@@ -28,6 +28,7 @@ import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.EmailService;
 import app.api.denuncia.Services.EntidadeService;
 import app.api.denuncia.Services.LocalizacaoService;
+import app.api.denuncia.Services.ReprocessamentoService;
 import app.api.denuncia.Services.UtilizadorService;
 import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
@@ -43,6 +44,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     private PasswordEncoder passwordEncoder;
     private AuthenticationService auth;
     private AES256Service aes256Service;
+    private ReprocessamentoService reprocessamentoService;
 
     @Value("${template.recover}")
     private String PathRecover;
@@ -65,7 +67,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
     public UtilizadorServiceImpl(UtilizadorRepository userRepository, LocalizacaoService localService,
             DominioService domService, EntidadeService entService, EmailService emailService,
-            PasswordEncoder passwordEncoder, AuthenticationService auth, AES256Service aes256Service) {
+            PasswordEncoder passwordEncoder, AuthenticationService auth, AES256Service aes256Service,
+            ReprocessamentoService reprocessamentoService) {
         this.userRepository = userRepository;
         this.localService = localService;
         this.domService = domService;
@@ -74,6 +77,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         this.passwordEncoder = passwordEncoder;
         this.auth = auth;
         this.aes256Service = aes256Service;
+        this.reprocessamentoService = reprocessamentoService;
     }
 
     @Override
@@ -157,7 +161,15 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 EmailDetails emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
-                return emailService.sendEmail(emailDetail, msg);
+                Response em = emailService.sendEmail(emailDetail, msg);
+
+                if (em.getResponseCode() == 1) {
+                    return em;
+                } else {
+                    reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(), emailDetail.getMsgBody(),
+                            emailDetail.getSubject(),IdUserLogado());
+                    return em;
+                }
             } else {
                 return val;
             }
@@ -344,7 +356,15 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                         EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
-                        return emailService.sendEmail(emailDetail, msg);
+                        Response em = emailService.sendEmail(emailDetail, msg);
+
+                        if (em.getResponseCode() == 1) {
+                            return em;
+                        } else {
+                            reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(),
+                                    emailDetail.getMsgBody(), emailDetail.getSubject(), user.getId());
+                            return em;
+                        }
                     } else {
                         return val;
                     }

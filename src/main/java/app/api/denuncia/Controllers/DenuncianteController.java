@@ -113,4 +113,11 @@ public class DenuncianteController {
     public ResponseEntity<Response> listar_ocorrencias() {
         return ResponseEntity.ok(denunciaService.listar_ocorrencias());
     }
+
+    @Operation(summary = "Get Faixa Etária", description = "Lista todas as faixas etárias.")
+    // @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping(path = "/getFaixaEtaria")
+    public ResponseEntity<Response> getFaixaEtaria() {
+        return ResponseEntity.ok(denuncianteService.getFaixaEtaria());
+    }
 }

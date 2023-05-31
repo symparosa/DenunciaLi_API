@@ -34,6 +34,10 @@ public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, I
         Optional<DenuncianteModel> findByUsernameAndEstado(String username, int estado);
 
         @Modifying
+        @Query(value = "SELECT idade_inicio ,idade_fim, faixa_etaria FROM dbo.view_faixa_etaria where idade_fim < 150", nativeQuery = true)
+        List<Object[]> getfaixaetaria();
+
+        @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), hash =:hash, last_user_change=:id WHERE id =:id", nativeQuery = true)
         Integer updateHash(@Param("hash") String hash, @Param("id") int id);
 

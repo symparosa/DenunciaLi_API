@@ -2,6 +2,7 @@ package app.api.denuncia.Services.Implementation;
 
 import java.util.List;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ import app.api.denuncia.AES.AES256Service;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Denuncia;
+import app.api.denuncia.Dto.DenunciaFiltro;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
 import app.api.denuncia.Integration.Integrate.IntegrateService;
@@ -283,5 +285,49 @@ public class DenunciaServiceImpl implements DenunciaService {
         }
 
         return denuncias;
+    }
+
+    @Override
+    public Response filtroDenuncia(Integer TipoQueixa, Integer TipoCrime, LocalDate data_inicio, LocalDate data_fim,
+    Integer idade_inicio, Integer idade_fim, String genero, Integer concelho) {
+
+        gf.clearList(msg);
+
+        try {
+            if (denunciaRepository.count() > 0) {
+
+                String metodo = "listar";
+
+                List<Object[]> results = denunciaRepository.filtroDenuncia(TipoQueixa, TipoCrime, data_inicio, data_fim,
+                        idade_inicio, idade_fim, genero, concelho);
+
+                List<DenunciaFiltro> denunciaFiltros = new ArrayList<>();
+
+                for (Object[] result : results) {
+                    DenunciaFiltro denunciaFiltro = new DenunciaFiltro();
+                    denunciaFiltro.setDenunciante((String) result[0]);
+                    denunciaFiltro.setIdade((String) result[1]);
+                    denunciaFiltro.setDenuncianteGenero((String) result[2]);
+                    denunciaFiltro.setTipoCrime((String) result[3]);
+                    denunciaFiltro.setTipoQueixa((String) result[4]);
+                    denunciaFiltro.setDescricaoDenuncia((String) result[5]);
+                    denunciaFiltro.setEstadoDenuncia((Integer) result[6]);
+                    denunciaFiltro.setLocalOcorrencia((String) result[7]);
+                    denunciaFiltro.setDataDenuncia(((Timestamp) result[8]).toLocalDateTime());
+                    denunciaFiltro.setQuantArquivoAnexado((Integer) result[9]);
+
+                    denunciaFiltros.add(denunciaFiltro);
+                }
+
+                return gf.validateGetListMsg(metodo, denunciaFiltros);
+
+            } else {
+                msg.add(message.getMessage05());
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
+        }
     }
 }

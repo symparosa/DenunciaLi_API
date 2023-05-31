@@ -10,6 +10,7 @@ import java.util.List;
 
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
+import app.api.denuncia.Constants.StatusReprocessamento;
 import app.api.denuncia.Dto.EmailDetails;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.ResponseType;
@@ -19,6 +20,7 @@ public class GlobalFunctions {
     private Message message = new Message();
     private Status status = new Status();
     private List<String> msg = new ArrayList<>();
+    private StatusReprocessamento statusReprocessamento = new StatusReprocessamento();
 
     public Response getResponse(int code, ResponseType type, List<String> msg, Object obj) {
 
@@ -146,6 +148,16 @@ public class GlobalFunctions {
     public Boolean validateStatus(int estado) {
 
         if (estado == status.getAtivo() || estado == status.getInativo() || estado == status.getEliminado()) {
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean validateStatusReprocessamento(int estado) {
+
+        if (estado == statusReprocessamento.getReprocessadoComSucesso()
+                || estado == statusReprocessamento.getErroNoReprocessamento()
+                || estado == statusReprocessamento.getNaoReprocessado()) {
             return true;
         }
         return false;
