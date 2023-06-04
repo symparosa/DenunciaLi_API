@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Models.DenuncianteModel;
 import app.api.denuncia.Services.DenunciaService;
@@ -27,7 +28,8 @@ public class DenuncianteController {
 
     private DenuncianteService denuncianteService;
     private DenunciaService denunciaService;
-
+    private Status status = new Status();
+    
     public DenuncianteController(DenuncianteService denuncianteService, DenunciaService denunciaService) {
         this.denuncianteService = denuncianteService;
         this.denunciaService = denunciaService;
@@ -78,7 +80,7 @@ public class DenuncianteController {
     // @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(path = "/eliminarConta")
     public ResponseEntity<Response> eliminarConta() {
-        return ResponseEntity.ok(denuncianteService.eliminarConta(-1));
+        return ResponseEntity.ok(denuncianteService.eliminarConta(status.getEliminado()));
     }
 
     @Operation(summary = "Get Detalhes Denunciante", description = "Lista todos os detalhes do denunciante.", parameters = {

@@ -34,6 +34,10 @@ public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, I
         Optional<DenuncianteModel> findByUsernameAndEstado(String username, int estado);
 
         @Modifying
+        @Query(value = "select id from dbo.dn_t_denunciante where conta_confirmada=0 and estado = 1", nativeQuery = true)
+        List<Integer> getIdUserContaNaoConfirmada();
+
+        @Modifying
         @Query(value = "SELECT idade_inicio ,idade_fim, faixa_etaria FROM dbo.view_faixa_etaria where idade_fim < 150", nativeQuery = true)
         List<Object[]> getfaixaetaria();
 
@@ -42,8 +46,8 @@ public interface DenuncianteRepository extends JpaRepository<DenuncianteModel, I
         Integer updateHash(@Param("hash") String hash, @Param("id") int id);
 
         @Modifying
-        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:id WHERE id =:id", nativeQuery = true)
-        Integer alterarEstado(@Param("estado") int estado, @Param("id") int id);
+        @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE() ,estado =:estado, last_user_change=:idLast WHERE id =:id", nativeQuery = true)
+        Integer alterarEstado(@Param("estado") int estado, @Param("idLast") int idLast, @Param("id") int id);
 
         @Modifying
         @Query(value = "UPDATE dbo.dn_t_denunciante SET data_atualizacao = GETDATE(), token = null, token_iat = null, last_user_change=:id WHERE id =:id", nativeQuery = true)

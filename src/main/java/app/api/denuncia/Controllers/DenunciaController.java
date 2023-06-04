@@ -41,9 +41,9 @@ public class DenunciaController {
     }
 
     @Hidden
-    @PostMapping(path = "/reprocessarDenuncia")
-    public Response reprocessarDenuncia(@RequestBody Denuncia denuncia) {
-        return gf.getResponse(0, ResponseType.Erro, null, null);
+    @PostMapping(path = "/sistemaPolicia")
+    public Response sistemaPolicia(@RequestBody Denuncia denuncia) {
+        return gf.getResponse(1, ResponseType.Sucesso, null, null);
     }
 
     @Operation(tags = {

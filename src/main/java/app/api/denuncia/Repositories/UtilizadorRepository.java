@@ -37,6 +37,10 @@ public interface UtilizadorRepository extends JpaRepository<UtilizadorModel, Int
         Optional<UtilizadorModel> findByUsernameAndEstado(String username, int estado);
 
         @Modifying
+        @Query(value = "select id from dbo.dn_t_utilizador_backoffice where conta_confirmada=0 and estado = 1", nativeQuery = true)
+        List<Integer> getIdUserContaNaoConfirmada();
+
+        @Modifying
         @Query(value = "UPDATE dbo.dn_t_utilizador_backoffice SET data_atualizacao = GETDATE(),token=:token, token_iat=:token_iat, last_user_change=:id WHERE username =:username", nativeQuery = true)
         Optional<Integer> insertToken(@Param("token") String token, @Param("token_iat") LocalDateTime token_iat,
                         @Param("id") int id,

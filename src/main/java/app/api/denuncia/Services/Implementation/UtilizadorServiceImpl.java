@@ -450,4 +450,14 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             return gf.getResponseError(msg);
         }
     }
+
+    @Override
+    public List<Integer> getIdUserContaNaoConfirmada() {
+        return userRepository.getIdUserContaNaoConfirmada();
+    }
+
+    @Override
+    public Integer eliminarUser(int estado, int idLast, int id) {
+        return userRepository.alterarEstado(estado, idLast, id);
+    }
 }

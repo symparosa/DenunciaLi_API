@@ -289,7 +289,7 @@ public class DenunciaServiceImpl implements DenunciaService {
 
     @Override
     public Response filtroDenuncia(Integer TipoQueixa, Integer TipoCrime, LocalDate data_inicio, LocalDate data_fim,
-    Integer idade_inicio, Integer idade_fim, String genero, Integer concelho) {
+            Integer idade_inicio, Integer idade_fim, String genero, Integer concelho) {
 
         gf.clearList(msg);
 

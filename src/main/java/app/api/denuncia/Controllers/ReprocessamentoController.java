@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.api.denuncia.Dto.Response;
+import app.api.denuncia.Integration.Integrate.IntegrateService;
 import app.api.denuncia.Services.ReprocessamentoService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,9 +27,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 @RequestMapping(path = "/api/reprocessamento", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReprocessamentoController {
 
+    private IntegrateService integrateService;
     private ReprocessamentoService reprocessamentoService;
 
-    public ReprocessamentoController(ReprocessamentoService reprocessamentoService) {
+    public ReprocessamentoController(IntegrateService integrateService, ReprocessamentoService reprocessamentoService) {
+        this.integrateService = integrateService;
         this.reprocessamentoService = reprocessamentoService;
     }
 
@@ -59,5 +62,25 @@ public class ReprocessamentoController {
     public ResponseEntity<Response> reprocessamentoManualEmail(
             @RequestParam(required = true) Integer Id) {
         return ResponseEntity.ok(reprocessamentoService.reprocessamentoManualEmail(Id));
+    }
+
+    @Operation(summary = "Filtro Reprocessamento Denúncia", description = "Filtrar dados de denúncia em reprocessamento.", parameters = {
+            @Parameter(name = "DataInicio", description = "A data de início"),
+            @Parameter(name = "DataFim", description = "A data de fim"),
+            @Parameter(name = "Estado", description = "O estado do reprocessamento") })
+    @GetMapping(path = "/filtroReprocessamentoDenuncia")
+    public ResponseEntity<Response> filtroReprocessamentoDenuncia(
+            @RequestParam(required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate DataInicio,
+            @RequestParam(required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate DataFim,
+            @RequestParam(required = true) Integer Estado) {
+        return ResponseEntity.ok(reprocessamentoService.filtroReprocessamentoDenuncia(DataInicio, DataFim, Estado));
+    }
+
+    @Operation(summary = "Reprocessamento Manual Denúncia", description = "Reprocessar denúncia manualmente.", parameters = {
+            @Parameter(name = "Id", description = "O identificador (ID) do reprocessamento") })
+    @PostMapping(path = "/reprocessamentoManualDenuncia")
+    public ResponseEntity<Response> reprocessamentoManualDenuncia(
+            @RequestParam(required = true) Integer Id) {
+        return ResponseEntity.ok(integrateService.reprocessamentoManualDenuncia(Id));
     }
 }

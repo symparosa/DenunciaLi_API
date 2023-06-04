@@ -3,10 +3,12 @@ package app.api.denuncia.Integration.Integrate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Enums.DomainValue;
@@ -20,7 +22,10 @@ import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Models.ReprocessamentoModel;
 import app.api.denuncia.Services.DominioService;
 import app.api.denuncia.Services.ReprocessamentoService;
+import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
+
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -30,12 +35,16 @@ import reactor.core.publisher.Mono;
 @Service
 public class IntegrateServiceImpl implements IntegrateService {
 
-    private ReprocessamentoService reprocessamentoService;
     private DominioService dominioService;
+    private ReprocessamentoService reprocessamentoService;
 
-    public IntegrateServiceImpl(ReprocessamentoService reprocessamentoService, DominioService dominioService) {
-        this.reprocessamentoService = reprocessamentoService;
+    private Message message = new Message();
+    private List<String> msg = new ArrayList<>();
+    private GlobalFunctions gf = new GlobalFunctions();
+
+    public IntegrateServiceImpl(DominioService dominioService, ReprocessamentoService reprocessamentoService) {
         this.dominioService = dominioService;
+        this.reprocessamentoService = reprocessamentoService;
     }
 
     @Override
@@ -48,7 +57,7 @@ public class IntegrateServiceImpl implements IntegrateService {
             System.out.println(requestBody);
 
             WebClient webClient = WebClient.create();
-            String apiUrl = "http://localhost:8080/api/denuncia/reprocessarDenuncia";
+            String apiUrl = "http://localhost:8080/api/denuncia/sistemaPolicia";
 
             Mono<Response> responseMono = webClient.post()
                     .uri(apiUrl)
@@ -61,26 +70,78 @@ public class IntegrateServiceImpl implements IntegrateService {
 
                 if (responseBody.getResponseCode() == 0) {
 
-                    DominioModel dom = dominioService.findByDominioAndValor(Domain.TIPO_REPROCESSAMENTO.name(),
-                            DomainValue.DENUNCIA.name());
+                    reprocessamentoService.saveReprocessamentoDenuncia(denunciaModel);
 
-                    ReprocessamentoModel repro = new ReprocessamentoModel();
-
-                    repro.setData_criacao(LocalDateTime.now());
-                    repro.setDenuncia(denunciaModel);
-                    repro.setEstado(1);
-                    repro.setLast_user_change(1);
-                    repro.setTipo_reprocessamento(dom);
-
-                    ReprocessamentoModel saveRepro = reprocessamentoService.saveReprocessamento(repro);
-
-                    if (saveRepro == null) {
-                        System.out.println("ERRO AO SALVAR REPROCESSAMENTO");
-                    }
                 } else {
                     System.out.println("INTEGRAÇÃO COM SUCESSO");
                 }
             });
+        }
+    }
+
+    @Override
+    public Response reprocessamentoManualDenuncia(int id) {
+
+        String obj = "Reprocessamento";
+        gf.clearList(msg);
+
+        try {
+
+            ReprocessamentoModel repro = reprocessamentoService.getReprocessamentoById(id);
+
+            if (repro != null) {
+
+                DominioModel dom = dominioService.findByDominioAndValor(Domain.TIPO_REPROCESSAMENTO.name(),
+                        DomainValue.DENUNCIA.name());
+
+                if ((repro.getEstado() == 1 || repro.getEstado() == 3)
+                        && dom.getId() == repro.getTipo_reprocessamento().getId()) {
+
+                    String requestBody = createRequestBody(repro.getDenuncia());
+
+                    if (requestBody != null) {
+
+                        System.out.println(requestBody);
+
+                        WebClient webClient = WebClient.create();
+                        String apiUrl = "http://localhost:8080/api/denuncia/sistemaPolicia";
+
+                        Mono<Response> responseMono = webClient.post()
+                                .uri(apiUrl)
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                                .bodyValue(requestBody)
+                                .retrieve()
+                                .bodyToMono(Response.class);
+
+                        CompletableFuture<Response> futureResult = new CompletableFuture<>();
+
+                        responseMono.subscribe(responseBody -> {
+                            Response result;
+                            if (responseBody.getResponseCode() == 0) {
+                                result = reprocessamentoService.alterarEstado(repro.getId(), 3);
+                            } else {
+                                System.out.println("INTEGRAÇÃO COM SUCESSO");
+                                result = reprocessamentoService.alterarEstado(repro.getId(), 2);
+                            }
+                            futureResult.complete(result);
+                        });
+
+                        return futureResult.get();
+                    } else {
+                        msg.add(message.getMessage19());
+                        return gf.getResponseError(msg);
+                    }
+                } else {
+                    msg.add(message.getMessage19());
+                    return gf.getResponseError(msg);
+                }
+            } else {
+                msg.add(message.getMessage06(obj));
+                return gf.getResponseError(msg);
+            }
+        } catch (Exception e) {
+            msg.add(message.getMessage04());
+            return gf.getResponseError(msg);
         }
     }
 
@@ -121,9 +182,11 @@ public class IntegrateServiceImpl implements IntegrateService {
 
         List<Anexos> anexos = new ArrayList<>();
 
-        if (denu.getQueixa().getArquivos() != null && !denu.getQueixa().getArquivos().isEmpty()) {
+        List<ArquivoModel> arquivos = denu.getQueixa().getArquivos();
 
-            for (ArquivoModel arquivo : denu.getQueixa().getArquivos()) {
+        if (arquivos != null && !arquivos.isEmpty()) {
+
+            for (ArquivoModel arquivo : arquivos) {
 
                 Anexos anexo = new Anexos();
 

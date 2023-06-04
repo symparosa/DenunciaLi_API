@@ -164,7 +164,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
                     String metodo = "eliminar";
 
-                    Integer result = denRepository.alterarEstado(estado, IdUserLogado());
+                    Integer result = denRepository.alterarEstado(estado, IdUserLogado(),IdUserLogado());
 
                     Response saida = gf.validateGetUpdateMsg(metodo, result);
 
@@ -524,5 +524,15 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             msg.add(message.getMessage04());
             return gf.getResponseError(msg);
         }
+    }
+
+    @Override
+    public List<Integer> getIdUserContaNaoConfirmada() {
+        return denRepository.getIdUserContaNaoConfirmada();
+    }
+
+    @Override
+    public Integer alterarEstado(int estado, int idLast, int id) {
+        return denRepository.alterarEstado(estado, idLast, id);
     }
 }

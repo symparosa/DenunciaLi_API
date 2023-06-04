@@ -7,6 +7,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -65,7 +66,7 @@ public class QueixaModel implements Serializable {
     private DominioModel tipo_queixa;
 
     @Schema(description = "A lista de arquivos")
-    @OneToMany(targetEntity = ArquivoModel.class, mappedBy = "queixa", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, targetEntity = ArquivoModel.class, mappedBy = "queixa", cascade = CascadeType.ALL)
     private List<ArquivoModel> arquivos = new ArrayList<>();
 
     @Schema(description = "O identificador (ID) do tipo de crime")
