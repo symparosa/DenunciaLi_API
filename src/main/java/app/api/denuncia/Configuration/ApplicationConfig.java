@@ -2,6 +2,8 @@ package app.api.denuncia.Configuration;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

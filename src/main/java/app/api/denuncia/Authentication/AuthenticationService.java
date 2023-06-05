@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.AES.AES256Service;
@@ -61,14 +62,14 @@ public class AuthenticationService {
         msg.add(message.getMessage14("decrypt"));
         return gf.getResponseError(msg);
       }
-
-    } catch (BadCredentialsException | IllegalArgumentException | NoSuchElementException ex) {
-
-      msg.add(message.getMessage12());
+    } catch (UsernameNotFoundException ex) {
+      msg.add(message.getMessage12()+ "-1-" + ex.getCause());
       return gf.getResponseError(msg);
-
+    } catch (BadCredentialsException | IllegalArgumentException ex) {
+      msg.add(message.getMessage12()+ "-2-" + ex.getCause());
+      return gf.getResponseError(msg);
     } catch (Exception e) {
-      msg.add(message.getMessage04());
+      msg.add(message.getMessage04() + "-3-" + e.getCause());
       return gf.getResponseError(msg);
     }
   }

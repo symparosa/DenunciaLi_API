@@ -25,7 +25,6 @@ import app.api.denuncia.Services.ReprocessamentoService;
 import app.api.denuncia.Utilities.GlobalFunctions;
 import app.api.denuncia.Utilities.LocalDateTimeTypeAdapter;
 
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
