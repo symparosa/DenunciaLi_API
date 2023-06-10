@@ -18,7 +18,7 @@ public class Message {
     private final String Message16 = "conflito entre user logado.";
     private final String Message17 = "user não logado.";
     private final String Message18 = "senha válida.";
-    private final String Message19 = "Não é possível reprocessar";
+    private final String Message19 = "não é possível reprocessar";
 
     public String getMessage01(String metodo) {
         return metodo + " dados com sucesso.";
