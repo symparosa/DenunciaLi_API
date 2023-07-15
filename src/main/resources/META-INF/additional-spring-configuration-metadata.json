@@ -28,5 +28,10 @@
     "name": "template.recover",
     "type": "java.lang.String",
     "description": "O caminho para o template de recover"
+  },
+  {
+    "name": "url",
+    "type": "java.lang.String",
+    "description": "Url de reencaminhamento"
   }
 ]}

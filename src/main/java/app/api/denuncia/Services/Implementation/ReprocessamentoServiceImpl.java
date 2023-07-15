@@ -39,12 +39,8 @@ public class ReprocessamentoServiceImpl implements ReprocessamentoService {
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    // public Integer IdUserLogado() {
-    // return auth.getUtiLogado().getId();
-    // }
-
     public Integer IdUserLogado() {
-        return 1;
+        return auth.getUtiLogado().getId();
     }
 
     public ReprocessamentoServiceImpl(EmailService emailService, AuthenticationService auth,

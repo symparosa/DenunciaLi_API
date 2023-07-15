@@ -45,12 +45,8 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
         this.auth = auth;
     }
 
-    // public int IdUserLogado() {
-    // return auth.getUtiLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getUtiLogado().getId();
     }
 
     @Override

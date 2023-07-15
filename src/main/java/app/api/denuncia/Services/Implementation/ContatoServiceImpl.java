@@ -46,12 +46,8 @@ public class ContatoServiceImpl implements ContatoService {
         this.auth = auth;
     }
 
-    // public int IdUserLogado() {
-    // return auth.getUtiLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getUtiLogado().getId();
     }
 
     @Override

@@ -33,12 +33,8 @@ public class MenuServiceImpl implements MenuService {
         this.auth = auth;
     }
 
-    // public int IdUserLogado() {
-    // return auth.getUtiLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getUtiLogado().getId();
     }
 
     @Override

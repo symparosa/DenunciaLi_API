@@ -52,17 +52,16 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     @Value("${template.registration}")
     private String pathRegistration;
 
+    @Value("${url}")
+    private String url;
+
     private Status status = new Status();
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    // public int IdUserLogado(){
-    // return auth.getUtiLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getUtiLogado().getId();
     }
 
     public UtilizadorServiceImpl(UtilizadorRepository userRepository, LocalizacaoService localService,
@@ -154,7 +153,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 Element div = doc.getElementById("div_titulo");
                 Element p = doc.getElementById("p_corpo");
                 Element link = doc.getElementById("a_link");
-                link.attr("href", "https://exemplo.com/nova_url");
+                link.attr("href", url);
                 div.html(titulo);
                 p.html(ptxt);
 
@@ -166,8 +165,9 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 if (em.getResponseCode() == 1) {
                     return em;
                 } else {
-                    reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(), emailDetail.getMsgBody(),
-                            emailDetail.getSubject(),IdUserLogado());
+                    reprocessamentoService.saveReprocessamentoEmail(emailDetail.getRecipient(),
+                            emailDetail.getMsgBody(),
+                            emailDetail.getSubject(), IdUserLogado());
                     return em;
                 }
             } else {
@@ -274,8 +274,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             if (pass != null) {
 
                 if (logado) {
-                    // auth.getUtiLogado().getUsername()
-                    if (username.equals("symparosa@gmail.com")) {
+
+                    if (username.equals(auth.getUtiLogado().getUsername())) {
 
                         if (userRepository.existsByUsername(username)) {
 
@@ -351,7 +351,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                         Document doc = Jsoup.parse(html);
                         Element link = doc.getElementById("a_link");
                         Element p = doc.getElementById("p_corpo");
-                        link.attr("href", "https://exemplo.com/nova-url");
+                        link.attr("href", url);
                         p.html(ptxt);
 
                         EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
@@ -425,8 +425,8 @@ public class UtilizadorServiceImpl implements UtilizadorService {
             String pass = aes256Service.decrypt(senha);
 
             if (pass != null) {
-                // auth.getUtiLogado().getUsername()
-                UtilizadorModel user = userRepository.findByUsername("symparosa@gmail.com").orElse(null);
+
+                UtilizadorModel user = userRepository.findByUsername(auth.getUtiLogado().getUsername()).orElse(null);
 
                 if (user != null) {
 

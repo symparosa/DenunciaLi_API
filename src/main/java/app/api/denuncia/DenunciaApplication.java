@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 @EnableScheduling
 @SpringBootApplication
 @Configuration
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 		info = @Info(title = "Denuncia Li", version = "1.0.0", description = "REST API para denúncias de crimes em Cabo Verde", contact = @Contact(name = "Elisângela Rosa", email = "symparosa@gmail.com")), servers = {
 				@Server(url = "http://localhost:8080"),
-				@Server(url = "http://denunciaLi.com.cv")
+				@Server(url = "http://167.99.238.112:8080")
 		}, tags = {
 				@Tag(name = "Autenticação", description = "Operações relacionadas à autenticação e autorização na API."),
 				@Tag(name = "Denúncia", description = "Onde serão gerenciados os endpoits de denúncia."),

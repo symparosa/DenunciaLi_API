@@ -57,6 +57,9 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     @Value("${template.registration}")
     private String pathRegistration;
 
+    @Value("${url}")
+    private String url;
+
     public DenuncianteServiceImpl(DenuncianteRepository denRepository, PasswordEncoder passwordEncoder,
             LocalizacaoService localService, AES256Service aes256Service, AuthenticationService auth,
             EmailService emailService, ReprocessamentoService reprocessamentoService) {
@@ -69,12 +72,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
         this.reprocessamentoService = reprocessamentoService;
     }
 
-    // public int IdUserLogado() {
-    // return auth.getDenunLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getDenunLogado().getId();
     }
 
     @Override
@@ -114,7 +113,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                             Document doc = Jsoup.parse(html);
                             Element link = doc.getElementById("a_link");
                             Element p = doc.getElementById("p_corpo");
-                            link.attr("href", "https://exemplo.com/nova-url");
+                            link.attr("href", url);
                             p.html(ptxt);
 
                             EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
@@ -164,7 +163,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
 
                     String metodo = "eliminar";
 
-                    Integer result = denRepository.alterarEstado(estado, IdUserLogado(),IdUserLogado());
+                    Integer result = denRepository.alterarEstado(estado, IdUserLogado(), IdUserLogado());
 
                     Response saida = gf.validateGetUpdateMsg(metodo, result);
 
@@ -212,8 +211,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             if (pass != null) {
 
                 if (logado) {
-                    // auth.getDenunLogado().getUsername()
-                    if (username.equals("symparosa@gmail.com")) {
+
+                    if (username.equals(auth.getDenunLogado().getUsername())) {
 
                         if (denRepository.existsByUsername(username)) {
 
@@ -293,7 +292,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                 Element div = doc.getElementById("div_titulo");
                 Element p = doc.getElementById("p_corpo");
                 Element link = doc.getElementById("a_link");
-                link.attr("href", "https://exemplo.com/nova-url");
+                link.attr("href", url);
                 div.html(titulo);
                 p.html(ptxt);
 
@@ -330,8 +329,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             Response validar = validarCampos(denu);
 
             if (validar.getResponseCode() == 1) {
-                // auth.getDenunLogado().getUsername()
-                if (denu.getUsername().equals("symparosa@gmail.com")) {
+
+                if (denu.getUsername().equals(auth.getDenunLogado().getUsername())) {
 
                     String metodo = "salvar";
                     obj = "Localização";
@@ -434,8 +433,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
         try {
 
             if (denRepository.count() > 0) {
-                // auth.getDenunLogado().getUsername()
-                if (username.equals("symparosa@gmail.com")) {
+
+                if (username.equals(auth.getDenunLogado().getUsername())) {
 
                     String metodo = "listar", obj = "Denunciante";
 
@@ -467,8 +466,8 @@ public class DenuncianteServiceImpl implements DenuncianteService {
             String pass = aes256Service.decrypt(senha);
 
             if (pass != null) {
-                // auth.getDenunLogado().getUsername()
-                DenuncianteModel denu = denRepository.findByUsername("symparosa@gmail.com").orElse(null);
+
+                DenuncianteModel denu = denRepository.findByUsername(auth.getDenunLogado().getUsername()).orElse(null);
 
                 if (denu != null) {
 

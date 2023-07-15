@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import app.api.denuncia.AES.AES256Service;
+import app.api.denuncia.Authentication.AuthenticationService;
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Denuncia;
@@ -40,6 +41,7 @@ public class DenunciaServiceImpl implements DenunciaService {
     private IntegrateService integrateService;
     private DenuncianteService denuncianteService;
     private DominioService dominioService;
+    private AuthenticationService auth;
 
     private Status status = new Status();
     private Message message = new Message();
@@ -48,21 +50,18 @@ public class DenunciaServiceImpl implements DenunciaService {
 
     public DenunciaServiceImpl(DenunciaRepository denunciaRepository, LocalizacaoService localService,
             AES256Service aes256Service, IntegrateService integrateService, DenuncianteService denuncianteService,
-            DominioService dominioService) {
+            DominioService dominioService, AuthenticationService auth) {
         this.denunciaRepository = denunciaRepository;
         this.localService = localService;
         this.aes256Service = aes256Service;
         this.integrateService = integrateService;
         this.denuncianteService = denuncianteService;
         this.dominioService = dominioService;
+        this.auth = auth;
     }
 
-    // public int IdUserLogado() {
-    // return auth.getDenunLogado().getId();
-    // }
-
     public int IdUserLogado() {
-        return 1;
+        return auth.getDenunLogado().getId();
     }
 
     @Override
@@ -157,16 +156,6 @@ public class DenunciaServiceImpl implements DenunciaService {
             return gf.getResponseError(msg);
         } else if (denuncia.getQueixa().getData_ocorrencia() == null) {
             obj = "Data de ocorrência";
-            msg.add(message.getMessage09(obj));
-            return gf.getResponseError(msg);
-        } else if (denuncia.getQueixa().getReferencia_morada() == null
-                || denuncia.getQueixa().getReferencia_morada().isEmpty()) {
-            obj = "Referência de morada";
-            msg.add(message.getMessage09(obj));
-            return gf.getResponseError(msg);
-        } else if (denuncia.getQueixa().getCodigo_postal() == null
-                || denuncia.getQueixa().getCodigo_postal().isEmpty()) {
-            obj = "Código postal";
             msg.add(message.getMessage09(obj));
             return gf.getResponseError(msg);
         } else if (denuncia.getQueixa().getLocalizacao() == null) {
