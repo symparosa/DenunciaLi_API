@@ -17,6 +17,7 @@ import app.api.denuncia.Services.DenunciaService;
 import app.api.denuncia.Services.DenuncianteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -29,7 +30,7 @@ public class DenuncianteController {
     private DenuncianteService denuncianteService;
     private DenunciaService denunciaService;
     private Status status = new Status();
-    
+
     public DenuncianteController(DenuncianteService denuncianteService, DenunciaService denunciaService) {
         this.denuncianteService = denuncianteService;
         this.denunciaService = denunciaService;
@@ -46,7 +47,7 @@ public class DenuncianteController {
     }
 
     @Operation(summary = "Atualizar Denunciante", description = "Atualizar denunciante no banco de dados.")
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(path = "/atualizar")
     public ResponseEntity<Response> atualizar(
             @RequestBody DenuncianteModel denunciante) {
@@ -56,7 +57,7 @@ public class DenuncianteController {
     @Operation(summary = "Alterar Password", description = "Altera o password do denunciante no banco de dados.", parameters = {
             @Parameter(name = "Password", description = "O novo password do denunciante", example = "yETSiJYQU0lU+vY2HUcvWg=="),
             @Parameter(name = "Username", description = "O username do denunciante", example = "MariaFontes@gmail.com") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(path = "/alterarPassword")
     public ResponseEntity<Response> alterarPassword(
             @RequestParam(required = true) String Password,
@@ -77,7 +78,7 @@ public class DenuncianteController {
     }
 
     @Operation(summary = "Eliminar Conta", description = "Elimina a conta do denunciante no banco de dados.")
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(path = "/eliminarConta")
     public ResponseEntity<Response> eliminarConta() {
         return ResponseEntity.ok(denuncianteService.eliminarConta(status.getEliminado()));
@@ -85,7 +86,7 @@ public class DenuncianteController {
 
     @Operation(summary = "Get Detalhes Denunciante", description = "Lista todos os detalhes do denunciante.", parameters = {
             @Parameter(name = "Username", description = "O Username do denunciante", example = "MariaFontes@gmail.com") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/getDetalhesByUsername")
     public ResponseEntity<Response> get_detalhes_by_username(
             @RequestParam(required = true) String Username) {
@@ -102,7 +103,7 @@ public class DenuncianteController {
 
     @Operation(summary = "Validar Senha", description = "Valida senha de denunciante.", parameters = {
             @Parameter(name = "Senha", description = "A senha do denunciante", example = "yETSiJYQU0lU+vY2HUcvWg==") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping(path = "/validarSenhaAtual")
     public ResponseEntity<Response> validarSenhaAtual(
             @RequestParam(required = true) String Senha) {
@@ -110,14 +111,14 @@ public class DenuncianteController {
     }
 
     @Operation(summary = "Listar Ocorrências", description = "Lista corrências de denunciante.")
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/listarOcorrencias")
     public ResponseEntity<Response> listar_ocorrencias() {
         return ResponseEntity.ok(denunciaService.listar_ocorrencias());
     }
 
     @Operation(summary = "Get Faixa Etária", description = "Lista todas as faixas etárias.")
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/getFaixaEtaria")
     public ResponseEntity<Response> getFaixaEtaria() {
         return ResponseEntity.ok(denuncianteService.getFaixaEtaria());

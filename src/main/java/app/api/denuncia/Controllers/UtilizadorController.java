@@ -2,6 +2,7 @@ package app.api.denuncia.Controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import app.api.denuncia.Services.UtilizadorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -31,8 +33,8 @@ public class UtilizadorController {
     }
 
     @Operation(summary = "Adicionar / Atualizar Utilizador", description = "Adiciona / Atualiza utilizador no banco de dados.")
-    // @SecurityRequirement(name = "Bearer Authentication")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody UtilizadorModel utilizador) {
         return ResponseEntity.ok(user.adicionar_atualizar(utilizador));
@@ -41,8 +43,8 @@ public class UtilizadorController {
     @Operation(summary = "Alterar Estado Utilizador", description = "Altera o estado do utilizador no banco de dados.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do utilizador"),
             @Parameter(name = "Estado", description = "O estado do utilizador") })
-    // @SecurityRequirement(name = "Bearer Authentication")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(path = "/alterarEstado")
     public ResponseEntity<Response> alterarEstado(@RequestParam(required = true) int Id,
             @RequestParam(required = true) int Estado) {
@@ -50,8 +52,8 @@ public class UtilizadorController {
     }
 
     @Operation(summary = "Listar Utilizadores", description = "Lista todos os utilizadores que estão no banco de dados.")
-    // @SecurityRequirement(name = "Bearer Authentication")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/listar")
     public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(user.listar());
@@ -60,7 +62,7 @@ public class UtilizadorController {
     @Operation(summary = "Alterar Password", description = "Altera o password do utilizador no banco de dados.", parameters = {
             @Parameter(name = "Password", description = "O novo password do utilizador", example = "yETSiJYQU0lU+vY2HUcvWg=="),
             @Parameter(name = "Username", description = "O username do utilizador", example = "MariaFontes@gmail.com") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(path = "/alterarPassword")
     public ResponseEntity<Response> alterarPassword(
             @RequestParam(required = true) String Password,
@@ -89,7 +91,7 @@ public class UtilizadorController {
 
     @Operation(summary = "Get Detalhes Utilizador", description = "Lista todos os detalhes do utilizador.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do utilizador") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/get_detalhes_by_id")
     public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(user.get_by_id(Id));
@@ -97,7 +99,7 @@ public class UtilizadorController {
 
     @Operation(summary = "Validar Senha", description = "Valida senha do utilizador.", parameters = {
             @Parameter(name = "Senha", description = "A senha do utilizador", example = "yETSiJYQU0lU+vY2HUcvWg==") })
-    // @SecurityRequirement(name = "Bearer Authentication")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping(path = "/validarSenhaAtual")
     public ResponseEntity<Response> validarSenhaAtual(
             @RequestParam(required = true) String Senha) {

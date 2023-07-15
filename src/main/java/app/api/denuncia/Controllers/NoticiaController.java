@@ -15,13 +15,14 @@ import app.api.denuncia.Models.NoticiaModel;
 import app.api.denuncia.Services.NoticiaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @Tag(name = "Notícia")
 @ApiResponse(responseCode = "200", description = "Success response.")
-// @SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/noticia", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NoticiaController {
 
