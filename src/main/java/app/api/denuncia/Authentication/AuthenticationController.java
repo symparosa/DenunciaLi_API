@@ -25,7 +25,7 @@ public class AuthenticationController {
 
   private final AuthenticationService service;
 
-  @Operation(summary = "Login", description = "Login")
+  @Operation(summary = "Login", description = "Realiza a autenticação do utilizador na plataforma.")
   @PostMapping("/login")
   public ResponseEntity<Response> authenticate(
       @RequestBody AuthenticationRequest request) {
@@ -33,7 +33,7 @@ public class AuthenticationController {
   }
 
   @SecurityRequirement(name = "Bearer Authentication")
-  @Operation(summary = "Logout", description = "Logout")
+  @Operation(summary = "Logout", description = "Encerra a sessão do utilizador na plataforma.")
   @PostMapping("/logout")
   public ResponseEntity<Response> logout(
       @RequestParam(required = true) String canal) {

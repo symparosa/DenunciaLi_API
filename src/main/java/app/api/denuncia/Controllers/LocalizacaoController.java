@@ -38,7 +38,7 @@ public class LocalizacaoController {
         return LocalizacaoService.getIlhas();
     }
 
-    @Operation(summary = "Listar localizações ", description = "Lista todas as localizações.", parameters = {
+    @Operation(summary = "Listar localizações", description = "Lista todas as localizações a partir de um concelho.", parameters = {
             @Parameter(name = "Concelho", description = "O identificador (ID) do concelho") })
     @GetMapping(path = "/listarLocalizacoes")
     public Response listarLocalizacoes(@RequestParam(required = true) String Concelho) {

@@ -20,6 +20,7 @@ import app.api.denuncia.Utilities.GlobalFunctions;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping(path = "/api/denuncia", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,7 +34,7 @@ public class DenunciaController {
     }
 
     @Operation(tags = {
-            "Denúncia" }, summary = "Adicionar denúncia", description = "Adiciona denúncia no banco de dados.")
+            "Denúncia" }, summary = "Adicionar denúncia", description = "Adiciona uma nova denúncia.")
     @PostMapping(path = "/adicionarDenuncia")
     public Response adicionarDenuncia(
             @RequestBody String denuncia) {
@@ -47,7 +48,7 @@ public class DenunciaController {
     }
 
     @Operation(tags = {
-            "Denúncia" }, summary = "Filtro Denúncia", description = "Filtrar dados da denúncia.", parameters = {
+            "Denúncia" }, summary = "Filtrar Denúncia", description = "Filtrar dados das denúncias.", parameters = {
                     @Parameter(name = "TipoQueixa", description = "Tipo de queixa da denúncia"),
                     @Parameter(name = "TipoCrime", description = "Tipo de crime da denúncia"),
                     @Parameter(name = "DataInicio", description = "A data de início"),
@@ -56,6 +57,7 @@ public class DenunciaController {
                     @Parameter(name = "IdadeFim", description = "A faixa etária"),
                     @Parameter(name = "Genero", description = "O genero"),
                     @Parameter(name = "Concelho", description = "O concelho") })
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/filtroDenuncia")
     public ResponseEntity<Response> filtroDenuncia(
             @RequestParam(required = true) Integer TipoQueixa,

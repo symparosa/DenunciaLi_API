@@ -32,7 +32,7 @@ public class UtilizadorController {
         this.user = user;
     }
 
-    @Operation(summary = "Adicionar / Atualizar Utilizador", description = "Adiciona / Atualiza utilizador no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Utilizador", description = "Adiciona / Atualiza utilizador.")
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/adicionar_atualizar")
@@ -40,7 +40,7 @@ public class UtilizadorController {
         return ResponseEntity.ok(user.adicionar_atualizar(utilizador));
     }
 
-    @Operation(summary = "Alterar Estado Utilizador", description = "Altera o estado do utilizador no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Estado Utilizador", description = "Altera o estado do utilizador.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do utilizador"),
             @Parameter(name = "Estado", description = "O estado do utilizador") })
     @SecurityRequirement(name = "Bearer Authentication")
@@ -51,7 +51,7 @@ public class UtilizadorController {
         return ResponseEntity.ok(user.alterarEstado(Id, Estado));
     }
 
-    @Operation(summary = "Listar Utilizadores", description = "Lista todos os utilizadores que estão no banco de dados.")
+    @Operation(summary = "Listar Utilizadores", description = "Lista todos os utilizadores.")
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/listar")
@@ -59,7 +59,7 @@ public class UtilizadorController {
         return ResponseEntity.ok(user.listar());
     }
 
-    @Operation(summary = "Alterar Password", description = "Altera o password do utilizador no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Password", description = "Altera o password do utilizador.", parameters = {
             @Parameter(name = "Password", description = "O novo password do utilizador", example = "yETSiJYQU0lU+vY2HUcvWg=="),
             @Parameter(name = "Username", description = "O username do utilizador", example = "MariaFontes@gmail.com") })
     @SecurityRequirement(name = "Bearer Authentication")
@@ -70,7 +70,7 @@ public class UtilizadorController {
         return ResponseEntity.ok(user.alterarPassword(Username, null, Password, true));
     }
 
-    @Operation(summary = "Recuperar Senha", description = "Recuperar o password do utilizador no banco de dados.", parameters = {
+    @Operation(summary = "Recuperar Senha", description = "Recuperar o password do utilizador.", parameters = {
             @Parameter(name = "Hash", description = "O hash do utilizador"),
             @Parameter(name = "Password", description = "O novo password do utilizador", example = "yETSiJYQU0lU+vY2HUcvWg=="),
             @Parameter(name = "Username", description = "O username do utilizador", example = "MariaFontes@gmail.com") })
@@ -97,7 +97,7 @@ public class UtilizadorController {
         return ResponseEntity.ok(user.get_by_id(Id));
     }
 
-    @Operation(summary = "Validar Senha", description = "Valida senha do utilizador.", parameters = {
+    @Operation(summary = "Validar Senha", description = "Valida a senha do utilizador.", parameters = {
             @Parameter(name = "Senha", description = "A senha do utilizador", example = "yETSiJYQU0lU+vY2HUcvWg==") })
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping(path = "/validarSenhaAtual")

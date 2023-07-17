@@ -12,10 +12,11 @@ import app.api.denuncia.Dto.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @ApiResponse(responseCode = "200", description = "Success response.")
-// @SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/estatistica", produces = MediaType.APPLICATION_JSON_VALUE)
 
 public class EstatisticaController {

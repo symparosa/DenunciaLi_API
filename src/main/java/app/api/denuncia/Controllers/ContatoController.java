@@ -34,13 +34,13 @@ public class ContatoController {
         ContatoService = contatoService;
     }
 
-    @Operation(summary = "Adicionar / Atualizar Contato", description = "Adiciona / Atualiza contato no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Contato", description = "Adiciona / Atualiza contato.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody List<ContatoModel> contato) {
         return ResponseEntity.ok(ContatoService.adicionar_atualizar(contato));
     }
 
-    @Operation(summary = "Alterar Estado Contato", description = "Altera o estado do contato no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Estado Contato", description = "Altera o estado de um contato.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do contato"),
             @Parameter(name = "Estado", description = "O estado do contato") })
     @PutMapping(path = "/alterarEstado")
