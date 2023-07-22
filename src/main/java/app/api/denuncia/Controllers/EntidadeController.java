@@ -32,13 +32,13 @@ public class EntidadeController {
         this.entidadeService = entidadeService;
     }
 
-    @Operation(summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody EntidadeModel entidade) {
         return ResponseEntity.ok(entidadeService.adicionar_atualizar(entidade));
     }
 
-    @Operation(summary = "Alterar Estado Entidade", description = "Altera o estado da entidade no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Estado Entidade", description = "Altera o estado de uma entidade.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
             @Parameter(name = "Estado", description = "O estado da entidade") })
     @PutMapping(path = "/alterarEstado")
@@ -47,20 +47,20 @@ public class EntidadeController {
         return ResponseEntity.ok(entidadeService.alterarEstado(Id, Estado));
     }
 
-    @Operation(summary = "Listar Entidades", description = "Lista todas as entidades que estão no banco de dados.")
+    @Operation(summary = "Listar Entidades", description = "Lista todas as entidades.")
     @GetMapping(path = "/listar")
     public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(entidadeService.listar());
     }
 
-    @Operation(summary = "Get Detalhes Entidade", description = "Lista todos os detalhes da entidade.", parameters = {
+    @Operation(summary = "Get Detalhes Entidade", description = "Lista todos os detalhes de uma entidade.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade") })
     @GetMapping(path = "/get_detalhes_by_id")
     public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
         return ResponseEntity.ok(entidadeService.get_by_id(Id));
     }
 
-    @Operation(summary = "Get Entidade By Tipo", description = "Lista todos os dados a partir do tipo de entidade.", parameters = {
+    @Operation(summary = "Get Entidade By Tipo", description = "Lista todos os dados a partir de um tipo de entidade.", parameters = {
             @Parameter(name = "TipoEntidade", description = "O tipo de entidade que se quer obter os dados") })
     @GetMapping(path = "/getEntidadeByTipo")
     public ResponseEntity<Response> getEntidadeByTipo(@RequestParam(required = true) String TipoEntidade) {

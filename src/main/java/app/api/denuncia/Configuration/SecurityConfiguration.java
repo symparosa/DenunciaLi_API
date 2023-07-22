@@ -27,7 +27,7 @@ public class SecurityConfiguration {
         .disable()
         .authorizeHttpRequests()
         .requestMatchers(
-            "/api/auth/login", "/api/utilizadorBackoffice/alterarPassword", "/api/utilizadorBackoffice/recuperarConta",
+            "/api/auth/login", "/api/utilizadorBackoffice/recuperarSenha", "/api/utilizadorBackoffice/recuperarConta",
             "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
             "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia", "/api/aes256/**")
         .permitAll()

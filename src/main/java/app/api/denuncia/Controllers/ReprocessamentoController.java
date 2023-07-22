@@ -50,7 +50,7 @@ public class ReprocessamentoController {
                                 .ok(reprocessamentoService.filtroReprocessamentoEmail(DataInicio, DataFim, Estado));
         }
 
-        @Operation(summary = "Alterar Estado Reprocessamento", description = "Altera o estado do reprocessamento no banco de dados.", parameters = {
+        @Operation(summary = "Alterar Estado Reprocessamento", description = "Altera o estado de um reprocessamento.", parameters = {
                         @Parameter(name = "Id", description = "O identificador (ID) do reprocessamento"),
                         @Parameter(name = "Estado", description = "O estado do reprocessamento") })
         @PutMapping(path = "/alterarEstado")

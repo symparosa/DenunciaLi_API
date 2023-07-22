@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 @Tag(name = "Auditoria")
 @ApiResponse(responseCode = "200", description = "Success response.")
 @SecurityRequirement(name = "Bearer Authentication")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+// @PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping(path = "/api/auditoria", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuditoriaController {
 

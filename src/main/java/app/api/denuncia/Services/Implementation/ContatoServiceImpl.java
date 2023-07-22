@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Authentication.AuthenticationService;
@@ -12,6 +13,8 @@ import app.api.denuncia.Constants.Status;
 import app.api.denuncia.Dto.Response;
 import app.api.denuncia.Enums.Domain;
 import app.api.denuncia.Models.ContatoModel;
+import app.api.denuncia.Models.DenuncianteModel;
+import app.api.denuncia.Models.UtilizadorModel;
 import app.api.denuncia.Services.ContatoService;
 import app.api.denuncia.Services.DenuncianteService;
 import app.api.denuncia.Services.DominioService;
@@ -47,7 +50,19 @@ public class ContatoServiceImpl implements ContatoService {
     }
 
     public int IdUserLogado() {
-        return auth.getUtiLogado().getId();
+
+        UserDetails userDetails = auth.userAutenticado();
+
+        if (userDetails instanceof UtilizadorModel) {
+
+            UtilizadorModel user = (UtilizadorModel) userDetails;
+            return user.getId();
+
+        } else {
+
+            DenuncianteModel user = (DenuncianteModel) userDetails;
+            return user.getId();
+        }
     }
 
     @Override

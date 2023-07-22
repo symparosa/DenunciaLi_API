@@ -34,13 +34,13 @@ public class DominioController {
         this.dominioservice = dominioservice;
     }
 
-    @Operation(summary = "Adicionar / Atualizar Domínio", description = "Adiciona / Atualiza domínios no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Domínio", description = "Adiciona / Atualiza domínios.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody List<DominioModel> dominios) {
         return ResponseEntity.ok(dominioservice.adicionar_atualizar(dominios));
     }
 
-    @Operation(summary = "Alterar Estado Domínio", description = "Altera o estado do domínio no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Estado Domínio", description = "Altera o estado do domínio.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do domínio"),
             @Parameter(name = "Estado", description = "O estado do domínio") })
     @PutMapping(path = "/alterarEstado")
@@ -50,7 +50,7 @@ public class DominioController {
         return ResponseEntity.ok(dominioservice.alterarEstado(Id, Estado));
     }
 
-    @Operation(summary = "Listar Domínios", description = "Lista todos os domínios que estão no banco de dados.")
+    @Operation(summary = "Listar Domínios", description = "Lista todos os domínios.")
     @GetMapping(path = "/listar")
     public ResponseEntity<Response> listar() {
         return ResponseEntity.ok(dominioservice.listar());
@@ -63,7 +63,7 @@ public class DominioController {
         return ResponseEntity.ok(dominioservice.getDominio(Dominio));
     }
 
-    @Operation(summary = "Get Detalhes Domínio", description = "Lista todos os detalhes do domínio.", parameters = {
+    @Operation(summary = "Get Detalhes Domínio", description = "Lista todos os detalhes de um domínio.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) do domínio") })
     @GetMapping(path = "/get_detalhes_by_id")
     public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {

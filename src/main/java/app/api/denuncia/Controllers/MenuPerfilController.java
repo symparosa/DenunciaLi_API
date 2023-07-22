@@ -2,7 +2,6 @@ package app.api.denuncia.Controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +32,7 @@ public class MenuPerfilController {
             @Parameter(name = "IdMenu", description = "O identificador (ID) do menu"),
             @Parameter(name = "IdPerfil", description = "O identificador (ID) do perfil"),
             @Parameter(name = "Estado", description = "O estado de permissão") })
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(path = "/alterarPermissaoMenu")
     public ResponseEntity<Response> alterarPermissaoMenu(
             @RequestParam(required = true) int IdMenu,

@@ -35,14 +35,14 @@ public class EntidadeTipoCrimeController {
         this.entidadeTipoCrimeService = entidadeTipoCrimeService;
     }
 
-    @Operation(summary = "Adicionar / Atualizar Entidade Tipo Crime", description = "Adiciona / Atualiza entidade tipo de crime no banco de dados.")
+    @Operation(summary = "Adicionar / Atualizar Entidade Tipo Crime", description = "Adiciona / Atualiza entidade tipo de crime.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(
             @RequestBody List<EntidadeTipoCrimeModel> entidadeTipoCrime) {
         return ResponseEntity.ok(entidadeTipoCrimeService.adicionar_atualizar(entidadeTipoCrime));
     }
 
-    @Operation(summary = "Alterar Estado Entidade Tipo Crime", description = "Altera o estado da entidade tipo de crime no banco de dados.", parameters = {
+    @Operation(summary = "Alterar Estado Entidade Tipo Crime", description = "Altera o estado da entidade tipo de crime.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade tipo de crime"),
             @Parameter(name = "Estado", description = "O estado da entidade tipo de crime") })
     @PutMapping(path = "/alterarEstado")

@@ -112,6 +112,8 @@ public class AuthenticationService {
 
   public Response logout(String canal) {
 
+    gf.clearList(msg);
+
     try {
 
       if (userAutenticado() != null) {
