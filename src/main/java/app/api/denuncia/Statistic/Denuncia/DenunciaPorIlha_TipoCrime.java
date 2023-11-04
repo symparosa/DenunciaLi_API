@@ -4,7 +4,11 @@ public interface DenunciaPorIlha_TipoCrime {
     
     int getIlha();
 
+    String getIlhaDesc();
+
     int getTipoCrime();
+
+    String getTipoCrimeDesc();
 
     int getQuantidade();
 

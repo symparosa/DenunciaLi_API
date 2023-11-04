@@ -6,6 +6,8 @@ public interface DenunciaPorAno_TipoQueixa {
 
     int getTipoQueixa();
 
+    String getTipoQueixaDesc();
+
     int getQuantidade();
 
     int getTotal();

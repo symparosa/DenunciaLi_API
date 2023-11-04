@@ -4,6 +4,8 @@ public interface DenunciaPorIlha_Genero {
     
     int getIlha();
 
+    String getIlhaDesc();
+
     int getQuantidadeFeminino();
 
     int getQuantidadeMasculino();

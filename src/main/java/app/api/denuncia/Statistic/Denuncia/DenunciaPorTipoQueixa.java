@@ -4,6 +4,8 @@ public interface DenunciaPorTipoQueixa {
 
     int getTipoQueixa();
 
+    String getTipoQueixaDesc();
+
     int getQuantidade();
 
     int getTotal();

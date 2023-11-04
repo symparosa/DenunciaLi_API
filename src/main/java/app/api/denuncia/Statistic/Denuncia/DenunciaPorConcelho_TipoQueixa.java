@@ -4,7 +4,11 @@ public interface DenunciaPorConcelho_TipoQueixa {
     
     int getConcelho();
 
+    String getConcelhoDesc();
+
     int getTipoQueixa();
+
+    String getTipoQueixaDesc();
 
     int getQuantidade();
 

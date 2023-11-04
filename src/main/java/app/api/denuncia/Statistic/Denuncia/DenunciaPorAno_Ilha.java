@@ -6,6 +6,8 @@ public interface DenunciaPorAno_Ilha {
 
     int getIdIlha();
 
+    String getIlhaDesc();
+
     int getQuantidade();
 
     int getTotal();

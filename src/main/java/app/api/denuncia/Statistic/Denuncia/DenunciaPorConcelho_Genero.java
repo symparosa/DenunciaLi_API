@@ -4,6 +4,8 @@ public interface DenunciaPorConcelho_Genero {
     
     int getConcelho();
 
+    String getConcelhoDesc();
+
     int getQuantidadeFeminino();
 
     int getQuantidadeMasculino();

@@ -6,7 +6,11 @@ public interface DenunciaPorAno_Concelho_TipoQueixa {
 
     int getConcelho();
 
+    String getConcelhoDesc();
+
     int getTipoQueixa();
+
+    String getTipoQueixaDesc();
 
     int getQuantidade();
 

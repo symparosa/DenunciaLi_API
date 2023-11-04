@@ -6,6 +6,8 @@ public interface DenunciaPorFaixaEtaria_TipoCrime {
 
     int getTipoCrime();
 
+    String getTipoCrimeDesc();
+
     int getQuantidade();
 
     int getTotal();

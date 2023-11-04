@@ -9,12 +9,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import app.api.denuncia.Models.LocalizacaoModel;
+import app.api.denuncia.Statistic.Denuncia.LocalNome;
 
 @Repository
 @Transactional
-public interface LocalizacaoRepository extends JpaRepository<LocalizacaoModel, Integer> {
+public interface LocalizacaoRepository extends JpaRepository<LocalizacaoModel, String> {
 
-        Boolean existsById(String id);
+        boolean existsById(String id);
 
         @Query(value = "SELECT id AS id_ilha, nome AS nome_ilha, nome_norm AS nome_norm_ilha"
                         + " FROM  dbo.dn_t_localizacao"
@@ -31,4 +32,6 @@ public interface LocalizacaoRepository extends JpaRepository<LocalizacaoModel, I
                         + " WHERE nivel_detalhe = 6 and concelho =:concelho", nativeQuery = true)
         List<Object[]> getLocalizacao(@Param("concelho") String concelho);
 
+        @Query(value = "SELECT nome FROM  dbo.dn_t_localizacao where id =:id", nativeQuery = true)
+        LocalNome getNome(@Param("id") String id);
 }

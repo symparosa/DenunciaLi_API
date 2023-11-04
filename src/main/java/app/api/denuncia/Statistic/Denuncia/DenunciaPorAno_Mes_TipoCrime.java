@@ -6,7 +6,11 @@ public interface DenunciaPorAno_Mes_TipoCrime {
 
     int getMes();
 
+    String getMesDesc();
+
     int getTipoCrime();
+
+    String getTipoCrimeDesc();
 
     int getQuantidade();
 

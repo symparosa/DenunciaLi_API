@@ -4,6 +4,8 @@ public interface DenunciaPorIlha {
     
     int getIlha();
 
+    String getIlhaDesc();
+
     int getQuantidade();
 
     int getTotal();

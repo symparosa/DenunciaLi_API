@@ -4,6 +4,8 @@ public interface DenunciaPorTipoCrime_Genero {
     
     int getTipoCrime();
 
+    String getTipoCrimeDesc();
+
     int getQuantidadeFeminino();
 
     int getQuantidadeMasculino();

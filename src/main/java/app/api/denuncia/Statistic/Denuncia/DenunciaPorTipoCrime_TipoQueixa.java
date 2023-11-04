@@ -4,7 +4,11 @@ public interface DenunciaPorTipoCrime_TipoQueixa {
 
     int getTipoCrime();
 
+    String getTipoCrimeDesc();
+
     int getTipoQueixa();
+
+    String getTipoQueixaDesc();
 
     int getQuantidade();
 

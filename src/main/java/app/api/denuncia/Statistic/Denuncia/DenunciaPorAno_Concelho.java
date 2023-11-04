@@ -6,6 +6,8 @@ public interface DenunciaPorAno_Concelho {
 
     int getConcelho();
 
+    String getConcelhoDesc();
+
     int getQuantidade();
 
     int getTotal();

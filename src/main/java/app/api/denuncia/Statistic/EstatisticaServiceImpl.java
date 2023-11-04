@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 
 import app.api.denuncia.Constants.Message;
 import app.api.denuncia.Dto.Response;
+import app.api.denuncia.Enums.Domain;
+import app.api.denuncia.Models.DominioModel;
 import app.api.denuncia.Repositories.DenunciaRepository;
+import app.api.denuncia.Repositories.DominioRepository;
+import app.api.denuncia.Repositories.LocalizacaoRepository;
 import app.api.denuncia.Repositories.UtilizadorRepository;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorAno_Concelho;
@@ -53,6 +57,8 @@ import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime_Genero;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoCrime_TipoQueixa;
 import app.api.denuncia.Statistic.Denuncia.DenunciaPorTipoQueixa;
+import app.api.denuncia.Statistic.Denuncia.LocalNome;
+import app.api.denuncia.Statistic.Denuncia.Meses;
 import app.api.denuncia.Statistic.Utilizador.UtilizadorPorEntidade;
 import app.api.denuncia.Statistic.Utilizador.UtilizadorPorTipoUtilizador;
 import app.api.denuncia.Statistic.Utilizador.UtilizadorTotal;
@@ -63,14 +69,19 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
     private DenunciaRepository denunciaRepository;
     private UtilizadorRepository utiRepository;
+    private DominioRepository domRepository;
+    private LocalizacaoRepository localRepository;
     private String metodo = "Listar";
     private Message message = new Message();
     private List<String> msg = new ArrayList<>();
     private GlobalFunctions gf = new GlobalFunctions();
 
-    public EstatisticaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository utiRepository) {
+    public EstatisticaServiceImpl(DenunciaRepository denunciaRepository, UtilizadorRepository utiRepository,
+            DominioRepository domRepository, LocalizacaoRepository localRepository) {
         this.denunciaRepository = denunciaRepository;
         this.utiRepository = utiRepository;
+        this.domRepository = domRepository;
+        this.localRepository = localRepository;
     }
 
     // -------------------------------------------------------------------------
@@ -128,8 +139,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica
-                                .add(addEstatisticaPorAno_TipoQueixa(ano, tiposQueixa, estatistica.get(0).getTotal()));
+
+                        DominioModel dom = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                        if (dom != null) {
+
+                            estatistica
+                                    .add(addEstatisticaPorAno_TipoQueixa(ano, tiposQueixa, dom.getValor(),
+                                            estatistica.get(0).getTotal()));
+                        }
                     }
                 }
 
@@ -182,7 +200,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int meses : totalMeses) {
                     if (estatistica.stream().filter(item -> item.getMes() == meses).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Mes(ano, meses, estatistica.get(0).getTotal()));
+
+                        Meses m = denunciaRepository.getMesByNumero(meses);
+
+                        if (m != null) {
+                            estatistica.add(
+                                    addEstatisticaPorAno_Mes(ano, meses, m.getMes(), estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -219,13 +243,24 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                         if (estatistica.stream()
                                 .filter(item -> item.getMes() == meses && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_Mes_TipoCrime e = estatistica.stream()
                                     .filter(item -> item.getMes() == meses).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(ano, meses, tiposCrime, total));
+
+                            Meses m = denunciaRepository.getMesByNumero(meses);
+
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                            if (m != null && dom != null) {
+                                estatistica.add(addEstatisticaPorAno_Mes_TipoCrime(ano, meses, m.getMes(), tiposCrime,
+                                        dom.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -260,7 +295,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_TipoCrime(ano, tiposCrime, estatistica.get(0).getTotal()));
+
+                        DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (dom != null) {
+                            estatistica.add(
+                                    addEstatisticaPorAno_TipoCrime(ano, tiposCrime, dom.getValor(),
+                                            estatistica.get(0).getTotal()));
+                        }
+
                     }
                 }
                 return rps;
@@ -289,8 +332,14 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int tiposCrime : totalTipoCrime) {
+
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_TipoCrime_Genero(ano, tiposCrime));
+
+                        DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (dom != null) {
+                            estatistica.add(addEstatisticaPorAno_TipoCrime_Genero(ano, tiposCrime, dom.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -323,17 +372,29 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int tipoQueixas : totalTipoQueixa) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_TipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorAno_TipoCrime_TipoQueixa(ano, tiposCrime, tipoQueixas, total));
+
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (dom_c != null && dom_q != null) {
+                                estatistica.add(
+                                        addEstatisticaPorAno_TipoCrime_TipoQueixa(ano, tiposCrime, dom_c.getValor(),
+                                                tipoQueixas, dom_q.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -432,17 +493,28 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (String faixaEtaria : totalFaixaEtaria) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getFaixa_etaria().equals(faixaEtaria) && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_FaixaEtaria_TipoCrime e = estatistica.stream()
                                     .filter(item -> item.getFaixa_etaria().equals(faixaEtaria)).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorAno_FaixaEtaria_TipoCrime(ano, faixaEtaria, tiposCrime, total));
+
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                            if (dom != null) {
+                                estatistica.add(
+                                        addEstatisticaPorAno_FaixaEtaria_TipoCrime(ano, faixaEtaria, tiposCrime,
+                                                dom.getValor(),
+                                                total));
+                            }
                         }
                     }
                 }
@@ -476,8 +548,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int ilha : totalIlhas) {
+
                     if (estatistica.stream().filter(item -> item.getIdIlha() == ilha).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Ilha(ano, ilha, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(ilha));
+
+                        if (local != null) {
+                            estatistica.add(addEstatisticaPorAno_Ilha(ano, ilha, local.getNome(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -506,8 +585,14 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int ilha : totalIlhas) {
+
                     if (estatistica.stream().filter(item -> item.getIdIlha() == ilha).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Ilha_Genero(ano, ilha));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(ilha));
+
+                        if (local != null) {
+                            estatistica.add(addEstatisticaPorAno_Ilha_Genero(ano, ilha, local.getNome()));
+                        }
                     }
                 }
                 return rps;
@@ -540,16 +625,28 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int ilha : totalIlha) {
+
                         if (estatistica.stream()
                                 .filter(item -> item.getIdIlha() == ilha && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_Ilha_TipoCrime e = estatistica.stream()
                                     .filter(item -> item.getIdIlha() == ilha).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime(ano, ilha, tiposCrime, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(ilha));
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                            if (local != null && dom != null) {
+
+                                estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime(ano, ilha, local.getNome(),
+                                        tiposCrime, dom.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -584,16 +681,29 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposQueixa : totalTipoQueixa) {
 
                     for (int ilha : totalIlha) {
+
                         if (estatistica.stream()
                                 .filter(item -> item.getIdIlha() == ilha && item.getTipoQueixa() == tiposQueixa)
                                 .count() < 1) {
+
                             DenunciaPorAno_Ilha_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getIdIlha() == ilha).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Ilha_TipoQueixa(ano, ilha, tiposQueixa, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(ilha));
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom != null) {
+
+                                estatistica.add(
+                                        addEstatisticaPorAno_Ilha_TipoQueixa(ano, ilha, local.getNome(), tiposQueixa,
+                                                dom.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -624,8 +734,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int tiposCrime : totalTipoCrime) {
+
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime_Genero(ano, Ilha, tiposCrime));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                        DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom != null) {
+
+                            estatistica.add(
+                                    addEstatisticaPorAno_Ilha_TipoCrime_Genero(ano, Ilha, local.getNome(), tiposCrime,
+                                            dom.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -662,14 +782,26 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_Ilha_TipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime_TipoQueixa(ano, Ilha, tiposCrime,
-                                    tipoQueixas, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom_c != null && dom_q != null) {
+                                estatistica.add(addEstatisticaPorAno_Ilha_TipoCrime_TipoQueixa(ano, Ilha,
+                                        local.getNome(), tiposCrime, dom_c.getValor(),
+                                        tipoQueixas, dom_q.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -703,8 +835,16 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int Concelho : totalConcelhos) {
+
                     if (estatistica.stream().filter(item -> item.getConcelho() == Concelho).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Concelho(ano, Concelho, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+
+                        if (local != null) {
+                            estatistica
+                                    .add(addEstatisticaPorAno_Concelho(ano, Concelho, local.getNome(),
+                                            estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -733,8 +873,14 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int Concelho : totalConcelhos) {
+
                     if (estatistica.stream().filter(item -> item.getConcelho() == Concelho).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Concelho_Genero(ano, Concelho));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+
+                        if (local != null) {
+                            estatistica.add(addEstatisticaPorAno_Concelho_Genero(ano, Concelho, local.getNome()));
+                        }
                     }
                 }
                 return rps;
@@ -767,16 +913,28 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int Concelho : totalConcelho) {
+
                         if (estatistica.stream()
                                 .filter(item -> item.getConcelho() == Concelho && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_Concelho_TipoCrime e = estatistica.stream()
                                     .filter(item -> item.getConcelho() == Concelho).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime(ano, Concelho, tiposCrime, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                            if (local != null && dom != null) {
+
+                                estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime(ano, Concelho, local.getNome(),
+                                        tiposCrime, dom.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -811,17 +969,29 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposQueixa : totalTipoQueixa) {
 
                     for (int Concelho : totalConcelho) {
+
                         if (estatistica.stream()
                                 .filter(item -> item.getConcelho() == Concelho && item.getTipoQueixa() == tiposQueixa)
                                 .count() < 1) {
+
                             DenunciaPorAno_Concelho_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getConcelho() == Concelho).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica
-                                    .add(addEstatisticaPorAno_Concelho_TipoQueixa(ano, Concelho, tiposQueixa, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                            DominioModel dom = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom != null) {
+                                estatistica
+                                        .add(addEstatisticaPorAno_Concelho_TipoQueixa(ano, Concelho, local.getNome(),
+                                                tiposQueixa, dom.getValor(),
+                                                total));
+                            }
                         }
                     }
                 }
@@ -852,8 +1022,16 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int tiposCrime : totalTipoCrime) {
+
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime_Genero(ano, Concelho, tiposCrime));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                        DominioModel dom = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom != null) {
+                            estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime_Genero(ano, Concelho,
+                                    local.getNome(), tiposCrime, dom.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -890,14 +1068,27 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorAno_Concelho_TipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime_TipoQueixa(ano, Concelho,
-                                    tiposCrime, tipoQueixas, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom_c != null && dom_q != null) {
+
+                                estatistica.add(addEstatisticaPorAno_Concelho_TipoCrime_TipoQueixa(ano, Concelho,
+                                        local.getNome(),
+                                        tiposCrime, dom_c.getValor(), tipoQueixas, dom_q.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -931,7 +1122,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int ilhas : totalIlha) {
                     if (estatistica.stream().filter(item -> item.getIlha() == ilhas).count() < 1) {
-                        estatistica.add(addEstatisticaPorIlha(ilhas, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(ilhas));
+
+                        if (local != null) {
+                            estatistica
+                                    .add(addEstatisticaPorIlha(ilhas, local.getNome(), estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -979,8 +1176,16 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica
-                                .add(addEstatisticaPorIlha_TipoCrime(Ilha, tiposCrime, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom_c != null) {
+                            estatistica
+                                    .add(addEstatisticaPorIlha_TipoCrime(Ilha, local.getNome(), tiposCrime,
+                                            dom_c.getValor(),
+                                            estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1010,8 +1215,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(
-                                addEstatisticaPorIlha_TipoQueixa(Ilha, tiposQueixa, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                        DominioModel dom_q = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                        if (local != null && dom_q != null) {
+                            estatistica.add(
+                                    addEstatisticaPorIlha_TipoQueixa(Ilha, local.getNome(), tiposQueixa,
+                                            dom_q.getValor(), estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1041,7 +1253,14 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorIlha_TipoCrime_Genero(Ilha, tiposCrime));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom_c != null) {
+                            estatistica.add(addEstatisticaPorIlha_TipoCrime_Genero(Ilha, local.getNome(), tiposCrime,
+                                    dom_c.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -1074,17 +1293,31 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int tipoQueixas : totalTipoQueixa) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorIlha_TipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorIlha_TipoCrime_TipoQueixa(Ilha, tiposCrime, tipoQueixas, total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Ilha));
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom_c != null && dom_q != null) {
+                                estatistica.add(
+                                        addEstatisticaPorIlha_TipoCrime_TipoQueixa(Ilha, local.getNome(), tiposCrime,
+                                                dom_c.getValor(), tipoQueixas, dom_q.getValor(),
+                                                total));
+                            }
                         }
                     }
                 }
@@ -1119,7 +1352,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int Concelhos : totalConcelho) {
                     if (estatistica.stream().filter(item -> item.getConcelho() == Concelhos).count() < 1) {
-                        estatistica.add(addEstatisticaPorConcelho(Concelhos, estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelhos));
+
+                        if (local != null) {
+                            estatistica.add(addEstatisticaPorConcelho(Concelhos, local.getNome(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1167,8 +1406,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorConcelho_TipoCrime(Concelho, tiposCrime,
-                                estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom_c != null) {
+                            estatistica.add(addEstatisticaPorConcelho_TipoCrime(Concelho, local.getNome(), tiposCrime,
+                                    dom_c.getValor(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1198,8 +1444,15 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorConcelho_TipoQueixa(Concelho, tiposQueixa,
-                                estatistica.get(0).getTotal()));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                        DominioModel dom_q = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                        if (local != null && dom_q != null) {
+                            estatistica.add(addEstatisticaPorConcelho_TipoQueixa(Concelho, local.getNome(), tiposQueixa,
+                                    dom_q.getValor(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1229,8 +1482,16 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             if (rps.getResponseCode() == 1) {
 
                 for (int tiposCrime : totalTipoCrime) {
+
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorConcelho_TipoCrime_Genero(Concelho, tiposCrime));
+
+                        LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (local != null && dom_c != null) {
+                            estatistica.add(addEstatisticaPorConcelho_TipoCrime_Genero(Concelho, local.getNome(),
+                                    tiposCrime, dom_c.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -1264,18 +1525,31 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int tipoQueixas : totalTipoQueixa) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorConcelho_TipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorConcelho_TipoCrime_TipoQueixa(Concelho, tiposCrime, tipoQueixas,
-                                            total));
+
+                            LocalNome local = localRepository.getNome(Integer.toString(Concelho));
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (local != null && dom_c != null && dom_q != null) {
+                                estatistica.add(addEstatisticaPorConcelho_TipoCrime_TipoQueixa(Concelho,
+                                        local.getNome(), tiposCrime, dom_c.getValor(),
+                                        tipoQueixas, dom_q.getValor(),
+                                        total));
+                            }
                         }
                     }
                 }
@@ -1332,7 +1606,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorTipoCrime(tiposCrime, estatistica.get(0).getTotal()));
+
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (dom_c != null) {
+                            estatistica.add(addEstatisticaPorTipoCrime(tiposCrime, dom_c.getValor(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1362,7 +1642,12 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposCrime : totalTipoCrime) {
                     if (estatistica.stream().filter(item -> item.getTipoCrime() == tiposCrime).count() < 1) {
-                        estatistica.add(addEstatisticaPorTipoCrime_Genero(tiposCrime));
+
+                        DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                        if (dom_c != null) {
+                            estatistica.add(addEstatisticaPorTipoCrime_Genero(tiposCrime, dom_c.getValor()));
+                        }
                     }
                 }
                 return rps;
@@ -1395,17 +1680,28 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (int tipoQueixas : totalTipoQueixa) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getTipoQueixa() == tipoQueixas && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorTipoCrime_TipoQueixa e = estatistica.stream()
                                     .filter(item -> item.getTipoCrime() == tiposCrime).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorTipoCrime_TipoQueixa(tiposCrime, tipoQueixas, total));
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+                            DominioModel dom_q = domRepository.findByIdAndDominio(tipoQueixas,
+                                    Domain.TIPO_QUEIXA.name());
+
+                            if (dom_c != null && dom_q != null) {
+                                estatistica.add(
+                                        addEstatisticaPorTipoCrime_TipoQueixa(tiposCrime, dom_c.getValor(), tipoQueixas,
+                                                dom_q.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -1440,7 +1736,13 @@ public class EstatisticaServiceImpl implements EstatisticaService {
 
                 for (int tiposQueixa : totalTipoQueixa) {
                     if (estatistica.stream().filter(item -> item.getTipoQueixa() == tiposQueixa).count() < 1) {
-                        estatistica.add(addEstatisticaPorTipoQueixa(tiposQueixa, estatistica.get(0).getTotal()));
+
+                        DominioModel dom_q = domRepository.findByIdAndDominio(tiposQueixa, Domain.TIPO_QUEIXA.name());
+
+                        if (dom_q != null) {
+                            estatistica.add(addEstatisticaPorTipoQueixa(tiposQueixa, dom_q.getValor(),
+                                    estatistica.get(0).getTotal()));
+                        }
                     }
                 }
                 return rps;
@@ -1538,17 +1840,27 @@ public class EstatisticaServiceImpl implements EstatisticaService {
                 for (int tiposCrime : totalTipoCrime) {
 
                     for (String faixaEtaria : totalFaixaEtaria) {
+
                         if (estatistica.stream().filter(
                                 item -> item.getFaixa_etaria().equals(faixaEtaria) && item.getTipoCrime() == tiposCrime)
                                 .count() < 1) {
+
                             DenunciaPorFaixaEtaria_TipoCrime e = estatistica.stream()
                                     .filter(item -> item.getFaixa_etaria().equals(faixaEtaria)).findAny().orElse(null);
+
                             int total = 0;
+
                             if (e != null) {
                                 total = e.getTotal();
                             }
-                            estatistica.add(
-                                    addEstatisticaPorFaixaEtaria_TipoCrime(faixaEtaria, tiposCrime, total));
+
+                            DominioModel dom_c = domRepository.findByIdAndDominio(tiposCrime, Domain.TIPO_CRIME.name());
+
+                            if (dom_c != null) {
+
+                                estatistica.add(
+                                        addEstatisticaPorFaixaEtaria_TipoCrime(faixaEtaria, tiposCrime,dom_c.getValor(), total));
+                            }
                         }
                     }
                 }
@@ -1607,7 +1919,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Mes addEstatisticaPorAno_Mes(int ano, int mes, int total) {
+    public DenunciaPorAno_Mes addEstatisticaPorAno_Mes(int ano, int mes, String mesdesc, int total) {
         DenunciaPorAno_Mes e = new DenunciaPorAno_Mes() {
 
             @Override
@@ -1621,6 +1933,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getMesDesc() {
+                return mesdesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -1638,7 +1955,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_TipoCrime addEstatisticaPorAno_TipoCrime(int ano, int tipoCrime, int total) {
+    public DenunciaPorAno_TipoCrime addEstatisticaPorAno_TipoCrime(int ano, int tipoCrime, String tipoCrimedesc,
+            int total) {
         DenunciaPorAno_TipoCrime e = new DenunciaPorAno_TipoCrime() {
 
             @Override
@@ -1652,6 +1970,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -1669,8 +1992,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Mes_TipoCrime addEstatisticaPorAno_Mes_TipoCrime(int ano, int mes,
-            int tipoCrime, int total) {
+    public DenunciaPorAno_Mes_TipoCrime addEstatisticaPorAno_Mes_TipoCrime(int ano, int mes, String mesdesc,
+            int tipoCrime, String tipoCrimedesc, int total) {
         DenunciaPorAno_Mes_TipoCrime e = new DenunciaPorAno_Mes_TipoCrime() {
 
             @Override
@@ -1684,8 +2007,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getMesDesc() {
+                return mesdesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -1791,7 +2124,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_FaixaEtaria_TipoCrime addEstatisticaPorAno_FaixaEtaria_TipoCrime(int ano,
-            String faixaEtaria, int tipoCrime, int total) {
+            String faixaEtaria, int tipoCrime, String tipoCrimedesc, int total) {
         DenunciaPorAno_FaixaEtaria_TipoCrime e = new DenunciaPorAno_FaixaEtaria_TipoCrime() {
 
             @Override
@@ -1807,6 +2140,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -1827,7 +2165,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_TipoCrime_Genero addEstatisticaPorAno_TipoCrime_Genero(int ano, int tipoCrime) {
+    public DenunciaPorAno_TipoCrime_Genero addEstatisticaPorAno_TipoCrime_Genero(int ano, int tipoCrime,
+            String tipoCrimedesc) {
         DenunciaPorAno_TipoCrime_Genero e = new DenunciaPorAno_TipoCrime_Genero() {
 
             @Override
@@ -1838,6 +2177,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -1879,7 +2223,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_TipoCrime_TipoQueixa addEstatisticaPorAno_TipoCrime_TipoQueixa(int ano,
-            int tipoCrime, int tipoQueixa, int total) {
+            int tipoCrime, String tipoCrimedesc, int tipoQueixa, String tipoQueixadesc, int total) {
         DenunciaPorAno_TipoCrime_TipoQueixa e = new DenunciaPorAno_TipoCrime_TipoQueixa() {
 
             @Override
@@ -1893,8 +2237,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -1915,7 +2269,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_TipoQueixa addEstatisticaPorAno_TipoQueixa(int ano, int tipoQueixa, int total) {
+    public DenunciaPorAno_TipoQueixa addEstatisticaPorAno_TipoQueixa(int ano, int tipoQueixa, String tipoQueixaDesc,
+            int total) {
         DenunciaPorAno_TipoQueixa e = new DenunciaPorAno_TipoQueixa() {
 
             @Override
@@ -1929,6 +2284,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixaDesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -1946,7 +2306,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Ilha addEstatisticaPorAno_Ilha(int ano, int ilha, int total) {
+    public DenunciaPorAno_Ilha addEstatisticaPorAno_Ilha(int ano, int ilha, String ilhadesc, int total) {
         DenunciaPorAno_Ilha e = new DenunciaPorAno_Ilha() {
 
             @Override
@@ -1960,6 +2320,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -1977,7 +2342,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Ilha_Genero addEstatisticaPorAno_Ilha_Genero(int ano, int ilha) {
+    public DenunciaPorAno_Ilha_Genero addEstatisticaPorAno_Ilha_Genero(int ano, int ilha, String ilhadesc) {
         DenunciaPorAno_Ilha_Genero e = new DenunciaPorAno_Ilha_Genero() {
 
             @Override
@@ -1988,6 +2353,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getIdIlha() {
                 return ilha;
+            }
+
+            @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
             }
 
             @Override
@@ -2028,8 +2398,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Ilha_TipoCrime addEstatisticaPorAno_Ilha_TipoCrime(int ano, int ilha,
-            int tipoCrime, int total) {
+    public DenunciaPorAno_Ilha_TipoCrime addEstatisticaPorAno_Ilha_TipoCrime(int ano, int ilha, String ilhadesc,
+            int tipoCrime, String tipoCrimedesc, int total) {
 
         DenunciaPorAno_Ilha_TipoCrime e = new DenunciaPorAno_Ilha_TipoCrime() {
 
@@ -2044,8 +2414,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2066,8 +2446,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Ilha_TipoQueixa addEstatisticaPorAno_Ilha_TipoQueixa(int ano, int ilha,
-            int tipoQueixa, int total) {
+    public DenunciaPorAno_Ilha_TipoQueixa addEstatisticaPorAno_Ilha_TipoQueixa(int ano, int ilha, String ilhadesc,
+            int tipoQueixa, String tipoQueixadesc, int total) {
         DenunciaPorAno_Ilha_TipoQueixa e = new DenunciaPorAno_Ilha_TipoQueixa() {
 
             @Override
@@ -2081,8 +2461,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -2104,7 +2494,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Ilha_TipoCrime_Genero addEstatisticaPorAno_Ilha_TipoCrime_Genero(int ano,
-            int ilha, int tipoCrime) {
+            int ilha, String ilhadesc, int tipoCrime, String tipoCrimedesc) {
         DenunciaPorAno_Ilha_TipoCrime_Genero e = new DenunciaPorAno_Ilha_TipoCrime_Genero() {
 
             @Override
@@ -2118,8 +2508,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2161,7 +2561,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Ilha_TipoCrime_TipoQueixa addEstatisticaPorAno_Ilha_TipoCrime_TipoQueixa(
-            int ano, int ilha, int tipoCrime, int tipoQueixa, int total) {
+            int ano, int ilha, String ilhadesc, int tipoCrime, String tipoCrimedesc, int tipoQueixa,
+            String tipoQueixadesc, int total) {
 
         DenunciaPorAno_Ilha_TipoCrime_TipoQueixa e = new DenunciaPorAno_Ilha_TipoCrime_TipoQueixa() {
 
@@ -2176,13 +2577,28 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return ilhadesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
             }
 
             @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -2203,7 +2619,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Concelho addEstatisticaPorAno_Concelho(int ano, int Concelho, int total) {
+    public DenunciaPorAno_Concelho addEstatisticaPorAno_Concelho(int ano, int Concelho, String Concelhodesc,
+            int total) {
         DenunciaPorAno_Concelho e = new DenunciaPorAno_Concelho() {
 
             @Override
@@ -2217,6 +2634,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2234,7 +2656,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorAno_Concelho_Genero addEstatisticaPorAno_Concelho_Genero(int ano, int Concelho) {
+    public DenunciaPorAno_Concelho_Genero addEstatisticaPorAno_Concelho_Genero(int ano, int Concelho,
+            String Concelhodesc) {
         DenunciaPorAno_Concelho_Genero e = new DenunciaPorAno_Concelho_Genero() {
 
             @Override
@@ -2245,6 +2668,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getConcelho() {
                 return Concelho;
+            }
+
+            @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
             }
 
             @Override
@@ -2286,8 +2714,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Concelho_TipoCrime addEstatisticaPorAno_Concelho_TipoCrime(int ano,
-            int Concelho,
-            int tipoCrime, int total) {
+            int Concelho, String Concelhodesc,
+            int tipoCrime, String tipoCrimedesc, int total) {
 
         DenunciaPorAno_Concelho_TipoCrime e = new DenunciaPorAno_Concelho_TipoCrime() {
 
@@ -2302,8 +2730,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2325,7 +2763,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Concelho_TipoQueixa addEstatisticaPorAno_Concelho_TipoQueixa(int ano,
-            int Concelho, int tipoQueixa, int total) {
+            int Concelho, String Concelhodesc, int tipoQueixa, String tipoQueixadesc, int total) {
         DenunciaPorAno_Concelho_TipoQueixa e = new DenunciaPorAno_Concelho_TipoQueixa() {
 
             @Override
@@ -2339,8 +2777,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -2362,7 +2810,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Concelho_TipoCrime_Genero addEstatisticaPorAno_Concelho_TipoCrime_Genero(
-            int ano, int Concelho, int tipoCrime) {
+            int ano, int Concelho, String Concelhodesc, int tipoCrime, String tipoCrimedesc) {
         DenunciaPorAno_Concelho_TipoCrime_Genero e = new DenunciaPorAno_Concelho_TipoCrime_Genero() {
 
             @Override
@@ -2376,8 +2824,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2419,7 +2877,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorAno_Concelho_TipoCrime_TipoQueixa addEstatisticaPorAno_Concelho_TipoCrime_TipoQueixa(
-            int ano, int Concelho, int tipoCrime, int tipoQueixa, int total) {
+            int ano, int Concelho, String Concelhodesc, int tipoCrime, String tipoCrimedesc, int tipoQueixa,
+            String tipoQueixadesc, int total) {
 
         DenunciaPorAno_Concelho_TipoCrime_TipoQueixa e = new DenunciaPorAno_Concelho_TipoCrime_TipoQueixa() {
 
@@ -2434,8 +2893,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return Concelhodesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2444,6 +2913,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2461,7 +2935,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorIlha addEstatisticaPorIlha(int Ilha, int total) {
+    public DenunciaPorIlha addEstatisticaPorIlha(int Ilha, String IlhaDesc, int total) {
         DenunciaPorIlha e = new DenunciaPorIlha() {
 
             @Override
@@ -2470,6 +2944,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return IlhaDesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2488,7 +2967,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorIlha_TipoCrime addEstatisticaPorIlha_TipoCrime(int Ilha, int tipoCrime, int total) {
+    public DenunciaPorIlha_TipoCrime addEstatisticaPorIlha_TipoCrime(int Ilha, String IlhaDesc, int tipoCrime,
+            String tipoCrimeDesc, int total) {
         DenunciaPorIlha_TipoCrime e = new DenunciaPorIlha_TipoCrime() {
 
             @Override
@@ -2497,8 +2977,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return IlhaDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2519,7 +3009,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorIlha_TipoQueixa addEstatisticaPorIlha_TipoQueixa(int Ilha, int tipoQueixa,
+    public DenunciaPorIlha_TipoQueixa addEstatisticaPorIlha_TipoQueixa(int Ilha, String IlhaDesc, int tipoQueixa,
+            String tipoQueixaDesc,
             int total) {
         DenunciaPorIlha_TipoQueixa e = new DenunciaPorIlha_TipoQueixa() {
 
@@ -2529,8 +3020,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return IlhaDesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixaDesc;
             }
 
             @Override
@@ -2551,8 +3052,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorIlha_TipoCrime_Genero addEstatisticaPorIlha_TipoCrime_Genero(int Ilha,
-            int tipoCrime) {
+    public DenunciaPorIlha_TipoCrime_Genero addEstatisticaPorIlha_TipoCrime_Genero(int Ilha, String IlhaDesc,
+            int tipoCrime, String tipoCrimeDesc) {
         DenunciaPorIlha_TipoCrime_Genero e = new DenunciaPorIlha_TipoCrime_Genero() {
 
             @Override
@@ -2561,8 +3062,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return IlhaDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2603,8 +3114,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorIlha_TipoCrime_TipoQueixa addEstatisticaPorIlha_TipoCrime_TipoQueixa(int Ilha,
-            int tipoCrime, int tipoQueixa, int total) {
+    public DenunciaPorIlha_TipoCrime_TipoQueixa addEstatisticaPorIlha_TipoCrime_TipoQueixa(int Ilha, String IlhaDesc,
+            int tipoCrime, String tipoCrimeDesc, int tipoQueixa, String tipoQueixaDesc, int total) {
         DenunciaPorIlha_TipoCrime_TipoQueixa e = new DenunciaPorIlha_TipoCrime_TipoQueixa() {
 
             @Override
@@ -2613,8 +3124,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getIlhaDesc() {
+                return IlhaDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2623,6 +3144,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixaDesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2640,7 +3166,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorConcelho addEstatisticaPorConcelho(int Concelho, int total) {
+    public DenunciaPorConcelho addEstatisticaPorConcelho(int Concelho, String ConcelhoDesc, int total) {
         DenunciaPorConcelho e = new DenunciaPorConcelho() {
 
             @Override
@@ -2649,6 +3175,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return ConcelhoDesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2667,7 +3198,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorConcelho_TipoCrime addEstatisticaPorConcelho_TipoCrime(int Concelho, int tipoCrime,
+    public DenunciaPorConcelho_TipoCrime addEstatisticaPorConcelho_TipoCrime(int Concelho, String ConcelhoDesc,
+            int tipoCrime, String tipoCrimeDesc,
             int total) {
         DenunciaPorConcelho_TipoCrime e = new DenunciaPorConcelho_TipoCrime() {
 
@@ -2677,8 +3209,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return ConcelhoDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2699,8 +3241,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorConcelho_TipoQueixa addEstatisticaPorConcelho_TipoQueixa(int Concelho,
-            int tipoQueixa, int total) {
+    public DenunciaPorConcelho_TipoQueixa addEstatisticaPorConcelho_TipoQueixa(int Concelho, String ConcelhoDesc,
+            int tipoQueixa, String tipoQueixaDesc, int total) {
         DenunciaPorConcelho_TipoQueixa e = new DenunciaPorConcelho_TipoQueixa() {
 
             @Override
@@ -2709,8 +3251,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return ConcelhoDesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixaDesc;
             }
 
             @Override
@@ -2732,7 +3284,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorConcelho_TipoCrime_Genero addEstatisticaPorConcelho_TipoCrime_Genero(int Concelho,
-            int tipoCrime) {
+            String ConcelhoDesc,
+            int tipoCrime, String tipoCrimeDesc) {
         DenunciaPorConcelho_TipoCrime_Genero e = new DenunciaPorConcelho_TipoCrime_Genero() {
 
             @Override
@@ -2741,8 +3294,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return ConcelhoDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2784,8 +3347,8 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorConcelho_TipoCrime_TipoQueixa addEstatisticaPorConcelho_TipoCrime_TipoQueixa(
-            int Concelho,
-            int tipoCrime, int tipoQueixa, int total) {
+            int Concelho, String ConcelhoDesc,
+            int tipoCrime, String tipoCrimeDesc, int tipoQueixa, String tipoQueixaDesc, int total) {
         DenunciaPorConcelho_TipoCrime_TipoQueixa e = new DenunciaPorConcelho_TipoCrime_TipoQueixa() {
 
             @Override
@@ -2794,8 +3357,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getConcelhoDesc() {
+                return ConcelhoDesc;
+            }
+
+            @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimeDesc;
             }
 
             @Override
@@ -2804,6 +3377,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixaDesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2821,7 +3399,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorTipoCrime addEstatisticaPorTipoCrime(int tipoCrime, int total) {
+    public DenunciaPorTipoCrime addEstatisticaPorTipoCrime(int tipoCrime, String tipoCrimedesc, int total) {
         DenunciaPorTipoCrime e = new DenunciaPorTipoCrime() {
 
             @Override
@@ -2830,6 +3408,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
+            }
+
+            @Override
             public int getQuantidade() {
                 return 0;
             }
@@ -2847,12 +3430,17 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorTipoCrime_Genero addEstatisticaPorTipoCrime_Genero(int tipoCrime) {
+    public DenunciaPorTipoCrime_Genero addEstatisticaPorTipoCrime_Genero(int tipoCrime, String tipoCrimedesc) {
         DenunciaPorTipoCrime_Genero e = new DenunciaPorTipoCrime_Genero() {
 
             @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override
@@ -2894,7 +3482,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorTipoCrime_TipoQueixa addEstatisticaPorTipoCrime_TipoQueixa(
-            int tipoCrime, int tipoQueixa, int total) {
+            int tipoCrime, String tipoCrimedesc, int tipoQueixa, String tipoQueixadesc, int total) {
         DenunciaPorTipoCrime_TipoQueixa e = new DenunciaPorTipoCrime_TipoQueixa() {
 
             @Override
@@ -2903,8 +3491,18 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             }
 
             @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
+            }
+
+            @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -2925,12 +3523,17 @@ public class EstatisticaServiceImpl implements EstatisticaService {
         return e;
     }
 
-    public DenunciaPorTipoQueixa addEstatisticaPorTipoQueixa(int tipoQueixa, int total) {
+    public DenunciaPorTipoQueixa addEstatisticaPorTipoQueixa(int tipoQueixa, String tipoQueixadesc, int total) {
         DenunciaPorTipoQueixa e = new DenunciaPorTipoQueixa() {
 
             @Override
             public int getTipoQueixa() {
                 return tipoQueixa;
+            }
+
+            @Override
+            public String getTipoQueixaDesc() {
+                return tipoQueixadesc;
             }
 
             @Override
@@ -3024,7 +3627,7 @@ public class EstatisticaServiceImpl implements EstatisticaService {
     }
 
     public DenunciaPorFaixaEtaria_TipoCrime addEstatisticaPorFaixaEtaria_TipoCrime(String faixaEtaria,
-            int tipoCrime, int total) {
+            int tipoCrime, String tipoCrimedesc, int total) {
         DenunciaPorFaixaEtaria_TipoCrime e = new DenunciaPorFaixaEtaria_TipoCrime() {
 
             @Override
@@ -3035,6 +3638,11 @@ public class EstatisticaServiceImpl implements EstatisticaService {
             @Override
             public int getTipoCrime() {
                 return tipoCrime;
+            }
+
+            @Override
+            public String getTipoCrimeDesc() {
+                return tipoCrimedesc;
             }
 
             @Override

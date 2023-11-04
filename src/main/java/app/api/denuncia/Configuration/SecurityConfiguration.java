@@ -22,23 +22,22 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf()
-        .disable()
-        .authorizeHttpRequests()
-        .requestMatchers(
-            "/api/auth/login", "/api/utilizadorBackoffice/recuperarSenha", "/api/utilizadorBackoffice/recuperarConta",
-            "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
-            "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia", "/api/aes256/**")
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+      http
+              .csrf(csrf -> csrf
+                      .disable())
+              .authorizeHttpRequests()
+              .requestMatchers(
+                      "/api/auth/login", "/api/utilizadorBackoffice/recuperarSenha", "/api/utilizadorBackoffice/recuperarConta",
+                      "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
+                      "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia", "/api/aes256/**")
+              .permitAll()
+              .anyRequest()
+              .authenticated()
+              .and()
+              .sessionManagement(management -> management
+                      .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+              .authenticationProvider(authenticationProvider)
+              .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 }

@@ -6,6 +6,8 @@ public interface DenunciaPorAno_Mes{
 
     int getMes();
 
+    String getMesDesc();
+
     int getQuantidade();
 
     int getTotal();

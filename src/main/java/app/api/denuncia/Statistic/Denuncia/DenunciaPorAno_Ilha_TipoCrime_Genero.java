@@ -6,7 +6,11 @@ public interface DenunciaPorAno_Ilha_TipoCrime_Genero {
 
     int getIdIlha();
 
+    String getIlhaDesc();
+
     int getTipoCrime();
+
+    String getTipoCrimeDesc();
 
     int getQuantidadeFeminino();
 
