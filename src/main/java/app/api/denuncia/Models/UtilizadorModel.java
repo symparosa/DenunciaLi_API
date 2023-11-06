@@ -92,7 +92,7 @@ public class UtilizadorModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(tipoUtilizador.getValor()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" +tipoUtilizador.getValor()));
     }
 
     @Override

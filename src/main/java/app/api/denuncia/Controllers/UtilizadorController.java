@@ -34,7 +34,7 @@ public class UtilizadorController {
 
     @Operation(summary = "Adicionar / Atualizar Utilizador", description = "Adiciona / Atualiza utilizador.")
     @SecurityRequirement(name = "Bearer Authentication")
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody UtilizadorModel utilizador) {
         return ResponseEntity.ok(user.adicionar_atualizar(utilizador));
