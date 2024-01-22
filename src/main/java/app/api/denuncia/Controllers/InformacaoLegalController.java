@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Informação Legal")
 @ApiResponse(responseCode = "200", description = "Success response.")
-@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/informacaoLegal", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InformacaoLegalController {
 
@@ -32,12 +31,14 @@ public class InformacaoLegalController {
         this.info = info;
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Adicionar / Atualizar Informação Legal", description = "Adiciona / Atualiza informação legal.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody InformacaoLegalModel informacao) {
         return ResponseEntity.ok(info.adicionar_atualizar(informacao));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Alterar Estado Informação Legal", description = "Altera o estado de uma informação legal.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da informação legal"),
             @Parameter(name = "Estado", description = "O estado do informação legal") })
@@ -47,6 +48,7 @@ public class InformacaoLegalController {
         return ResponseEntity.ok(info.alterarEstado(Id, Estado));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Listar Informações Legais", description = "Lista todas as informações legais.")
     @GetMapping(path = "/listar")
     public ResponseEntity<Response> listar() {
@@ -60,6 +62,7 @@ public class InformacaoLegalController {
         return ResponseEntity.ok(info.getInfoByTipo(TipoInfo));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Get Detalhes Informação Legal", description = "Lista todos os detalhes de uma informação legal.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da informação legal") })
     @GetMapping(path = "/get_detalhes_by_id")

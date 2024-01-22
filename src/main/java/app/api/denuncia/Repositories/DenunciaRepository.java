@@ -61,7 +61,7 @@ import app.api.denuncia.Statistic.Denuncia.Meses;
 @Transactional
 public interface DenunciaRepository extends JpaRepository<DenunciaModel, Integer> {
 
-        @Query(value = "SELECT data_criacao"
+        @Query(value = "SELECT DISTINCT data_criacao"
                         + " ,estado"
                         + " ,queixa_codigo_postal AS codigo_postal"
                         + " ,data_ocorrencia"

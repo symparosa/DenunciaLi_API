@@ -29,7 +29,9 @@ public class SecurityConfiguration {
               .requestMatchers(
                       "/api/auth/login", "/api/utilizadorBackoffice/recuperarSenha", "/api/utilizadorBackoffice/recuperarConta",
                       "/v3/**", "/swagger-ui/**", "/api/denunciante/adicionar", "/api/denunciante/recuperarSenha",
-                      "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia", "/api/aes256/**")
+                      "/api/denunciante/recuperarConta", "/api/denuncia/adicionarDenuncia", "/api/aes256/**","/api/banner/listar",
+                      "/api/entidade/listar","/api/informacaoLegal/getInfoByTipo","/api/noticia/listar","/api/localizacao/**","/api/dominio/getDominio",
+                      "/api/denuncia/sistemaPolicia","/api/noticia/get_detalhes_by_id")
               .permitAll()
               .anyRequest()
               .authenticated()

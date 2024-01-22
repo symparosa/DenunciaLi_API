@@ -53,6 +53,8 @@ public class DominioServiceImpl implements DominioService {
 
                     for (DominioModel dom : dominio) {
 
+                        dom.setLast_user_change(IdUserLogado());
+                        
                         if (dom.getId() != null) { // update
 
                             if (domRepository.existsById(dom.getId())) {
@@ -72,10 +74,9 @@ public class DominioServiceImpl implements DominioService {
                                 contInsert++;
                             }
                             dom.setData_atualizacao(null);
+                            dom.setEstado(status.getAtivo());
+                            dom.setData_criacao(LocalDateTime.now());
                         }
-                        dom.setEstado(status.getAtivo());
-                        dom.setData_criacao(LocalDateTime.now());
-                        dom.setLast_user_change(IdUserLogado());
                     }
 
                     return saveAll(dominio, contUpdate, contInsert, insert, update, metodo);

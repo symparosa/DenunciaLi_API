@@ -50,20 +50,19 @@ public class InformacaoLegalServiceImpl implements InformacaoLegalService {
 
             String metodo = "salvar";
 
-            infoLegal.setEstado(status.getAtivo());
-            infoLegal.setData_criacao(LocalDateTime.now());
-            infoLegal.setLast_user_change(IdUserLogado());
-
             String obj = "Tipo de informação legal";
 
             if (validateTipo(infoLegal.getTipoInformacaoLegal())) {
+
+                infoLegal.setLast_user_change(IdUserLogado());
 
                 if (infoLegal.getId() != null) {
 
                     return update(infoLegal, metodo);
 
                 } else {
-
+                    infoLegal.setEstado(status.getAtivo());
+                    infoLegal.setData_criacao(LocalDateTime.now());
                     return insert(infoLegal, metodo);
 
                 }

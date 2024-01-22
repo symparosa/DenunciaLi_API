@@ -57,7 +57,7 @@ public class DenuncianteServiceImpl implements DenuncianteService {
     @Value("${template.registration}")
     private String pathRegistration;
 
-    @Value("${url}")
+    @Value("${url_frontoffice}")
     private String url;
 
     public DenuncianteServiceImpl(DenuncianteRepository denRepository, PasswordEncoder passwordEncoder,
@@ -113,12 +113,12 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                             Document doc = Jsoup.parse(html);
                             Element link = doc.getElementById("a_link");
                             Element p = doc.getElementById("p_corpo");
-                            link.attr("href", url);
+                            link.attr("href", url+"obj="+hash+"&obj_2="+email+"&obj_t=2");
                             p.html(ptxt);
 
                             EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
-                            Response em = emailService.sendEmail(emailDetail, msg);
+                            Response em = emailService.sendEmail(emailDetail, msg, null);
 
                             if (em.getResponseCode() == 1) {
                                 return em;
@@ -292,14 +292,14 @@ public class DenuncianteServiceImpl implements DenuncianteService {
                 Element div = doc.getElementById("div_titulo");
                 Element p = doc.getElementById("p_corpo");
                 Element link = doc.getElementById("a_link");
-                link.attr("href", url);
+                link.attr("href", url+"obj="+hash+"&obj_2="+username+"&obj_t=1");
                 div.html(titulo);
                 p.html(ptxt);
 
                 EmailDetails emailDetail = gf.createEmail(denu.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
-                Response em = emailService.sendEmail(emailDetail, msg);
+                Response em = emailService.sendEmail(emailDetail, msg,null);
 
                 if (em.getResponseCode() == 1) {
                     return em;

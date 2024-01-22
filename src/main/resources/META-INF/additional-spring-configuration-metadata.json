@@ -30,8 +30,13 @@
     "description": "O caminho para o template de recover"
   },
   {
-    "name": "url",
+    "name": "url_backoffice",
     "type": "java.lang.String",
-    "description": "Url de reencaminhamento"
+    "description": "Url de reencaminhamento para backoffice"
+  },
+  {
+    "name": "url_frontoffice",
+    "type": "java.lang.String",
+    "description": "Url de reencaminhamento para frontoffice"
   }
 ]}

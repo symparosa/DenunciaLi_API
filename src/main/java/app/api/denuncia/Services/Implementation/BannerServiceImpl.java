@@ -45,16 +45,16 @@ public class BannerServiceImpl implements BannerService {
 
             String metodo = "salvar";
 
-            banner.setEstado(status.getAtivo());
-            banner.setData_criacao(LocalDateTime.now());
             banner.setLast_user_change(IdUserLogado());
-
+            
             if (banner.getId() != null) {
 
                 return update(banner, metodo);
 
             } else {
 
+                banner.setEstado(status.getAtivo());
+                banner.setData_criacao(LocalDateTime.now());
                 return insert(banner, metodo);
 
             }

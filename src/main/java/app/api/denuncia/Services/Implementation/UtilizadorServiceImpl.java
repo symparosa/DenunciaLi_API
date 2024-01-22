@@ -52,7 +52,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     @Value("${template.registration}")
     private String pathRegistration;
 
-    @Value("${url}")
+    @Value("${url_backoffice}")
     private String url;
 
     private Status status = new Status();
@@ -98,17 +98,17 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                     if (entService.existsEntidade(user.getEntidade())) {
 
-                        user.setEstado(status.getAtivo());
-                        user.setData_criacao(LocalDateTime.now());
                         user.setLast_user_change(IdUserLogado());
-                        user.setContaConfirmada(false);
-
+                        
                         if (user.getId() != null) {
 
                             return updateUser(user, metodo);
 
                         } else {
-
+                            user.setEstado(status.getAtivo());
+                            user.setData_criacao(LocalDateTime.now());
+                           
+                            user.setContaConfirmada(false);
                             return insertUser(user, metodo);
                         }
                     } else {
@@ -134,7 +134,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
         String hash = gf.generateHash();
         String Subject = "Registo de Utilizador";
         String ptxt = "Ol&aacute;, " + uti.getNome()
-                + ". Voc&ecirc; foi convidado a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
+                + ". Voc&ecirc; foi convidado(a) a colaborar no <i>backoffice</i> da plataforma <strong>DenunciaLi</strong>.";
         String titulo = "REGISTO DE UTILIZADOR";
 
         if (!userRepository.existsByUsername(uti.getUsername()) && !userRepository.existsByHash(hash)) {
@@ -153,14 +153,14 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                 Element div = doc.getElementById("div_titulo");
                 Element p = doc.getElementById("p_corpo");
                 Element link = doc.getElementById("a_link");
-                link.attr("href", url);
+                link.attr("href", url+"obj="+hash+"&obj_2="+uti.getUsername()+"&obj_t=1");
                 div.html(titulo);
                 p.html(ptxt);
 
                 EmailDetails emailDetail = gf.createEmail(user.getUsername(), doc.html(), Subject);
                 msg.add(val.getMessage().get(0));
 
-                Response em = emailService.sendEmail(emailDetail, msg);
+                Response em = emailService.sendEmail(emailDetail, msg, val.getObject());
 
                 if (em.getResponseCode() == 1) {
                     return em;
@@ -351,12 +351,12 @@ public class UtilizadorServiceImpl implements UtilizadorService {
                         Document doc = Jsoup.parse(html);
                         Element link = doc.getElementById("a_link");
                         Element p = doc.getElementById("p_corpo");
-                        link.attr("href", url);
+                        link.attr("href",  url+"obj="+hash+"&obj_2="+email+"&obj_t=2");
                         p.html(ptxt);
 
                         EmailDetails emailDetail = gf.createEmail(email, doc.html(), Subject);
 
-                        Response em = emailService.sendEmail(emailDetail, msg);
+                        Response em = emailService.sendEmail(emailDetail, msg, null);
 
                         if (em.getResponseCode() == 1) {
                             return em;
@@ -383,7 +383,7 @@ public class UtilizadorServiceImpl implements UtilizadorService {
     }
 
     @Override
-    public Response get_by_id(int id) {
+    public Response get_by_email(String email) {
 
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
                 .serializeNulls().create();
@@ -395,11 +395,16 @@ public class UtilizadorServiceImpl implements UtilizadorService {
 
                 String metodo = "listar", obj = "Utilizador";
 
-                UtilizadorModel user = userRepository.findById(id).orElse(null);
-                String json = gson.toJson(user);
-                String encript = aes256Service.encrypt(json);
-                return gf.validateGetMsgWithObj(metodo, encript, obj);
+                UtilizadorModel user = userRepository.findByUsername(email).orElse(null);
 
+                if(user != null){
+                    String json = gson.toJson(user);
+                    String encript = aes256Service.encrypt(json);
+                    return gf.validateGetMsgWithObj(metodo, encript, obj);
+                }else{
+                    msg.add(message.getMessage06(email));
+                    return gf.getResponseError(msg);
+                }
             } else {
                 msg.add(message.getMessage05());
                 return gf.getResponseError(msg);

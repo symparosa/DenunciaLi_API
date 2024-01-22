@@ -53,10 +53,8 @@ public class IntegrateServiceImpl implements IntegrateService {
 
         if (requestBody != null) {
 
-            System.out.println(requestBody);
-
             WebClient webClient = WebClient.create();
-            String apiUrl = "http://localhost:8080/api/denuncia/sistemaPolicia";
+            String apiUrl = "http://104.131.179.103:8080/api/denuncia/sistemaPolicia";
 
             Mono<Response> responseMono = webClient.post()
                     .uri(apiUrl)
@@ -103,7 +101,7 @@ public class IntegrateServiceImpl implements IntegrateService {
                         System.out.println(requestBody);
 
                         WebClient webClient = WebClient.create();
-                        String apiUrl = "http://localhost:8080/api/denuncia/sistemaPolicia";
+                        String apiUrl = "http://104.131.179.103:8080/api/denuncia/sistemaPolicia";
 
                         Mono<Response> responseMono = webClient.post()
                                 .uri(apiUrl)

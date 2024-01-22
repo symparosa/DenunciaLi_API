@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 @RestController
 @Tag(name = "Notícia")
 @ApiResponse(responseCode = "200", description = "Success response.")
-@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/noticia", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NoticiaController {
 
@@ -32,12 +31,14 @@ public class NoticiaController {
         this.noticiaService = noticiaService;
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Adicionar / Atualizar Notícia", description = "Adiciona / Atualiza notícia no banco de dados.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody NoticiaModel noticia) {
         return ResponseEntity.ok(noticiaService.adicionar_atualizar(noticia));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Alterar Estado Notícia", description = "Altera o estado da notícia no banco de dados.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da notícia"),
             @Parameter(name = "Estado", description = "O estado da notícia") })

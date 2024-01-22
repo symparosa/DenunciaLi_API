@@ -90,11 +90,11 @@ public class UtilizadorController {
     }
 
     @Operation(summary = "Get Detalhes Utilizador", description = "Lista todos os detalhes do utilizador.", parameters = {
-            @Parameter(name = "Id", description = "O identificador (ID) do utilizador") })
+            @Parameter(name = "Username", description = "O Username do utilizador") })
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping(path = "/get_detalhes_by_id")
-    public ResponseEntity<Response> get_detalhes_by_id(@RequestParam(required = true) int Id) {
-        return ResponseEntity.ok(user.get_by_id(Id));
+    @GetMapping(path = "/get_detalhes_by_username")
+    public ResponseEntity<Response> get_detalhes_by_username(@RequestParam(required = true) String Username) {
+        return ResponseEntity.ok(user.get_by_email(Username));
     }
 
     @Operation(summary = "Validar Senha", description = "Valida a senha do utilizador.", parameters = {

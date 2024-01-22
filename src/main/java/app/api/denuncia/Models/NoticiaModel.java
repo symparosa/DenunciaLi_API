@@ -30,6 +30,7 @@ public class NoticiaModel implements Serializable {
     private String titulo;
 
     @Schema(description = "A imagem de capa da notícia")
+    @Lob
     private String imagem_capa;
 
     @Schema(description = "A introdução da notícia")

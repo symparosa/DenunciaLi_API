@@ -7,5 +7,5 @@ import app.api.denuncia.Dto.Response;
 
 public interface EmailService {
 
-    Response sendEmail(EmailDetails details, List<String> msg);
+    Response sendEmail(EmailDetails details, List<String> msg, Object obj);
 }

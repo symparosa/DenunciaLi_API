@@ -87,24 +87,25 @@ public class ContatoServiceImpl implements ContatoService {
                                     && validateIdObjeto(contato.getIdObjeto(), contato.getTipoObjeto())) {
 
                                 if (!contato.getValor().equals("") && !contato.getValor().equals(null)) {
-
+                                    contato.setLast_user_change(IdUserLogado());
                                     if (contato.getId() != null) { // update
 
                                         obj = "Contato";
 
                                         if (contatoRepository.existsById(contato.getId())) {
                                             contato.setData_atualizacao(LocalDateTime.now());
+                                            contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                         } else {
                                             msg.add(message.getMessage06(obj));
                                             return gf.getResponseError(msg);
                                         }
                                     } else if (contato.getId() == null) { // insert
                                         contato.setData_atualizacao(null);
+                                        contato.setEstado(status.getAtivo());
+                                        contato.setData_criacao(LocalDateTime.now());
+                                        contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
                                     }
-                                    contato.setEstado(status.getAtivo());
-                                    contato.setData_criacao(LocalDateTime.now());
-                                    contato.setLast_user_change(IdUserLogado());
-                                    contato.setTipoObjeto("dn_t_" + contato.getTipoObjeto());
+
                                 } else {
                                     msg.add(message.getMessage09("valor"));
                                     return gf.getResponseError(msg);

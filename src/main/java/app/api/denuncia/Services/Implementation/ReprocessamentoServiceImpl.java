@@ -200,7 +200,7 @@ public class ReprocessamentoServiceImpl implements ReprocessamentoService {
                         EmailDetails emailDetail = gf.createEmail(repro.getEmail_user(), repro.getEmail_body(),
                                 repro.getEmail_subject());
 
-                        Response val = emailService.sendEmail(emailDetail, msg);
+                        Response val = emailService.sendEmail(emailDetail, msg, null);
 
                         String metodo = "salvar";
                         Integer userId = 1;

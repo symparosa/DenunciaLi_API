@@ -54,7 +54,6 @@ public class AuthenticationService {
             .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), pass));
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        msg.add(message.getMessage13("Login"));
         return sendToken(request.getCanal(), userDetails);
 
       } else {
@@ -82,30 +81,48 @@ public class AuthenticationService {
       userid = user.getId();
       username = user.getUsername();
 
+      if (userid != null && username != null) {
+
+        if (canal.equals("BackOffice")) {
+
+          var jwtToken = jwtService.generateToken(userDetails);
+          UserRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
+          msg.add(message.getMessage13("Login"));
+          return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
+
+        } else {
+          msg.add(message.getMessage12());
+          return gf.getResponseError(msg);
+        }
+      } else {
+        msg.add(message.getMessage12());
+        return gf.getResponseError(msg);
+      }
     } else if (userDetails instanceof DenuncianteModel) {
 
       DenuncianteModel user = (DenuncianteModel) userDetails;
       userid = user.getId();
       username = user.getUsername();
-    }
 
-    if (userid != null && username != null) {
+      if (userid != null && username != null) {
 
-      if (canal.equals("BackOffice")) {
+        if (canal.equals("FrontOffice")) {
 
-        var jwtToken = jwtService.generateToken(userDetails);
-        UserRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
+          var jwtToken = jwtService.generateToken(userDetails);
+          DenunRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
+          msg.add(message.getMessage13("Login"));
+          return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
 
+        } else {
+          msg.add(message.getMessage12());
+          return gf.getResponseError(msg);
+        }
       } else {
-
-        var jwtToken = jwtService.generateToken(userDetails);
-        DenunRepository.insertToken(jwtToken, now, userid, username).orElseThrow();
-        return gf.getResponse(1, ResponseType.Sucesso, msg, jwtToken);
-
+        msg.add(message.getMessage12());
+        return gf.getResponseError(msg);
       }
     } else {
-      msg.add(message.getMessage14("envio de token"));
+      msg.add(message.getMessage12());
       return gf.getResponseError(msg);
     }
   }

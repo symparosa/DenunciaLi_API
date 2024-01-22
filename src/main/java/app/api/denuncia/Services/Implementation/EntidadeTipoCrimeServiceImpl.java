@@ -96,9 +96,10 @@ public class EntidadeTipoCrimeServiceImpl implements EntidadeTipoCrimeService {
                                         contInsert++;
                                     }
                                     ent.setData_atualizacao(null);
+                                    ent.setEstado(status.getAtivo());
+                                    ent.setData_criacao(LocalDateTime.now());
                                 }
-                                ent.setEstado(status.getAtivo());
-                                ent.setData_criacao(LocalDateTime.now());
+
                                 ent.setLast_user_change(IdUserLogado());
                             } else {
                                 msg.add(message.getMessage06(obj));

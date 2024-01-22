@@ -77,7 +77,7 @@ public class GlobalFunctions {
         if (obj != null) {
 
             msg.add(message.getMessage01(metodo));
-            return getResponse(1, ResponseType.Sucesso, msg, null);
+            return getResponse(1, ResponseType.Sucesso, msg, obj);
 
         } else {
             msg.add(message.getMessage02(metodo));

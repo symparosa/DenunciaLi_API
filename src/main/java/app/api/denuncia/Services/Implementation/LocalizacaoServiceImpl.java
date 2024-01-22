@@ -28,7 +28,7 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
     }
 
     @Override
-    public Response listarLocalizacoes(String concelho) {
+    public Response listarLocalizacoes(String concelho) { //Lista todas as localizações a partir de um concelho.
 
         gf.clearList(msg);
 
@@ -63,7 +63,7 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
     }
 
     @Override
-    public Response getIlhas() {
+    public Response getIlhas() { //Lista todos as ilhas de Cabo Verde.
 
         gf.clearList(msg);
 
@@ -97,7 +97,7 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
     }
 
     @Override
-    public Response getConcelhos() {
+    public Response getConcelhos() { //Lista todos os concelhos de Cabo Verde.
 
         gf.clearList(msg);
 
@@ -130,7 +130,7 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
         }
     }
 
-    public Boolean existsLocalizacao(LocalizacaoModel local) {
+    public Boolean existsLocalizacao(LocalizacaoModel local) { //Valida a existencia da localização
 
         if (local != null && localRepository.existsById(local.getId())) {
             return true;

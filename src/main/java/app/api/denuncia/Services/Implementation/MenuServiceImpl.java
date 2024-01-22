@@ -46,16 +46,16 @@ public class MenuServiceImpl implements MenuService {
 
             String metodo = "salvar";
 
-            menu.setEstado(status.getAtivo());
-            menu.setData_criacao(LocalDateTime.now());
             menu.setLast_user_change(IdUserLogado());
-
+            
             if (menu.getId() != null) {
 
                 return update(menu, metodo);
 
             } else {
-
+                menu.setEstado(status.getAtivo());
+                menu.setData_criacao(LocalDateTime.now());
+               
                 return insert(menu, metodo);
             }
         } catch (Exception e) {

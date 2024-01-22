@@ -53,16 +53,14 @@ public class EntidadeServiceImpl implements EntidadeService {
 
             String metodo = "salvar", obj = "Localização";
 
-            entidade.setEstado(status.getAtivo());
-            entidade.setData_criacao(LocalDateTime.now());
-            entidade.setLast_user_change(IdUserLogado());
-
             if (localService.existsLocalizacao(entidade.getLocalizacao())) {
 
                 obj = "Tipo de entidade";
 
                 if (domService.existsTipo(entidade.getTipoEntidade(), Domain.TIPO_ENTIDADE.name())) {
 
+                    entidade.setLast_user_change(IdUserLogado());
+                    
                     if (entidade.getId() != null) { // update
 
                         obj = "Entidade";
@@ -71,6 +69,8 @@ public class EntidadeServiceImpl implements EntidadeService {
 
                     } else {
 
+                        entidade.setEstado(status.getAtivo());
+                        entidade.setData_criacao(LocalDateTime.now());
                         return insert(entidade, metodo);
 
                     }

@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     @Override
-    public Response sendEmail(EmailDetails details, List<String> msg) {
+    public Response sendEmail(EmailDetails details, List<String> msg, Object obj) {
 
         try {
 
@@ -46,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
             javaMailSender.send(mimeMessage);
 
             msg.add(message.getMessage10());
-            return gf.getResponse(1, ResponseType.Sucesso, msg, null);
+            return gf.getResponse(1, ResponseType.Sucesso, msg, obj);
 
         } catch (Exception e) {
             msg.add(message.getMessage11());

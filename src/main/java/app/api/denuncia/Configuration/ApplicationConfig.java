@@ -38,7 +38,6 @@ public class ApplicationConfig {
 
       @Override
       public UserDetails loadUserByUsername(String username) {
-
         UtilizadorModel user1 = utiRepository.findByUsernameAndEstado(username, status.getAtivo()).orElse(null);
 
         if (user1 != null) {

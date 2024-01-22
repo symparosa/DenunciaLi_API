@@ -9,7 +9,7 @@ public interface UtilizadorService {
 
     Response listar();
 
-    Response get_by_id(int id);
+    Response get_by_email(String email);
 
     Response recuperarConta(String email);
 

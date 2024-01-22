@@ -46,8 +46,6 @@ public class BotaoServiceImpl implements BotaoService {
 
             String metodo = "salvar";
 
-            botao.setEstado(status.getAtivo());
-            botao.setData_criacao(LocalDateTime.now());
             botao.setLast_user_change(IdUserLogado());
 
             if (botao.getId() != null) {
@@ -56,8 +54,9 @@ public class BotaoServiceImpl implements BotaoService {
 
             } else {
 
+                botao.setData_criacao(LocalDateTime.now());
+                botao.setEstado(status.getAtivo());
                 return insert(botao, metodo);
-
             }
         } catch (Exception e) {
             msg.add(message.getMessage04());

@@ -123,16 +123,17 @@ public class NoticiaServiceImpl implements NoticiaService {
 
             String metodo = "salvar";
 
-            noticia.setEstado(status.getAtivo());
-            noticia.setData_criacao(LocalDateTime.now());
             noticia.setLast_user_change(IdUserLogado());
-
+            
             if (noticia.getId() != null) {
 
                 return update(noticia, metodo);
 
             } else {
 
+                noticia.setEstado(status.getAtivo());
+                noticia.setData_criacao(LocalDateTime.now());
+                
                 return insert(noticia, metodo);
 
             }

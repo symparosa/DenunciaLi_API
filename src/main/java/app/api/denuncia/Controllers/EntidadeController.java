@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Entidade")
 @ApiResponse(responseCode = "200", description = "Success response.")
-@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping(path = "/api/entidade", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntidadeController {
 
@@ -32,12 +31,14 @@ public class EntidadeController {
         this.entidadeService = entidadeService;
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Adicionar / Atualizar Entidade", description = "Adiciona / Atualiza entidade.")
     @PostMapping(path = "/adicionar_atualizar")
     public ResponseEntity<Response> adicionar_atualizar(@RequestBody EntidadeModel entidade) {
         return ResponseEntity.ok(entidadeService.adicionar_atualizar(entidade));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Alterar Estado Entidade", description = "Altera o estado de uma entidade.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade"),
             @Parameter(name = "Estado", description = "O estado da entidade") })
@@ -53,6 +54,7 @@ public class EntidadeController {
         return ResponseEntity.ok(entidadeService.listar());
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Get Detalhes Entidade", description = "Lista todos os detalhes de uma entidade.", parameters = {
             @Parameter(name = "Id", description = "O identificador (ID) da entidade") })
     @GetMapping(path = "/get_detalhes_by_id")
@@ -60,6 +62,7 @@ public class EntidadeController {
         return ResponseEntity.ok(entidadeService.get_by_id(Id));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "Get Entidade By Tipo", description = "Lista todos os dados a partir de um tipo de entidade.", parameters = {
             @Parameter(name = "TipoEntidade", description = "O tipo de entidade que se quer obter os dados") })
     @GetMapping(path = "/getEntidadeByTipo")
